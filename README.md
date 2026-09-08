@@ -1,3 +1,5 @@
+# 📝 RF-002 — Tela de Cadastro de Usuários
+
 # 1. METADADOS DO PROJETO E DA EQUIPE
 
 ## 1.1 Composição da Equipe
@@ -20,7 +22,7 @@
 
 ## 1.3 Localização dos Artefatos
 
-* **LINK_REPOSITORIO_GITHUB:** `https://github.com/[seu-usuario]/[seu-repositorio]`
+* **LINK_REPOSITORIO_GITHUB:** `(https://github.com/angeldanylo35-ux/librando00/)`
 * **BRANCH_PRINCIPAL:** `main`
 * **LINK_APLICACAO_DEPLOY:** Aplicação executada localmente por meio do XAMPP.
 * **LINK_BANCO_DADOS:** Banco de dados MySQL local.
@@ -44,6 +46,7 @@ librando/
 ├── docs/
 │   └── requisitos/
 │       └── RF-001-login.md
+|       └── RF-002-cadastrar.md
 │
 ├── backend/                         # API / Back-end Laravel
 │   ├── app/
@@ -159,7 +162,7 @@ librando/
 
 ## Localização dos Arquivos
 
-* **Documentação:** `docs/requisitos/RF-001-login.md`
+* **Documentação:** `docs/requisitos/RF-002-cadastrar.md`
 * **Back-end Laravel:** `backend/`
 * **Controllers da API:** `backend/app/Http/Controllers/api/`
 * **Autenticação:** `backend/app/Http/Controllers/api/AuthController.php`
@@ -182,519 +185,535 @@ librando/
 ---
 
 
-# 3. DETALHAMENTO TÉCNICO DE UM REQUISITO FUNCIONAL
+## 🔎 1. Identificação do Requisito
 
-## 🎯 1. IDENTIFICAÇÃO DO REQUISITO
+| 📌 Campo | 📄 Informação |
+|---|---|
+| **🆔 ID** | RF-002 |
+| **📋 Título** | Tela de Cadastro de Usuários |
+| **📂 Tipo** | Requisito Funcional |
+| **🚨 Prioridade** | ALTA |
+| **⚙️ Complexidade** | MÉDIA |
+| **📊 Status** | CONCLUÍDO |
+| **📅 Data de Criação** | 02/09/2026 |
+| **🔄 Última Atualização** | 02/09/2026 |
 
-* **ID:** RF-001
+### 📖 Descrição
 
-* **Título:** Tela de Login da Rede Social
+O sistema deve permitir que novos usuários realizem seu cadastro por meio de uma tela específica, preenchendo os dados solicitados.
 
-* **Tipo:** Requisito Funcional
+As informações fornecidas devem ser validadas pelo sistema antes da criação da conta. Após a validação, os dados devem ser armazenados de forma segura no banco de dados MySQL.
 
-* **Prioridade:** ALTA
-
-* **Complexidade:** MÉDIA
-
-* **Status:** EM DESENVOLVIMENTO
-
-* **Data de Criação:** [preencher]
-
-* **Última Atualização:** [preencher]
-
-* **Breve Descrição:**
-  O sistema deve permitir que usuários previamente cadastrados realizem login na plataforma Librando por meio de e-mail e senha. As credenciais devem ser verificadas pelo backend PHP utilizando o banco de dados MySQL.
+Quando o cadastro for concluído com sucesso, o usuário deverá receber uma confirmação visual e poderá utilizar suas credenciais para acessar a plataforma por meio da tela de login.
 
 ---
 
-# 📋 2.  DESCRIÇÃO E ATORES — RF: Tela de Login da Rede Social
+# 👥 2. Descrição e Atores
 
-## **Descrição Detalhada**
+## 🎯 Objetivo
 
-### **Por que este requisito existe?**
+Descrever de forma clara o funcionamento do requisito de cadastro de usuários, identificando os atores envolvidos, suas responsabilidades e permissões dentro do processo.
 
-A rede social precisa disponibilizar um mecanismo de autenticação que permita aos usuários cadastrados acessar a plataforma de forma **segura, simples e acessível**.
+## 💼 Benefícios para o Negócio
 
-A tela de login existe para:
+- 👤 Permitir que novos usuários tenham acesso à plataforma.
+- 🔐 Possibilitar a criação de contas de forma segura.
+- 📈 Aumentar a quantidade de usuários e interações na plataforma.
+- ♿ Oferecer um processo de cadastro acessível e fácil de utilizar.
+- 🗄️ Manter os dados dos usuários organizados no banco de dados.
+- ✅ Garantir que somente informações válidas sejam utilizadas na criação das contas.
 
-- 🔐 **Garantir a segurança do acesso**, permitindo que somente usuários autorizados entrem na plataforma;
-- 👤 **Identificar e autenticar os usuários cadastrados**, verificando e-mail, senha, situação da conta e permissão de acesso;
-- ♿ **Garantir acessibilidade**, disponibilizando recursos visuais e suporte à comunicação em Libras;
-- 🔑 **Permitir recuperação de senha**, possibilitando que usuários que esqueceram suas credenciais recuperem o acesso à conta;
-- 📝 **Permitir a criação de novas contas**, possibilitando que novos usuários ingressem na rede social;
-- 🛡️ **Proteger as contas dos usuários**, utilizando sessão segura, proteção contra tentativas excessivas e armazenamento seguro das senhas.
+## 🌐 Contexto
 
-## **Contexto do Negócio**
+O usuário não cadastrado acessa a opção **"Criar uma conta"** disponível na tela de login.
 
-A aplicação é uma **rede social acessível voltada para pessoas surdas**, na qual os usuários precisam realizar autenticação para acessar a plataforma.
+O sistema apresenta a tela de cadastro, na qual o usuário deve preencher os dados solicitados.
 
-A tela de login deve permitir que um usuário cadastrado informe seu **e-mail e senha**. O sistema valida os campos, verifica as credenciais, verifica se a conta está ativa e se o usuário possui permissão de acesso.
+Após o preenchimento, o sistema realiza as validações necessárias, verifica as regras de negócio e confirma se já existe uma conta cadastrada com o mesmo e-mail.
 
-Quando a autenticação é válida, o sistema cria uma sessão segura e direciona o usuário para a página principal da rede social. Caso as credenciais sejam inválidas, a conta esteja desativada ou ocorram outras situações previstas, o acesso deve ser impedido e o usuário deve receber um feedback visual.
+Caso todas as validações sejam aprovadas, os dados são armazenados de forma segura no banco de dados e o cadastro é concluído.
 
-## 👥 Atores do Sistema
-
-### 1. 👤 USUÁRIO CADASTRADO — Ator Principal
-
-**Papel:**  
-Realizar a autenticação para acessar a rede social.
-
-**Responsabilidade:**
-
-O usuário cadastrado é responsável por informar suas próprias credenciais de acesso e utilizar os recursos disponibilizados pela tela de login.
-
-Pode:
-
-- Informar o e-mail cadastrado;
-- Informar a senha;
-- Solicitar o login;
-- Visualizar ou ocultar a senha;
-- Solicitar recuperação de senha;
-- Encerrar sua sessão por meio do logout.
-
-**Permissões:**
-
-| Operação | Permissão | Justificativa |
-|---|:---:|---|
-| **CREATE** | ⚠️ | Não especificado para o usuário cadastrado na tela de login. |
-| **READ** | ✅ | Pode utilizar as informações e recursos necessários para sua autenticação. |
-| **UPDATE** | ⚠️ | Pode redefinir a senha durante o processo de recuperação. |
-| **DELETE** | ❌ | Não existe requisito para exclusão de conta na tela de login. |
+Após o cadastro, o usuário recebe uma confirmação visual e é direcionado para a tela de login.
 
 ---
 
-### 2. 👤 USUÁRIO NÃO CADASTRADO — Ator Secundário
+# 👥 Atores do Sistema
 
-**Papel:**  
-Iniciar o processo de criação de uma conta para obter acesso à rede social.
+## 1. 👤 Usuário Não Cadastrado
 
-**Responsabilidade:**
+**🎭 Tipo:** Ator Principal
 
-O usuário não cadastrado ainda não possui uma conta na plataforma. Portanto, **não pode realizar login nem recuperar uma senha de uma conta inexistente**.
+**📌 Papel:**
 
-A partir da tela de login, pode selecionar a opção **"Criar uma conta"** e ser direcionado para o formulário de cadastro.
+É o usuário que ainda não possui uma conta na plataforma e deseja realizar seu cadastro.
 
-**Permissões:**
+**📋 Responsabilidades:**
 
-| Operação | Permissão | Justificativa |
-|---|:---:|---|
-| **CREATE** | ✅ | Pode iniciar o processo de criação de uma nova conta. |
-| **READ** | ⚠️ | Pode acessar informações e orientações disponíveis na tela de login. |
-| **UPDATE** | ❌ | Ainda não possui uma conta para alterar. |
-| **DELETE** | ❌ | Não possui uma conta cadastrada para excluir. |
+- 🔗 Acessar a opção de criação de conta.
+- ✍️ Preencher os dados solicitados.
+- ✅ Fornecer informações válidas.
+- 🖱️ Confirmar o cadastro.
+- 🔄 Corrigir informações quando houver erros apontados pelo sistema.
 
+### 🔐 Permissões CRUD
 
-### 3. ⚙️ SISTEMA — Ator Automático
+| ⚙️ Operação | 🔑 Permissão | 📄 Descrição |
+|---|---|---|
+| **CREATE** | ✅ | Criar sua própria conta |
+| **READ** | ❌ | Não possui acesso aos dados de outros usuários durante o cadastro |
+| **UPDATE** | ❌ | Não pode alterar contas de outros usuários |
+| **DELETE** | ❌ | Não pode excluir contas de outros usuários |
 
-**Papel:**  
-Executar automaticamente as operações necessárias para realizar a autenticação, garantir a segurança do acesso e controlar a sessão dos usuários da rede social.
+---
 
-**Responsabilidade:**
+## 2. 👨‍💼 Administrador
 
-O sistema é responsável por processar as informações fornecidas pelo usuário durante o login e aplicar as regras definidas para permitir ou impedir o acesso à rede social.
+**🎭 Tipo:** Ator Secundário
 
-Durante o processo de autenticação, o sistema deve:
+**📌 Papel:**
 
-- Validar os campos de e-mail e senha;
-- Verificar se os campos obrigatórios foram preenchidos;
-- Validar o formato do e-mail;
-- Verificar se o e-mail informado está cadastrado;
-- Verificar se a senha corresponde à conta;
-- Verificar se a conta está ativa;
-- Verificar se o usuário possui permissão de acesso;
-- Impedir o acesso com credenciais inválidas;
-- Impedir o acesso quando a conta estiver desativada;
-- Controlar tentativas excessivas de login;
-- Apresentar mensagens de feedback ao usuário em caso de erro;
-- Criar uma sessão segura após uma autenticação válida;
-- Redirecionar o usuário autenticado para a página principal da rede social;
-- Permitir o encerramento da sessão por meio do logout;
-- Participar do processo de recuperação e redefinição de senha;
-- Armazenar as senhas utilizando mecanismo de hash seguro;
-- Utilizar comunicação segura por meio de HTTPS.
+Responsável pela administração e supervisão dos usuários da plataforma.
 
-**Permissões:**
+**📋 Responsabilidades:**
 
-| Operação | Permissão | Justificativa |
-|---|:---:|---|
-| **CREATE** | ✅ | Cria uma sessão segura após a autenticação válida do usuário. |
-| **READ** | ✅ | Consulta as informações necessárias para validar e autenticar o usuário. |
-| **UPDATE** | ✅ | Participa do processo de redefinição da senha durante a recuperação. |
-| **DELETE** | ✅ | Encerra a sessão do usuário durante o logout. |
+- 🗂️ Administrar os registros de usuários.
+- 🔍 Consultar informações dos usuários.
+- ✏️ Atualizar informações quando permitido.
+- ⚙️ Executar ações administrativas relacionadas às contas.
 
-**Regras de Segurança:**
+### 🔐 Permissões CRUD
 
-O sistema deve garantir que:
+| ⚙️ Operação | 🔑 Permissão | 📄 Descrição |
+|---|---|---|
+| **CREATE** | ✅ | Criar registros de usuários, caso essa funcionalidade seja disponibilizada ao administrador |
+| **READ** | ✅ | Consultar informações dos usuários |
+| **UPDATE** | ✅ | Atualizar informações das contas |
+| **DELETE** | ✅ | Excluir ou desativar contas conforme as permissões administrativas |
 
-- As senhas não sejam armazenadas em texto puro;
-- As senhas sejam protegidas por mecanismo de hash seguro;
-- A comunicação entre usuário e sistema seja protegida por HTTPS;
-- Tentativas excessivas de login sejam controladas;
-- Usuários com contas desativadas não consigam acessar a rede social;
-- Credenciais inválidas não permitam o acesso à plataforma.
+---
 
+## 3. ⚙️ Sistema
 
-### 4. 👨‍💼 ADMINISTRADOR — Ator Secundário
+**🎭 Tipo:** Ator Automático
 
-**Papel:**  
-Realizar o login e acessar as funcionalidades administrativas da rede social.
+**📌 Papel:**
 
-**Responsabilidade:**
+Responsável por executar automaticamente as operações necessárias para validar e processar o cadastro.
 
-O administrador possui uma conta cadastrada na plataforma e utiliza o mesmo processo de autenticação dos demais usuários. A diferença está nas permissões concedidas após a autenticação.
+**📋 Responsabilidades:**
 
-Durante o login, o administrador deve:
+- 🖥️ Apresentar a tela de cadastro.
+- 🔎 Validar os campos preenchidos.
+- 📋 Verificar campos obrigatórios.
+- 🔤 Validar formatos das informações.
+- 📧 Verificar se o e-mail já está cadastrado.
+- 📏 Aplicar as regras de negócio.
+- ⚙️ Processar os dados recebidos.
+- 🔐 Proteger a senha utilizando hash seguro.
+- 🗄️ Armazenar os dados no banco de dados.
+- 💬 Informar o resultado do cadastro ao usuário.
+- ⚠️ Apresentar mensagens de erro quando necessário.
+- 🔄 Redirecionar o usuário para a tela de login após o cadastro.
 
-- Informar o e-mail cadastrado;
-- Informar a senha;
-- Solicitar o login;
-- Ter suas credenciais validadas pelo sistema;
-- Ter o status da conta verificado;
-- Ter seu perfil de administrador identificado pelo sistema;
-- Acessar a área administrativa após uma autenticação válida.
+### 🔐 Permissões CRUD
 
-Após o login, o administrador poderá realizar atividades específicas de gerenciamento da plataforma, de acordo com suas permissões, como:
+| ⚙️ Operação | 🔑 Permissão | 📄 Descrição |
+|---|---|---|
+| **CREATE** | ✅ | Criar o registro do novo usuário |
+| **READ** | ✅ | Consultar informações necessárias para validação |
+| **UPDATE** | ✅ | Atualizar informações durante o processamento, quando necessário |
+| **DELETE** | ✅ | Impedir ou remover registros inválidos conforme as regras do sistema |
 
-- Gerenciar usuários;
-- Visualizar informações dos usuários;
-- Gerenciar ou desativar contas;
-- Moderar conteúdos publicados na rede social;
-- Analisar denúncias;
-- Aplicar medidas administrativas previstas pelo sistema.
+---
 
-**Permissões — CRUD:**
+# 📋 3. Especificação de Casos de Uso
 
-| Operação | Permissão | Justificativa |
-|---|:---:|---|
-| **CREATE** | ✅ | Pode realizar operações administrativas que envolvam a criação de registros, quando previstas pelo sistema. |
-| **READ** | ✅ | Pode consultar informações necessárias para administração e moderação da plataforma. |
-| **UPDATE** | ✅ | Pode alterar informações ou status de usuários e conteúdos conforme suas permissões administrativas. |
-| **DELETE** | ✅ | Pode excluir ou remover registros e conteúdos quando essa ação estiver prevista para a administração da plataforma. |
-Não aplicável nesta etapa |
+## 📝 UC-002 — Realizar Cadastro de Usuário
 
+### 🎯 Objetivo
 
-# 🔄 3. ESPECIFICAÇÃO DE CASOS DE USO + REQUISITOS NÃO-FUNCIONAIS
+Permitir que um usuário não cadastrado crie uma nova conta na plataforma, desde que todas as informações necessárias sejam preenchidas corretamente e as regras de negócio sejam atendidas.
 
-## 📌 Objetivo
+### 👥 Atores
 
-Descrever detalhadamente como o requisito **RF — Tela de Login da Rede Social** será executado, especificando o caso de uso, pré-condições, pós-condições, fluxo principal, fluxos alternativos, regras de negócio e requisitos não-funcionais.
+- 👤 **Usuário Não Cadastrado** — inicia e realiza o cadastro.
+- 👨‍💼 **Administrador** — possui responsabilidades administrativas relacionadas aos usuários.
+- ⚙️ **Sistema** — realiza automaticamente as validações e o processamento do cadastro.
 
-A especificação foi elaborada com base nos requisitos definidos para a tela de login, considerando autenticação, acessibilidade, segurança e usabilidade.
+---
 
-## 📋 Caso de Uso
+## 🔒 Pré-condições
 
-### UC-001 — Realizar Login
+Para que o caso de uso seja iniciado:
 
-**Requisito Funcional:** RF — Tela de Login da Rede Social
+1. 🔑 O usuário deve estar na tela de login ou possuir acesso à opção de criação de conta.
+2. 🟢 O sistema deve estar disponível.
+3. 🗄️ O banco de dados deve estar disponível.
+4. 📧 Não deve existir outra conta cadastrada com o mesmo e-mail.
+5. ⚙️ Os serviços necessários para processamento do cadastro devem estar disponíveis.
 
-### Atores Envolvidos
+---
 
-- 👤 **Usuário Cadastrado** — Ator Principal
-- 👨‍💼 **Administrador** — Ator Secundário
-- ⚙️ **Sistema** — Ator Automático
+## ✅ Pós-condições de Sucesso
 
-## 🔹 Pré-Condições
+Após a conclusão do cadastro:
 
-- O usuário deve possuir uma conta cadastrada;
-- O usuário deve possuir e-mail e senha cadastrados;
-- A conta deve estar ativa;
-- O sistema deve estar disponível;
-- O banco de dados deve estar acessível;
-- O usuário deve estar na tela de login.
+1. 👤 Uma nova conta de usuário é criada.
+2. ✅ Os dados fornecidos são validados.
+3. 🔐 A senha é armazenada de forma segura.
+4. 🗄️ O registro do usuário é criado no banco de dados.
+5. 💬 O sistema apresenta uma confirmação visual.
+6. 🔄 O usuário é direcionado para a tela de login.
+7. 🔑 O usuário poderá utilizar suas credenciais para acessar a plataforma.
 
-## 🔹 Pós-Condições
+---
 
-### ✅ Sucesso
+## ❌ Pós-condições de Falha
 
-- Credenciais são validadas;
-- Conta do usuário é identificada;
-- Status da conta é verificado;
-- Permissão de acesso é verificada;
-- Perfil do usuário é identificado;
-- Usuário é autenticado;
-- Uma sessão segura é criada;
-- O acesso pode ser registrado;
-- Usuário é direcionado para a página principal da rede social.
+Caso o cadastro não seja concluído:
 
-### ❌ Falha
+1. 🚫 A conta não deve ser criada.
+2. 🛑 Dados inválidos não devem ser armazenados.
+3. ⚠️ O sistema deve apresentar uma mensagem de erro.
+4. 🔴 O campo que apresentar erro deve ser identificado visualmente quando aplicável.
+5. 🔄 O usuário permanece na tela de cadastro para realizar as correções.
+6. 🖥️ Em caso de falha no servidor ou banco de dados, o sistema deve informar que o cadastro não pôde ser concluído.
 
-- Usuário não é autenticado;
-- Sessão não é criada;
-- Acesso à plataforma é impedido;
-- Sistema apresenta feedback visual;
-- Usuário permanece na tela de login;
-- Quando aplicável, a tentativa pode ser registrada.
+---
 
-## 🔄 Fluxo Principal
+# 🔄 Fluxo Principal
 
-1. Usuário cadastrado acessa a tela de login.
-2. Sistema apresenta o campo de **E-mail**.
-3. Sistema apresenta o campo de **Senha**.
-4. Usuário informa seu e-mail cadastrado.
-5. Sistema valida o preenchimento e o formato do e-mail.
-6. Usuário informa sua senha.
-7. Sistema mantém a senha oculta por padrão.
-8. Usuário seleciona o botão **"Entrar"**.
-9. Sistema valida os campos obrigatórios.
-10. Sistema envia as credenciais ao servidor.
-11. Sistema verifica se o e-mail está cadastrado.
-12. Sistema verifica se a senha corresponde à conta.
-13. Sistema verifica se a conta está ativa.
-14. Sistema verifica se o usuário possui permissão de acesso.
-15. Sistema autentica o usuário.
-16. Sistema cria uma sessão segura.
-17. Sistema registra o acesso quando aplicável.
-18. Sistema redireciona o usuário para a página principal da rede social.
-19. Usuário acessa a plataforma de acordo com suas permissões.
-20. Caso o usuário seja Administrador, o sistema disponibiliza as funcionalidades permitidas para seu perfil.
+| Nº | 👤 Ator | ⚙️ Ação |
+|---|---|---|
+| **1** | 👤 Usuário Não Cadastrado | Acessa a opção **"Criar uma conta"** na tela de login. |
+| **2** | ⚙️ Sistema | Direciona o usuário para a tela de cadastro. |
+| **3** | ⚙️ Sistema | Exibe o formulário com os campos necessários para o cadastro. |
+| **4** | 👤 Usuário Não Cadastrado | Preenche os campos solicitados. |
+| **5** | ⚙️ Sistema | Realiza a validação inicial dos campos preenchidos. |
+| **6** | ⚙️ Sistema | Verifica se os campos obrigatórios foram preenchidos. |
+| **7** | ⚙️ Sistema | Verifica se os dados possuem formatos válidos. |
+| **8** | 👤 Usuário Não Cadastrado | Seleciona a opção **"Cadastrar"**. |
+| **9** | ⚙️ Sistema | Realiza novamente as validações no servidor. |
+| **10** | ⚙️ Sistema | Verifica se o e-mail informado já está cadastrado. |
+| **11** | ⚙️ Sistema | Verifica as regras de negócio relacionadas ao cadastro. |
+| **12** | ⚙️ Sistema | Processa os dados informados. |
+| **13** | ⚙️ Sistema | Aplica hash seguro à senha antes do armazenamento. |
+| **14** | ⚙️ Sistema | Armazena os dados do usuário no banco de dados. |
+| **15** | ⚙️ Sistema | Confirma que o cadastro foi realizado com sucesso. |
+| **16** | ⚙️ Sistema | Exibe a mensagem **"Cadastro realizado com sucesso!"**. |
+| **17** | ⚙️ Sistema | Redireciona o usuário para a tela de login. |
+| **18** | 👤 Usuário Não Cadastrado | Utiliza as credenciais cadastradas para realizar o login. |
+
+---
 
 # 🔀 Fluxos Alternativos
 
-## A1 — Credenciais inválidas
+## A1 — ⚠️ Campos Obrigatórios Não Preenchidos
 
-1. Sistema identifica que o e-mail ou senha informados estão incorretos.
-2. Sistema impede o acesso.
-3. Sistema não cria uma sessão.
-4. Sistema apresenta uma mensagem visual de erro.
-5. Usuário permanece na tela de login.
-6. Usuário pode corrigir os dados e realizar uma nova tentativa.
+**Quando ocorre:**  
+O usuário tenta realizar o cadastro sem preencher um ou mais campos obrigatórios.
 
-## A2 — Conta inexistente
+**Fluxo:**
 
-1. Sistema verifica que não existe uma conta associada ao e-mail informado.
-2. Sistema impede a realização do login.
-3. Sistema não cria uma sessão.
-4. Sistema apresenta uma mensagem informando que o login não pôde ser realizado.
-5. Sistema disponibiliza um caminho para **"Criar uma conta"**.
-6. Usuário pode iniciar o processo de cadastro.
+1. 🖱️ O usuário seleciona **"Cadastrar"**.
+2. 🔎 O sistema identifica os campos obrigatórios não preenchidos.
+3. 💬 O sistema informa visualmente quais campos precisam ser preenchidos.
+4. 🚫 O cadastro não é realizado.
+5. ✍️ O usuário preenche os campos necessários.
+6. 🔄 O fluxo retorna para a validação do cadastro.
 
-## A3 — Conta desativada
+---
 
-1. Sistema identifica que a conta associada ao e-mail está desativada.
-2. Sistema impede o acesso.
-3. Sistema não cria uma sessão.
-4. Sistema apresenta uma orientação visual sobre a situação da conta.
-5. Sistema orienta o usuário a solicitar suporte, quando aplicável.
+## A2 — 📧 E-mail Já Cadastrado
 
-## A4 — Campos obrigatórios inválidos ou vazios
+**Quando ocorre:**  
+O usuário informa um e-mail que já possui uma conta cadastrada.
 
-1. Usuário tenta realizar o login.
-2. Sistema verifica os campos obrigatórios.
-3. Sistema identifica que o e-mail ou senha está vazio ou inválido.
-4. Sistema destaca visualmente o campo que apresenta erro.
-5. Sistema apresenta uma mensagem de orientação.
-6. Usuário corrige os dados.
-7. Sistema realiza novamente a validação.
+**Fluxo:**
 
-## A5 — Recuperação de senha
+1. 📤 O usuário envia o formulário.
+2. 🔎 O sistema consulta o banco de dados.
+3. ⚠️ O sistema identifica que o e-mail já está cadastrado.
+4. 💬 O sistema apresenta uma mensagem informando que o e-mail já está em uso.
+5. 🚫 O cadastro não é realizado.
+6. 🔄 O usuário deve informar outro e-mail ou utilizar a opção de login.
 
-1. Usuário cadastrado seleciona **"Esqueci minha senha"**.
-2. Sistema direciona para a tela de recuperação de senha.
-3. Usuário informa o e-mail associado à conta.
-4. Sistema verifica o e-mail informado.
-5. Sistema inicia o processo de recuperação.
-6. Usuário recebe as instruções para redefinição.
-7. Usuário define uma nova senha.
-8. Sistema confirma a alteração.
-9. Usuário retorna à tela de login.
+---
 
-## A6 — Falha de conexão
+## A3 — ❌ Dados Inválidos
 
-1. Sistema tenta enviar as credenciais ao servidor.
-2. Sistema identifica uma falha de comunicação.
-3. Sistema não consegue concluir a autenticação.
-4. Sistema não cria uma sessão.
-5. Sistema apresenta feedback visual informando a indisponibilidade temporária.
-6. Usuário pode tentar novamente posteriormente.
+**Quando ocorre:**  
+Um ou mais dados fornecidos não atendem aos formatos ou critérios definidos pelo sistema.
 
-# 📋 Regras de Negócio (RN)
+**Fluxo:**
+
+1. 🖱️ O usuário seleciona **"Cadastrar"**.
+2. 🔎 O sistema realiza a validação.
+3. ⚠️ O sistema identifica um ou mais dados inválidos.
+4. 💬 O sistema apresenta uma mensagem de erro.
+5. 🔴 O campo correspondente é identificado visualmente.
+6. 🚫 O cadastro não é realizado.
+7. ✏️ O usuário corrige os dados.
+8. 🔄 O fluxo retorna para a validação.
+
+---
+
+## A4 — 🔐 Confirmação de Senha Diferente
+
+**Quando ocorre:**  
+A senha informada e a confirmação da senha não são iguais.
+
+**Fluxo:**
+
+1. 🔑 O usuário preenche a senha.
+2. 🔁 O usuário preenche a confirmação da senha.
+3. ⚙️ O sistema compara os dois valores.
+4. ⚠️ O sistema identifica a divergência.
+5. 💬 O sistema apresenta uma mensagem de erro.
+6. 🚫 O cadastro não é realizado.
+7. ✏️ O usuário corrige a confirmação da senha.
+
+---
+
+## A5 — 🌐 Falha de Conexão ou Servidor
+
+**Quando ocorre:**  
+O sistema não consegue acessar o servidor ou o banco de dados durante o processo de cadastro.
+
+**Fluxo:**
+
+1. 📤 O usuário envia o formulário.
+2. ⚙️ O sistema tenta processar o cadastro.
+3. ❌ Ocorre uma falha de conexão ou processamento.
+4. 🚫 O sistema não cria a conta.
+5. 💬 O sistema apresenta uma mensagem informando que não foi possível concluir o cadastro.
+6. 🔄 O usuário permanece na tela de cadastro.
+7. 🔁 O usuário poderá tentar novamente posteriormente.
+
+---
+
+### 📋 Regras de Negócio (RN)
 
 | ID | Regra | Descrição |
 |:---:|:---|:---|
-| **RN-001** | Usuário Cadastrado | Somente usuários cadastrados podem realizar login. |
-| **RN-002** | Credenciais | O usuário deve informar e-mail e senha válidos. |
-| **RN-003** | Conta Ativa | Usuários com conta desativada não podem acessar a plataforma. |
-| **RN-004** | Redirecionamento | Após uma autenticação válida, o usuário deve ser direcionado à área principal. |
-| **RN-005** | Credenciais Inválidas | Credenciais inválidas não devem permitir o acesso. |
-| **RN-006** | Senha | A senha nunca deve ser armazenada em texto puro. |
-| **RN-007** | Feedback Visual | O sistema deve fornecer feedback visual para erros e operações realizadas. |
-| **RN-008** | Recuperação de Senha | O usuário deve poder recuperar sua senha. |
-| **RN-009** | Criação de Conta | O usuário deve poder iniciar o processo de criação de uma nova conta. |
-| **RN-010** | Acessibilidade | Recursos essenciais devem ser acessíveis sem depender exclusivamente de áudio. |
+| **RN-01** | E-mail Único | O e-mail deve ser único no sistema; não permitir o cadastro de contas duplicadas |
+| **RN-02** | Campos Obrigatórios | Todos os campos definidos como obrigatórios devem ser preenchidos antes da conclusão do cadastro |
+| **RN-03** | E-mail Válido | O e-mail informado deve possuir um formato válido |
+| **RN-04** | Senha Obrigatória | O usuário deve informar uma senha para concluir o cadastro |
+| **RN-05** | Confirmação de Senha | A senha e sua confirmação devem ser iguais para permitir a criação da conta |
+| **RN-06** | Segurança da Senha | A senha não deve ser armazenada em texto puro; deve ser protegida utilizando hash seguro |
+| **RN-07** | Validação dos Dados | Todos os dados fornecidos devem ser validados antes da criação da conta |
+| **RN-08** | Cadastro Após Validação | A conta somente deve ser criada quando todas as validações obrigatórias forem concluídas com sucesso |
+| **RN-09** | Feedback do Cadastro | O sistema deve informar visualmente ao usuário se o cadastro foi realizado com sucesso ou se ocorreu algum erro |
+| **RN-10** | Acessibilidade | As informações essenciais do cadastro não devem depender exclusivamente de áudio para serem compreendidas |
+| **RN-11** | Acesso à Plataforma | Após o cadastro realizado com sucesso, o usuário deve poder utilizar suas credenciais para acessar a plataforma |
+| **RN-12** | Integridade dos Dados | O sistema deve impedir que informações inválidas sejam armazenadas como dados válidos de uma conta |
 
-# ⚙️ Requisitos Não-Funcionais (RNF)
+### ⚙️ Requisitos Não-Funcionais (RNF)
 
-## 🔐 Segurança
-
-| ID | Requisito | Descrição |
-|:---:|:---|:---|
-| **RS-LOGIN-001** | Proteção das Senhas | As senhas não devem ser armazenadas em texto puro e devem utilizar mecanismo seguro de hash. |
-| **RS-LOGIN-002** | Comunicação Segura | As credenciais devem ser transmitidas utilizando uma conexão segura, como HTTPS. |
-| **RS-LOGIN-003** | Proteção contra Tentativas Excessivas | O sistema deve possuir mecanismos contra tentativas automatizadas ou excessivas de login. |
-| **RS-LOGIN-004** | Sessão Segura | A sessão autenticada deve possuir mecanismos para reduzir riscos de sequestro ou reutilização indevida. |
-| **RS-LOGIN-005** | Logout | O sistema deve permitir que o usuário encerre sua sessão autenticada. |
-
-
-
+| ID | Atributo | Requisito | Métrica | Justificativa |
+|:---:|:---|:---|:---|:---|
+| **RNF-01** | Segurança | Senhas devem ser armazenadas utilizando hash seguro, não sendo permitida sua gravação em texto puro | Senhas armazenadas sem texto puro | 🔐 Proteger as credenciais dos usuários |
+| **RNF-02** | Segurança | A comunicação entre cliente e servidor deve utilizar HTTPS | Comunicação realizada via HTTPS | 🛡️ Proteger os dados transmitidos |
+| **RNF-03** | Performance | O processo de cadastro deve apresentar resposta em até aproximadamente 2 segundos em condições normais | Tempo de resposta ≤ 2 segundos | ⚡ Evitar que o usuário fique esperando |
+| **RNF-04** | Acessibilidade | Mensagens de sucesso, erro e validação devem ser apresentadas visualmente | Mensagens visuais disponíveis | ♿ Garantir que informações importantes não dependam exclusivamente de áudio |
+| **RNF-05** | Acessibilidade | Orientações importantes devem possuir suporte visual compatível com Libras, quando aplicável | Recursos visuais disponíveis quando necessários | 🤟 Facilitar o acesso de pessoas surdas às informações |
+| **RNF-06** | Acessibilidade | Os elementos da tela de cadastro devem permitir navegação e interação por teclado | Elementos acessíveis via teclado | ⌨️ Facilitar a utilização por diferentes usuários |
+| **RNF-07** | Usabilidade | Os campos do formulário devem possuir identificação clara e persistente | Campos identificados corretamente | 🏷️ Facilitar a compreensão e o preenchimento do formulário |
+| **RNF-08** | Usabilidade | O sistema deve apresentar feedback visual durante validações, erros, processamento e conclusão do cadastro | Feedback visual nas principais ações | 💬 Informar ao usuário o estado da operação |
+| **RNF-09** | Responsividade | A tela de cadastro deve adaptar-se a computadores, notebooks, tablets e smartphones | Interface adaptável a diferentes resoluções | 📱 Garantir uma boa experiência em diferentes dispositivos |
+| **RNF-10** | Acessibilidade | Textos, campos, botões e elementos importantes devem possuir contraste visual adequado | Contraste adequado entre elementos | 👁️ Facilitar a leitura e identificação dos elementos da interface |
 ## 🎨 4. PROTÓTIPO FUNCIONAL (HTML + CSS + PHP + MySQL + RENDER)
-
-#### Exemplo Prático — RF-001: Mockup das Telas
-
 **Mockup - Tela 1: Formulário Vazio (Estado Inicial)**
 ```
-┌────────────────────────────────────────────────┐
-│                                                │
-│                  LIBRANDO                       │
-│        Rede social acessível em Libras         │
-│                                                │
-│              ┌──────────────────┐              │
-│              │ E-mail           │              │
-│              └──────────────────┘              │
-│                                                │
-│              ┌──────────────────┐              │
-│              │ Senha         👁 │              │
-│              └──────────────────┘              │
-│                                                │
-│              [     ENTRAR     ]                │
-│                                                │
-│              Esqueceu a senha?                 │
-│                                                │
-│          Ainda não possui conta?               │
-│              [ CADASTRE-SE ]                   │
-│                                                │
-└────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│  🤟 Librando                                               │
+│                                                             │
+│  Faça parte da                                              │
+│  comunidade                                                 │
+│  Librando.                                                  │
+│                                                             │
+│  Crie sua conta e comece a contribuir com conteúdo em       │
+│  Libras e aprendizado compartilhado.                        │
+│                                                             │
+│                         ┌──────────────────────────────┐    │
+│                         │ Criar conta                  │    │
+│                         │ Preencha os dados abaixo...  │    │
+│                         │                              │    │
+│                         │ Nome completo                │    │
+│                         │ [ Digite seu nome         ]  │    │
+│                         │                              │    │
+│                         │ E-mail                       │    │
+│                         │ [ Digite seu e-mail       ]  │    │
+│                         │                              │    │
+│                         │ Nome de usuário              │    │
+│                         │ [ Escolha um nome...      ]  │    │
+│                         │                              │    │
+│                         │ Data de nascimento           │    │
+│                         │ [ __/__/____              ]  │    │
+│                         │                              │    │
+│                         │ Senha                        │    │
+│                         │ [ Crie uma senha          ]  │    │
+│                         │ A senha precisa ter ao       │    │
+│                         │ menos 6 caracteres.          │    │
+│                         │                              │    │
+│                         │ Confirmar senha              │    │
+│                         │ [ Repita a senha          ]  │    │
+│                         │ [ ] Mostrar                  │    │
+│                         │                              │    │
+│                         │ [       Cadastrar        ]  │     │
+│                         │                              │    │
+│                         │ Já possui uma conta? Entrar  │    │
+│                         └──────────────────────────────┘    │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-**Mockup - Tela 2: Formulário Preenchido (Validação Visual)**
+**Tela 2: Formulário Preenchido (Validação Visual)**
+
 ```
-┌────────────────────────────────────────────────┐
-│                                                │
-│                  LIBRANDO                       │
-│        Rede social acessível em Libras         │
-│                                                │
-│              ┌──────────────────┐              │
-│              │ usuario@email.com │ ✅           │
-│              └──────────────────┘              │
-│                                                │
-│              ┌──────────────────┐              │
-│              │ •••••••••••••• 👁│ ✅           │
-│              └──────────────────┘              │
-│                                                │
-│              [     ENTRAR     ]                │
-│                                                │
-│              Esqueceu a senha?                 │
-│                                                │
-└────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│  🤟 Librando                                               │
+│                                                             │
+│  Faça parte da                                              │
+│  comunidade                                                 │
+│  Librando.                                                  │
+│                                                             │
+│  Crie sua conta e comece a contribuir com conteúdo em       │
+│  Libras e aprendizado compartilhado.                        │
+│                                                             │
+│                         ┌──────────────────────────────┐    │
+│                         │ Criar conta                  │    │
+│                         │ Preencha os dados abaixo...  │    │
+│                         │                              │    │
+│                         │ Nome completo                │    │
+│                         │ [ João da Silva         ] ✅ │    │
+│                         │                              │    │
+│                         │ E-mail                       │    │
+│                         │ [ usuario@email.com     ] ✅ │    │
+│                         │                              │    │
+│                         │ Nome de usuário              │    │
+│                         │ [ cachorro_ovudo      ]   ✅ │    │
+│                         │                              │    │
+│                         │ Data de nascimento           │    │
+│                         │ [ 16__/11__/__2005__      ✅ │    │
+│                         │                              │    │
+│                         │ Senha                        │    │
+│                         │ [ ••••••••••••          ] ✅ │    │
+│                         │ A senha precisa ter ao       │    │
+│                         │ menos 6 caracteres.          │    │
+│                         │                              │    │
+│                         │ Confirmar senha              │    │
+│                         │ [ ••••••••••••          ] ✅ │    │
+│                         │ [ ] Mostrar                  │    │
+│                         │                              │    │
+│                         │ [       Cadastrar        ]   │    │
+│                         │                              │    │
+│                         │ Já possui uma conta? Entrar  │    │
+│                         └──────────────────────────────┘    │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-**Mockup - Tela 3: Erro de Validação ($enha inválida)**
+
+**Tela 3: Erro de Validação (Senha Inválida / Não Coincide)**
 ```
-┌────────────────────────────────────────────────┐
-│                                                │
-│                  LIBRANDO                       │
-│                                                │
-│        ⚠️ Não foi possível realizar o login    │
-│                                                │
-│        E-mail ou senha incorretos.             │
-│        Verifique seus dados e tente novamente. │
-│                                                │
-│              ┌──────────────────┐              │
-│              │ usuario@email.com │              │
-│              └──────────────────┘              │
-│                                                │
-│              ┌──────────────────┐              │
-│              │ •••••••••••••• 👁│ ❌           │
-│              └──────────────────┘              │
-│                                                │
-│              [     ENTRAR     ]                │
-│                                                │
-└────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│  🤟 Librando                                               │
+│                                                             │
+│  Faça parte da                                              │
+│  comunidade                                                 │
+│  Librando.                                                  │
+│                                                             │
+│  Crie sua conta e comece a contribuir com conteúdo em       │
+│  Libras e aprendizado compartilhado.                        │
+│                                                             │
+│                         ┌──────────────────────────────┐    │
+│                         │ Criar conta                  │    │
+│                         │ Preencha os dados abaixo...  │    │
+│                         │                              │    │
+│                         │ Nome completo                │    │
+│                         │ [ João da Silva         ] ✅ │    │
+│                         │                              │    │
+│                         │ E-mail                       │    │
+│                         │ [ usuario@email.com     ] ✅ │    │
+│                         │                              │    │
+│                         │ Nome de usuário              │    │
+│                         │ [ cachorro_ovudo      ]   ✅ │    │
+│                         │                              │    │
+│                         │ Data de nascimento           │    │
+│                         │ [ 16__/11__/__2005__      ✅ │    │
+│                         │                              │    │
+│                         │ Senha                        │    │
+│                         │ [ ••••••••••••          ] ❌ │    │
+│                         │ A senha precisa ter ao       │    │
+│                         │ menos 6 caracteres.          │    │
+│                         │                              │    │
+│                         │ Confirmar senha              │    │
+│                         │ [ ••••••••••••          ] ❌ │    │
+│                         │ [ ] Mostrar                  │    │
+│                         │                              │    │
+│                         │ [       Cadastrar        ]   │    │
+│                         │                              │    │
+│                         │ Já possui uma conta? Entrar  │    │
+│                         └──────────────────────────────┘    │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-**Mockup - Tela 4: Sucesso (Confirmação)**
-```
-┌────────────────────────────────────────────────┐
-│                                                │
-│                  LIBRANDO                       │
-│                                                │
-│          ✅ Login realizado com sucesso!       │
-│                                                │
-│             Bem-vindo ao Librando!             │
-│                                                │
-│          Redirecionando para o início...       │
-│                                                │
-│                   ⟳                            │
-│                                                │
-└────────────────────────────────────────────────┘
-```
 
 **Descrição de Estados:**
 - **Estado Normal:** Todos campos em branco, botões habilitados
 - **Estado Preenchido:** Validação visual com checkmark verde
 - **Estado Erro:** Campo inválido destacado em vermelho com mensagem
-- **Estado Sucesso:** Mensagem de confirmação com dados salvos
 
 **Fluxo de Navegação:**
 O fluxo funciona da seguinte maneira:
 
-1. O usuário acessa a Tela de Login.
-2. Informa seu e-mail e senha.
-3. Seleciona ENTRAR.
-4. O sistema envia os dados para o back-end PHP.
-5. O back-end consulta o usuário no banco de dados.
-6. A senha informada é comparada com o hash armazenado.
-7. Se as credenciais forem inválidas, o usuário permanece na tela de login e recebe uma mensagem de erro.
-8. Se as credenciais forem válidas, o sistema cria a sessão do usuário e o encaminha para a Página Inicial do Librando.
-9. Caso selecione CADASTRE-SE, o usuário é direcionado para a tela de cadastro.
-10. Caso selecione Esqueceu a senha?, é direcionado para o fluxo de recuperação de senha.
+1. O usuário acessa a Tela de Cadastro.  
+2. Informa seu nome, e-mail, senha e confirmação de senha.  
+3. Seleciona CADASTRAR.  
+4. O sistema valida se as senhas coincidem localmente; caso divirjam, o usuário permanece na tela e recebe uma mensagem de erro.  
+5. Se a validação local for bem-sucedida, o frontend envia os dados para o back-end Laravel.  
+6. O back-end valida os campos e verifica a unicidade do e-mail no banco de dados.  
+7. Se os dados forem inválidos ou o e-mail já estiver cadastrado, o usuário permanece na tela de cadastro e recebe uma mensagem de erro.  
+8. Se os dados forem válidos, o back-end aplica o hash na senha, insere o novo usuário no banco de dados e retorna a confirmação de sucesso.  
+9. O sistema exibe o alerta de sucesso e redireciona o usuário para a Tela de Login.
+10. Caso selecione Faça Login, o usuário é direcionado imediatamente para a tela de login sem submeter o formulário.
 
 **Responsividade:**
 - **Mobile (até 980px):** Layout single-column, campos full-width
 - **Tablet (até 980px):** Layout single-column com padding maior
 - **Desktop (980px+):** Layout potencialmente two-column se apropriado
 
-
-
 ## 🏗️ 5. ARQUITETURA E ADR
-
 #### Exemplo Prático — RF-001: Arquitetura Completa
 
 ### Diagrama de Componentes
-
 ```text
-┌──────────────────────────────────────────────┐
-│             Frontend — Librando              │
-│       HTML5 + CSS3 + JavaScript              │
-│                                              │
-│  • index.html (Tela de Login)                │      
-│  • Interface acessível                       |
-|  • Hospedado em GitHub Pages                 │      
-└──────────────────────┬───────────────────────┘
-                       │
-                       │ HTTPS + HTTP
-                       ▼
-┌──────────────────────────────────────────────┐
-│             Backend — PHP                    │
-│                                              │
-│  • login.php (Autenticação)                  │       
-│  • conexao.php (Conexão com Banco)           │
-│  • Validação dos dados                       │                 
-│  • password_hash() / password_verify()       |
-|   • Hospedado em Render                      │
-└──────────────────────┬───────────────────────┘
-                       │
-                       │ PDO / SQL
-                       ▼
-┌──────────────────────────────────────────────┐
-│              Banco de Dados                  │
-│                  SQLite                      │
-│                                              │
-│  • Tabela: usuarios                          │
-│  • ID do usuário                             │                                                                         
-│  • Senha (hash)                              │
-│  • Dados de cadastro                         │
-│  • Restrições e validações                   │
-└──────────────────────────────────────────────┘
+┌─────────────────────────┐
+│       FRONTEND          │
+│ Vue.js 3 + Vite         │
+│ Vue Router + Axios      │
+└────────────┬────────────┘
+             │ HTTP/JSON
+             ▼
+┌─────────────────────────┐
+│        BACKEND          │
+│ PHP + Laravel 12        │
+│ AuthController          │
+│ Sanctum                 │
+└────────────┬────────────┘
+             │ Eloquent ORM
+             ▼
+┌─────────────────────────┐
+│      BANCO DE DADOS     │
+│         MySQL           │
+│     Tabela `usuarios`   │
+└─────────────────────────┘
 ```
 
 ADR-001 — Escolha do banco de dados
@@ -702,72 +721,71 @@ ADR-001 — Escolha do banco de dados
 Status: Aceito
 
 Contexto:
-O sistema precisa de um banco de dados para armazenar
-os usuários e validar o login.
+A aplicação necessita armazenar dados estruturados de usuários com garantia de integridade relacional, suporte transacional ACID e unicidade de e-mail.
 
 Decisão:
-Será utilizado SQLite.
+Adotar o MySQL gerenciado por meio de migrations nativas do Laravel
 
 Motivo:
-O projeto possui pequeno volume de dados e o SQLite
-é simples de configurar e não exige um servidor de banco
-de dados separado.
+O projeto exige um sistema de gerenciamento de banco de dados confiável, com alto desempenho para operações de leitura e escrita simples, além de ampla compatibilidade com o ecossistema PHP/Laravel. O MySQL foi escolhido por ser o padrão de mercado para aplicações Web relacionais, oferecendo excelente suporte a restrições de unicidade (como e-mails únicos) e suporte nativo completo pelo Eloquent ORM sem a necessidade de drivers adicionais complexos.
 
 Consequências:
-+ Fácil configuração
-+ Baixo custo
-+ Simples para desenvolvimento
-- Menos adequado para grandes volumes de usuários
++ Integração simples e eficiente com o Eloquent ORM.
++ Aplicação de integridade de dados e índice único diretamente na tabela de usuarios ($table->string('email')->unique()).  
+- Exige um servidor de banco de dados relacional MySQL configurado no ambiente.
 
-ADR-002 — Escolha do back-end
-
-Contexto:
-Precisamos implementar a autenticação dos usuários.
-
-Decisão:
-Utilizar PHP no back-end.
-
-Motivo:
-PHP é compatível com a hospedagem escolhida e atende
-às necessidades do projeto.
+ADR-002: Escolha do Back-end
 
 Status: Aceito
+
+Contexto:
+Necessidade de construir uma API RESTful para cadastro e autenticação de usuários, capaz de aplicar validação server-side rígida e hashing seguro de senhas.
+
+Decisão:
+Adotar o Laravel 12 (PHP 8.2+) utilizando controladores de API.
+
+Motivo:
+O Laravel 12 foi escolhido por ser um framework maduro que simplifica a criação de APIs RESTful estruturadas. Ele oferece ferramentas nativas para validação robusta de dados no servidor (`Validator::make`), integração transparente com ORM (Eloquent) e recursos de criptografia segura (`Hash::make`) sem a necessidade de dependências de terceiros, garantindo alta produtividade, manutenibilidade e segurança[cite: 2].
+* **Decisão:** Adotar o **Laravel 12 (PHP 8.2+)** utilizando controladores de API .
+
+Consequências:
++ Validação declarativa com o uso de `Validator::make()`[cite: 2].
++ Criptografia segura nativa com `Hash::make()` para o armazenamento de senhas[cite: 2].
++ Requer ambiente PHP configurado na máquina/servidor.
 
 ### Tecnologias Escolhidas
 
 | Camada | Tecnologia | Versão | Justificativa |
 |--------|-----------|--------|---------------|
-| Frontend | HTML5 + CSS3 | HTML5 / CSS3 | Estrutura e estilização da tela de login |
-| Backend | PHP | 8.x | Processamento da autenticação e comunicação com o banco |
-| Banco de Dados | MySQL | 8.x | Armazenamento dos usuários e credenciais |
-| Banco de Dados | Aiven Cloud | — | Hospedagem online gratuita do banco de dados MySQL |
-| Conexão BD | MySQLi | PHP 8.x | Conexão do backend PHP com o banco MySQL |
-| Hash | password_hash() / password_verify() | PHP 8.x | Armazenamento e verificação segura das senhas |
-| Servidor | Render | — | Hospedagem online do backend PHP |
-
+| Frontend | Vue.js 3 | 3.x | 3.x	Construção da interface reativa e gerenciamento dos estados do formulário |
+| Roteamento | Vue Router | 4.x | Navegação entre as telas da SPA (ex: cadastro e login) sem recarregar a página |
+| Cliente HTTP | Axios | 1.x | Realização de requisições assíncronas (POST) para a API backend |
+| Build Tool | Vite | 5.x | Ferramenta de build rápida e servidor de desenvolvimento para o frontend Vue |
+| Backend | Laravel | 12.x | Framework PHP para a criação da API RESTful, gerenciamento de rotas e validações |
+| Linguagem Backend | PHP | 8.2+ | Linguagem base para execução do framework Laravel e processamento da API |
+| ORM / Conexão BD | Eloquent ORM (PDO) | Laravel 12 | Abstração do banco de dados e prevenção nativa contra SQL Injection via Prepared Statements |
+| Banco de Dados | MySQL | 8.x | Armazenamento relacional dos usuários, garantindo integridade e e-mails únicos |
+| Hash / Segurança | Bcrypt (Hash::make)| PHP / Laravel | Criptografia irreversível e segura para o armazenamento das senhas no banco |
 
 ## 🔒 6. VALIDAÇÃO DE SEGURANÇA OWASP
 
-VALIDAÇÃO DE SEGURANÇA OWASP
+VALIDAÇÂO DE SEGURANÇA OWASP
 
-Foram analisadas as principais vulnerabilidades aplicáveis ao
-sistema, tomando como referência as recomendações da OWASP.
+Foram analisadas as principais vulnerabilidades aplicáveis ao sistema, tomando como referência as recomendações da OWASP.
 
-- SQL Injection: utilização de consultas preparadas.
-- Armazenamento de senhas: utilização de password_hash().
-- XSS: tratamento dos dados recebidos e exibidos pelo sistema.
-- Autenticação: validação das credenciais no back-end.
-- Controle de acesso: validação das permissões antes de acessar
-  recursos protegidos.
-- Gerenciamento de sessão: utilização de sessões PHP e logout.
-- Validação de entrada: dados recebidos pelo usuário são
-  validados no back-end.
+- SQL Injection: Utilização do Eloquent ORM com consultas preparadas (*Prepared Statements* via PDO) na persistência de dados.
+- Armazenamento de senhas: Utilização de `Hash::make()` (Bcrypt) para criptografia irreversível das senhas antes do salvamento no banco.
+- XSS (Cross-Site Scripting): Tratamento e interpolação segura de dados exibidos pelo Vue.js, além de validação e sanitização das entradas no back-end.
+- Autenticação: Validação rígida de credenciais e campos obrigatórios realizada no back-end pelo `Validator` do Laravel.
+- Controle de acesso: Validação de permissões e rotas de API no servidor antes de disponibilizar ou alterar recursos protegidos.
+- Gerenciamento de sessão: Utilização de mecanismos seguros de autenticação gerenciados pelo back-end Laravel.
+- Validação de entrada: Todos os dados recebidos do usuário (nome, e-mail, senha) são validados no back-end com regras declarativas de formato e unicidade.
 
-## 📚 7. DOCUMENTAÇÃO API (SWAGGER/OPENAPI) (3%)
+## 📚 7. DOCUMENTAÇÃO API (SWAGGER/OPENAPI)
 
 **Objetivo:** Documentar endpoints REST da API usando Swagger/OpenAPI.
 
-#### Exemplo Prático — RF-001: Documentação Swagger
+#### Exemplo Prático — RF-002: Documentação Swagger
 
 **Arquivo:** `docs/api/swagger.json`
 
@@ -775,24 +793,28 @@ sistema, tomando como referência as recomendações da OWASP.
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Librando API",
+    "title": "Sistema Web API",
     "version": "1.0.0"
   },
   "paths": {
-    "/login.php": {
+    "/api/cadastrar": {
       "post": {
-        "summary": "Realizar login",
+        "summary": "Realizar cadastro",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["email", "senha"],
+                "required": ["nome", "email", "senha"],
                 "properties": {
+                  "nome": {
+                    "type": "string",
+                    "example": "João da Silva"
+                  },
                   "email": {
                     "type": "string",
-                    "example": "usuario@email.com"
+                    "example": "joao.silva@email.com"
                   },
                   "senha": {
                     "type": "string",
@@ -804,14 +826,14 @@ sistema, tomando como referência as recomendações da OWASP.
           }
         },
         "responses": {
-          "200": {
-            "description": "Login realizado com sucesso"
+          "201": {
+            "description": "Usuário cadastrado com sucesso"
           },
           "400": {
             "description": "Dados inválidos"
           },
-          "401": {
-            "description": "E-mail ou senha incorretos"
+          "422": {
+            "description": "E-mail já cadastrado ou validação falhou"
           },
           "500": {
             "description": "Erro interno do servidor"
@@ -828,12 +850,11 @@ O arquivo `swagger.json` pode ser aberto em uma ferramenta compatível com **Swa
 
 **Endpoints documentados:**
 
-* `POST /login.php` — Realizar login do usuário.
+* `POST /api/cadastrar` — Realizar Cadastro de novo usuário.
 
 **Autenticação:**
 
-* O usuário envia e-mail e senha.
-* O backend PHP consulta o usuário no banco de dados.
-* A senha é validada utilizando `password_verify()`.
-* Em caso de sucesso, uma sessão PHP é criada.
-
+* O usuário envia nome, e-mail e senha.
+* O backend Laravel valida a unicidade do e-mail no banco de dados.
+* A senha é criptografada de forma segura utilizando Hash::make() (Bcrypt).
+* Em caso de sucesso, o registro do usuário é criado com o retorno do status HTTP 201.
