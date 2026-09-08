@@ -671,19 +671,50 @@ O sistema não consegue acessar o servidor ou o banco de dados durante o process
 - **Estado Preenchido:** Validação visual com checkmark verde
 - **Estado Erro:** Campo inválido destacado em vermelho com mensagem
 
-**Fluxo de Navegação:**
+## Fluxo de Navegação
+
 O fluxo funciona da seguinte maneira:
 
-1. O usuário acessa a Tela de Cadastro.  
-2. Informa seu nome, e-mail, senha e confirmação de senha.  
-3. Seleciona CADASTRAR.  
-4. O sistema valida se as senhas coincidem localmente; caso divirjam, o usuário permanece na tela e recebe uma mensagem de erro.  
-5. Se a validação local for bem-sucedida, o frontend envia os dados para o back-end Laravel.  
-6. O back-end valida os campos e verifica a unicidade do e-mail no banco de dados.  
-7. Se os dados forem inválidos ou o e-mail já estiver cadastrado, o usuário permanece na tela de cadastro e recebe uma mensagem de erro.  
-8. Se os dados forem válidos, o back-end aplica o hash na senha, insere o novo usuário no banco de dados e retorna a confirmação de sucesso.  
-9. O sistema exibe o alerta de sucesso e redireciona o usuário para a Tela de Login.
-10. Caso selecione Faça Login, o usuário é direcionado imediatamente para a tela de login sem submeter o formulário.
+1. O usuário acessa a **Tela de Cadastro**.
+
+2. O usuário preenche os seguintes dados:
+
+   * **Nome**;
+   * **E-mail**;
+   * **Nome de usuário**;
+   * **Data de nascimento**;
+   * **Senha**;
+   * **Confirmação de senha**.
+
+3. O usuário seleciona o botão **CADASTRAR**.
+
+4. O sistema realiza as validações iniciais dos dados preenchidos. Caso existam campos obrigatórios não preenchidos ou as senhas não coincidam, o usuário permanece na tela e recebe uma mensagem de erro.
+
+5. Se as validações iniciais forem bem-sucedidas, o **frontend Vue** envia os dados para o **back-end Laravel** por meio de uma requisição `POST` para a rota `/api/cadastro`.
+
+6. O **back-end Laravel** recebe os dados e realiza as validações necessárias, verificando:
+
+   * Se os campos obrigatórios foram preenchidos;
+   * Se o e-mail possui formato válido;
+   * Se a senha possui no mínimo 6 caracteres;
+   * Se a confirmação de senha corresponde à senha informada;
+   * Se o e-mail ainda não está cadastrado;
+   * Se o nome de usuário ainda não está cadastrado.
+
+7. Caso algum dado seja inválido ou o e-mail/nome de usuário já esteja cadastrado, o back-end retorna uma mensagem de erro. O usuário permanece na **Tela de Cadastro** para corrigir as informações.
+
+8. Caso todos os dados sejam válidos, o back-end aplica o **hash na senha** utilizando o mecanismo de hash do Laravel.
+
+9. O sistema insere os dados do novo usuário na tabela `usuarios` do banco de dados **MySQL**.
+
+10. Após o cadastro ser realizado com sucesso, o back-end retorna uma resposta de confirmação para o frontend.
+
+11. O sistema exibe a mensagem **"Cadastro realizado com sucesso!"** e redireciona o usuário para a **Tela de Login**.
+
+12. Na Tela de Login, o usuário poderá informar seu **e-mail e senha** para realizar a autenticação.
+
+13. Caso o usuário selecione a opção **FAÇA LOGIN** na Tela de Cadastro, ele será direcionado diretamente para a Tela de Login, sem submeter o formulário de cadastro.
+
 
 **Responsividade:**
 - **Mobile (até 980px):** Layout single-column, campos full-width
