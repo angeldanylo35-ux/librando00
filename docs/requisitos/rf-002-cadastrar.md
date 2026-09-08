@@ -28,7 +28,7 @@
 * **LINK_APLICACAO_DEPLOY:** Aplicação executada localmente por meio do XAMPP.
 * **LINK_BANCO_DADOS:** Banco de dados MySQL local.
 * **LINK_API_SWAGGER:** Não se aplica nesta etapa do projeto.
-* **LINK_DEMONSTRAÇÃO:** Aplicação executada localmente em `(https://librando.onrender.com)`
+* **LINK_DEMONSTRAÇÃO:** Aplicação executada localmente em `[(http://localhost:5173/login)]`
 
 ---
 
