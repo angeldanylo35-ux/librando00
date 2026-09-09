@@ -781,6 +781,52 @@ Consequências:
 + Criptografia segura nativa com `Hash::make()` para o armazenamento de senhas[cite: 2].
 + Requer ambiente PHP configurado na máquina/servidor.
 
+ ADR-003 — Escolha do Front-end
+
+Status: Aceito
+
+Contexto:
+A aplicação necessita de uma interface web dinâmica para permitir que os usuários realizem operações como cadastro e login, além de possibilitar uma futura expansão das funcionalidades da rede social.
+
+Decisão:
+Adotar o Vue.js para o desenvolvimento do front-end da aplicação, utilizando o Vite como ferramenta de desenvolvimento e build.
+
+Motivo:
+O Vue.js foi escolhido por permitir o desenvolvimento de interfaces utilizando componentes reutilizáveis, facilitando a organização, manutenção e evolução do código. A integração com o Vite proporciona um ambiente de desenvolvimento rápido e adequado para aplicações modernas em JavaScript. Além disso, o Vue possui integração simples com bibliotecas como Axios, permitindo realizar a comunicação com a API desenvolvida no Laravel.
+
+Consequências:
+
+* Organização do front-end por componentes e páginas.
+* Facilidade de manutenção e reutilização de código.
+* Integração simples com o Vue Router para gerenciamento das páginas.
+* Integração com o Axios para comunicação com a API.
+
+- Exige a instalação e configuração do ambiente Node.js e das dependências do projeto.
+
+ADR-004 — Comunicação entre Front-end e Back-end
+
+Status: Aceito
+
+Contexto:
+A aplicação possui o front-end desenvolvido em Vue.js e o back-end desenvolvido em Laravel, sendo necessário estabelecer uma forma padronizada de comunicação entre as duas partes do sistema.
+
+Decisão:
+Adotar uma API REST desenvolvida no Laravel para comunicação entre o front-end e o back-end, utilizando o Axios no Vue.js para realizar as requisições HTTP.
+
+Motivo:
+A utilização de uma API REST permite separar as responsabilidades do sistema, mantendo a interface do usuário no front-end e as regras de negócio, validações e operações com o banco de dados no back-end. O Axios foi escolhido por facilitar o envio e recebimento de requisições HTTP entre o Vue.js e a API Laravel.
+
+Consequências:
+
+* Separação clara entre front-end e back-end.
+* Facilita a manutenção e evolução das duas partes da aplicação.
+* Permite que diferentes clientes possam consumir a mesma API.
+* Axios simplifica o envio de requisições HTTP para os endpoints da aplicação.
+
+- É necessário configurar corretamente a comunicação entre Vue, Vite e Laravel.
+- Pode exigir configurações adicionais de proxy durante o desenvolvimento local.
+
+
 ### Tecnologias Escolhidas
 
 | Camada | Tecnologia | Versão | Justificativa |
