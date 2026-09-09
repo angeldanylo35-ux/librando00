@@ -39,10 +39,6 @@ O projeto foi migrado para uma arquitetura separada entre **Back-end Laravel** e
 ```text
 librando/
 │
-├── .claude/
-│   ├── agents/
-│   ├── settings/
-│   └── system-prompts/
 │
 ├── docs/
 │   └── requisitos/
