@@ -54,16 +54,9 @@ Após receber o código, o usuário deverá informá-lo em uma segunda tela para
 
 O sistema deverá verificar se as senhas são iguais antes de concluir a alteração. Quando o processo for realizado com sucesso, deverá apresentar uma confirmação visual, como **"Senha redefinida com sucesso!"**, e direcionar o usuário para a tela principal da plataforma.
 
-## 📋 2. DESCRIÇÃO E ATORES (10%)
+## 📋 2. DESCRIÇÃO E ATORES 
 
 **Objetivo:** Descrever o requisito com clareza e identificar todos os atores envolvidos.
-
-**O que avaliar:**
-- ✅ Descrição detalhada do requisito
-- ✅ Objetivo do negócio claro (3+ benefícios)
-- ✅ Todos os atores identificados
-- ✅ Papel de cada ator descrito
-- ✅ Permissões mapeadas (CRUD)
 
 ---
 
