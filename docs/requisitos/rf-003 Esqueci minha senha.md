@@ -135,3 +135,77 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 | 🔎 **READ** | ✅ | Consulta os dados necessários para validar a conta e o processo de recuperação |
 | ✏️ **UPDATE** | ✅ | Atualiza a senha do usuário após todas as validações |
 | 🗑️ **DELETE** | ❌ | Não exclui a conta durante o processo de recuperação |
+
+## 🔄 3. ESPECIFICAÇÃO DE CASOS DE USO + REQUISITOS NÃO-FUNCIONAIS (20%)
+
+**Objetivo:** Descrever detalhadamente como o requisito de recuperação e redefinição de senha é executado, incluindo pré-condições, pós-condições, fluxo principal, fluxos alternativos, regras de negócio e requisitos não-funcionais.
+
+**O que avaliar:**
+- ✅ Pré-condições definidas
+- ✅ Pós-condições definidas (sucesso e falha)
+- ✅ Fluxo principal com 8+ passos
+- ✅ Fluxos alternativos (mínimo 3)
+- ✅ Regras de negócio (RN-XX)
+- ✅ Requisitos Não-Funcionais (mínimo 3)
+
+---
+
+## 📌 Caso de Uso (UC-003): Recuperar e Redefinir Senha
+
+### Pré-Condições
+
+- ✅ Usuário possui uma conta cadastrada na plataforma;
+- ✅ Usuário está na tela de login da plataforma;
+- ✅ Sistema está disponível para realizar o processo de recuperação;
+- ✅ Usuário possui acesso ao e-mail utilizado no cadastro;
+- ✅ Serviço de e-mail está disponível para envio do código de recuperação.
+
+### Pós-Condições (Sucesso)
+
+- ✅ Código de recuperação validado com sucesso;
+- ✅ Nova senha cadastrada e confirmada pelo usuário;
+- ✅ Senha da conta atualizada no sistema de forma segura;
+- ✅ Sistema exibe a mensagem **"Senha redefinida com sucesso!"**;
+- ✅ Usuário é direcionado para a tela principal da plataforma.
+
+### Pós-Condições (Falha)
+
+- ✅ Senha não é alterada;
+- ✅ Dados inválidos não são utilizados para redefinir a senha;
+- ✅ Sistema exibe uma mensagem de erro correspondente ao problema encontrado;
+- ✅ Usuário permanece no processo de recuperação para corrigir as informações;
+- ✅ Campo que apresentar erro recebe indicação visual quando aplicável.
+
+---
+
+### 🔄 Fluxo Principal
+
+1. Usuário acessa a tela de login da plataforma.
+2. Usuário clica na opção **"Esqueci minha senha"**.
+3. Sistema direciona o usuário para a tela de recuperação de senha.
+4. Sistema solicita que o usuário informe o e-mail cadastrado.
+5. Usuário informa seu endereço de e-mail.
+6. Sistema valida o formato e verifica se o e-mail está associado a uma conta.
+7. Sistema gera um código de recuperação.
+8. Sistema encaminha o código de recuperação para o e-mail informado.
+9. Sistema direciona o usuário para a tela de inserção do código.
+10. Usuário informa o código recebido por e-mail.
+11. Sistema valida o código informado.
+12. Sistema libera a tela para criação de uma nova senha.
+13. Usuário informa uma nova senha.
+14. Usuário confirma a nova senha no campo de confirmação.
+15. Sistema verifica se a nova senha e sua confirmação são iguais.
+16. Sistema atualiza a senha da conta de forma segura.
+17. Sistema exibe a mensagem **"Senha redefinida com sucesso!"**.
+18. Sistema direciona o usuário para a tela principal da plataforma.
+
+---
+
+### ⚠️ Fluxo Alternativo A1: E-mail não cadastrado
+
+```text
+6a.1. Sistema verifica que o e-mail informado não está associado a uma conta.
+6a.2. Sistema interrompe o processo de recuperação.
+6a.3. Sistema exibe uma mensagem informando que o e-mail não foi localizado.
+6a.4. Usuário pode corrigir o e-mail informado.
+6a.5. Sistema realiza uma nova validação após a correção.
