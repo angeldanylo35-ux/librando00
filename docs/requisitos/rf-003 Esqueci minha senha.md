@@ -56,7 +56,7 @@ O sistema deverá verificar se as senhas são iguais antes de concluir a altera�
 
 ## 📋 2. DESCRIÇÃO E ATORES (10%)
 
-**Objetivo:** Descrever o requisito de recuperação e redefinição de senha com clareza, identificando todos os atores envolvidos, suas responsabilidades e permissões no processo.
+**Objetivo:** Descrever o requisito com clareza e identificar todos os atores envolvidos.
 
 **O que avaliar:**
 - ✅ Descrição detalhada do requisito
@@ -71,28 +71,27 @@ O sistema deverá verificar se as senhas são iguais antes de concluir a altera�
 
 **Por que este requisito existe?**
 
-O sistema precisa disponibilizar um processo de recuperação e redefinição de senha para permitir que usuários cadastrados recuperem o acesso à plataforma quando não se lembrarem de suas credenciais.
+O sistema precisa disponibilizar uma funcionalidade de recuperação e redefinição de senha para permitir que usuários cadastrados recuperem o acesso à sua conta quando esquecerem suas credenciais.
 
 A funcionalidade existe para:
 
-- 🔐 Permitir que o usuário recupere o acesso à sua conta de forma segura;
-- 👤 Evitar que o usuário precise criar uma nova conta quando esquecer sua senha;
-- ⚡ Tornar o processo de recuperação de acesso simples e rápido;
-- 🛡️ Aumentar a segurança da conta por meio da validação de identidade através de código enviado ao e-mail cadastrado;
-- ♿ Garantir que o processo seja acessível, com informações importantes apresentadas visualmente e suporte adequado à acessibilidade;
-- 💻 Permitir que o usuário volte a utilizar a plataforma após redefinir sua senha.
+- 🔐 Permitir a recuperação segura do acesso à conta;
+- 👤 Evitar a necessidade de criar uma nova conta quando o usuário esquecer sua senha;
+- ⚡ Tornar o processo de recuperação simples e rápido;
+- 🛡️ Aumentar a segurança por meio da validação através de código enviado ao e-mail cadastrado;
+- ♿ Garantir que o processo apresente informações importantes de forma acessível.
 
 ### 🏢 Contexto do Negócio
 
-A rede social Librando precisa oferecer uma alternativa segura para usuários cadastrados que perderam ou esqueceram sua senha.
+A rede social Librando precisa oferecer uma alternativa segura para usuários cadastrados que esquecerem sua senha.
 
-Ao selecionar a opção **"Esqueci minha senha"** na tela de login, o usuário deverá informar o e-mail utilizado no cadastro. O sistema deverá validar a informação e, quando o e-mail estiver associado a uma conta, encaminhar um código de recuperação para o endereço informado.
+Ao selecionar a opção **"Esqueci minha senha"** na tela de login, o usuário deverá informar o e-mail cadastrado. O sistema deverá validar o e-mail e, caso esteja associado a uma conta, encaminhar um código de recuperação para o endereço de e-mail informado.
 
-Após receber o código, o usuário deverá inseri-lo no sistema. Se o código estiver correto, será permitido informar uma nova senha e sua confirmação.
+Após receber o código, o usuário deverá inseri-lo no sistema. Se o código estiver correto, poderá informar uma nova senha e sua confirmação.
 
-O sistema deverá verificar se as duas senhas são iguais e, estando todas as informações corretas, realizar a redefinição da senha. Ao finalizar o processo, deverá apresentar uma confirmação visual, como **"Senha redefinida com sucesso!"**, e direcionar o usuário para a tela principal da plataforma.
+O sistema deverá verificar se as duas senhas são iguais antes de concluir a alteração. Em caso de sucesso, deverá apresentar uma confirmação visual, como **"Senha redefinida com sucesso!"**, e direcionar o usuário para a tela principal da plataforma.
 
-Quando ocorrer algum problema durante o processo, o sistema deverá informar visualmente a situação encontrada, utilizando mensagens como **"Código inexistente"** ou **"Senhas não coincidem"**, conforme o erro identificado.
+Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro correspondente, como **"Código inexistente"** ou **"Senhas não coincidem"**.
 
 ---
 
@@ -100,69 +99,46 @@ Quando ocorrer algum problema durante o processo, o sistema deverá informar vis
 
 ### 1. 👤 USUÁRIO CADASTRADO (Ator Principal)
 
-- **Papel:** Solicitar a recuperação da senha e cadastrar uma nova senha para sua conta.
-- **Responsabilidade:** Informar o e-mail cadastrado, inserir corretamente o código de recuperação recebido e informar uma nova senha e sua confirmação.
-- **Permissões:**
-  - ❌ **CREATE** (não cria uma nova conta durante a recuperação)
-  - ✅ **READ** (informar/consultar os dados necessários para recuperação)
-  - ✅ **UPDATE** (alterar a senha da própria conta)
-  - ❌ **DELETE** (não pode excluir a conta pelo processo de recuperação)
+- **Papel:** Solicitar a recuperação da senha e cadastrar uma nova senha para sua própria conta.
+- **Responsabilidade:** Informar o e-mail cadastrado, inserir o código de recuperação recebido e informar e confirmar a nova senha.
+
+**Permissões:**
+
+| Operação | Permissão | Descrição |
+|---|:---:|---|
+| ➕ **CREATE** | ❌ | Não cria uma nova conta durante o processo de recuperação |
+| 🔎 **READ** | ✅ | Informa e consulta os dados necessários para realizar a recuperação |
+| ✏️ **UPDATE** | ✅ | Altera a senha da própria conta |
+| 🗑️ **DELETE** | ❌ | Não exclui a conta durante o processo de recuperação |
+
+---
 
 ### 2. 📧 SERVIÇO DE E-MAIL (Ator Secundário)
 
-- **Papel:** Receber e encaminhar o código de recuperação para o e-mail cadastrado do usuário.
-- **Responsabilidade:** Processar o envio da mensagem contendo o código de recuperação para o endereço de e-mail informado pelo usuário.
-- **Permissões:**
-  - ❌ **CREATE** (não cria contas de usuários)
-  - ✅ **READ** (utiliza o endereço de e-mail necessário para o envio)
-  - ❌ **UPDATE** (não altera dados da conta do usuário)
-  - ❌ **DELETE** (não exclui dados da conta)
+- **Papel:** Realizar o envio do código de recuperação para o e-mail cadastrado do usuário.
+- **Responsabilidade:** Receber a solicitação do sistema e encaminhar o código de recuperação ao endereço de e-mail informado.
+
+**Permissões:**
+
+| Operação | Permissão | Descrição |
+|---|:---:|---|
+| ➕ **CREATE** | ❌ | Não cria contas de usuários |
+| 🔎 **READ** | ✅ | Utiliza o endereço de e-mail necessário para realizar o envio |
+| ✏️ **UPDATE** | ❌ | Não altera os dados da conta do usuário |
+| 🗑️ **DELETE** | ❌ | Não exclui dados da conta do usuário |
+
+---
 
 ### 3. ⚙️ SISTEMA (Ator Automático)
 
-- **Papel:** Controlar todo o processo de recuperação e redefinição da senha.
-- **Responsabilidade:** Validar o e-mail informado, verificar a existência da conta, gerar e encaminhar o código de recuperação, validar o código informado, validar a nova senha e sua confirmação, atualizar a senha de forma segura e apresentar os retornos ao usuário.
-- **Permissões:**
-  - ✅ **CREATE** (criar o processo/dados temporários necessários para recuperação)
-  - ✅ **READ** (consultar dados necessários para validar a conta e o processo)
-  - ✅ **UPDATE** (atualizar a senha do usuário)
-  - ❌ **DELETE** (não realiza exclusão da conta durante a recuperação)
+- **Papel:** Controlar e processar o processo de recuperação e redefinição de senha.
+- **Responsabilidade:** Validar o e-mail, verificar a existência da conta, gerar e enviar o código de recuperação, validar o código informado, verificar a nova senha e sua confirmação, atualizar a senha de forma segura e apresentar as mensagens correspondentes ao usuário.
 
----
+**Permissões:**
 
-### 📊 Resumo das Permissões (CRUD)
-
-| 👥 Ator | ➕ CREATE | 🔎 READ | ✏️ UPDATE | 🗑️ DELETE |
-|---|:---:|:---:|:---:|:---:|
-| 👤 **Usuário Cadastrado** | ❌ | ✅ | ✅ | ❌ |
-| 📧 **Serviço de E-mail** | ❌ | ✅ | ❌ | ❌ |
-| ⚙️ **Sistema** | ✅ | ✅ | ✅ | ❌ |
-
----
-
-### 🎯 Benefícios do Requisito
-
-| # | Benefício | Descrição |
-|:---:|---|---|
-| **1** | 🔐 **Segurança** | Permite redefinir a senha por meio de uma etapa de validação com código enviado ao e-mail cadastrado. |
-| **2** | 👤 **Recuperação de Acesso** | Permite que usuários que esqueceram a senha recuperem o acesso à própria conta sem realizar um novo cadastro. |
-| **3** | ⚡ **Praticidade** | Disponibiliza um processo estruturado para recuperação de acesso sem depender da intervenção de um administrador. |
-| **4** | ♿ **Acessibilidade** | Permite que informações importantes do processo sejam apresentadas visualmente, atendendo às necessidades de acessibilidade da plataforma. |
-| **5** | 💻 **Continuidade de Uso** | Após a redefinição da senha, o usuário poderá voltar a utilizar a plataforma. |
-
----
-
-**CRITÉRIOS DE ACEITE PARA 10/10:**
-- ✅ Descrição detalhada do processo de recuperação e redefinição de senha
-- ✅ Objetivo do negócio apresentado
-- ✅ Mínimo de 3 benefícios de negócio identificados
-- ✅ Mínimo de 3 atores descritos
-- ✅ Papel de cada ator claramente definido
-- ✅ Responsabilidades de cada ator apresentadas
-- ✅ Permissões CRUD mapeadas
-- ✅ Contexto do negócio relacionado à rede social Librando
-- ✅ Fluxo de recuperação baseado em e-mail, código e redefinição de senha
-
-Caso ocorra algum problema durante o processo, o sistema deverá apresentar mensagens de erro claras ao usuário, como **"Código inexistente"**, **"Senhas não coincidem"** ou mensagens correspondentes à situação encontrada.
-
----
+| Operação | Permissão | Descrição |
+|---|:---:|---|
+| ➕ **CREATE** | ✅ | Cria e registra os dados necessários para o processo de recuperação |
+| 🔎 **READ** | ✅ | Consulta os dados necessários para validar a conta e o processo de recuperação |
+| ✏️ **UPDATE** | ✅ | Atualiza a senha do usuário após todas as validações |
+| 🗑️ **DELETE** | ❌ | Não exclui a conta durante o processo de recuperação |
