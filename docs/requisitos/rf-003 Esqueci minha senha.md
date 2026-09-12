@@ -113,17 +113,9 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 
 ---
 
-## 🔄 3. ESPECIFICAÇÃO DE CASOS DE USO + REQUISITOS NÃO-FUNCIONAIS (20%)
+## 🔄 3. ESPECIFICAÇÃO DE CASOS DE USO + REQUISITOS NÃO-FUNCIONAIS 
 
 **Objetivo:** Descrever detalhadamente como o requisito de recuperação e redefinição de senha é executado, incluindo pré-condições, pós-condições, fluxo principal, fluxos alternativos, regras de negócio e requisitos não-funcionais.
-
-**O que avaliar:**
-- ✅ Pré-condições definidas
-- ✅ Pós-condições definidas (sucesso e falha)
-- ✅ Fluxo principal com 8+ passos
-- ✅ Fluxos alternativos (mínimo 3)
-- ✅ Regras de negócio (RN-XX)
-- ✅ Requisitos Não-Funcionais (mínimo 3)
 
 ---
 
