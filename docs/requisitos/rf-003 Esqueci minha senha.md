@@ -20,7 +20,7 @@
 * **DESCRICAO_BREVE:**
   Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à comunidade surda. Nesta etapa do projeto, foi desenvolvida a tela de login com autenticação de usuários utilizando HTML, CSS, PHP e MySQL.
 
-## 1.3 Localização dos Artefatos
+## 1.3 Localização dos Artefatos(esse é do modelo anterior, tem que trocar para esse, não esqueçam!)
 
 * **LINK_REPOSITORIO_GITHUB:** `(https://github.com/angeldanylo35-ux/librando00/)`
 * **BRANCH_PRINCIPAL:** `main`
