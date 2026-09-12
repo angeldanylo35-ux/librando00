@@ -1,35 +1,4 @@
-# 📝 RF-003 — Esqueci minha senha
-
-# 1. METADADOS DO PROJETO E DA EQUIPE
-
-## 1.1 Composição da Equipe
-
-|  ID | Nome Completo                 | Papel Primário          | Papel Secundário | E-mail / Contato                                                                                                                                    |
-| :-: | :---------------------------- | :---------------------- | :--------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-|  1  | [André Mendes]                | Scrum Master            | Fullstack        | [[andre53774636@edu.df.senac.br](mailto:andre53774636@edu.df.senac.br)]                                                                             |
-|  2  | [Eduardo Amorim]                     | Desenvolvedor Front-End | —                | [[eduardo59381426@edu.df.senac.br](mailto:eduardo59381426@edu.df.senac.br)]                                                                         |
-|  3  | [Gabriel Souza / Vitor Silva] | Desenvolvedor Back-End  | —                | [[gabriel49414966@edu.df.senac.br](mailto:gabriel49414966@edu.df.senac.br) / [vitor59422706@edu.df.senac.br](mailto:vitor59422706@edu.df.senac.br)] |
-|  4  | [Henrique Alves]              | DBA / Banco de Dados    | —                | [[henrique51782196@edu.df.senac.br](mailto:henrique51782196@edu.df.senac.br)]                                                                       |
-|  5  | [Angel Pacheco]               | QA / SecDevOps          | —                | [[angel59381406@edu.df.senac.br](mailto:angel59381406@edu.df.senac.br)]                                                                             |
-|  6  | [Angel Pacheco]               | Fullstack (opcional)    | —                | [[angel59381406@edu.df.senac.br](mailto:angel59381406@edu.df.senac.br)]                                                                             |
-
-## 1.2 Identificação
-
-* **NOME_DO_PROJETO:** Librando
-
-* **DESCRICAO_BREVE:**
-  Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à comunidade surda. Nesta etapa do projeto, foi desenvolvida a tela de login com autenticação de usuários utilizando HTML, CSS, PHP e MySQL.
-
-## 1.3 Localização dos Artefatos(esse é do modelo anterior, tem que trocar para esse, não esqueçam!)
-
-* **LINK_REPOSITORIO_GITHUB:** `(https://github.com/angeldanylo35-ux/librando00/)`
-* **BRANCH_PRINCIPAL:** `main`
-* **LINK_APLICACAO_DEPLOY:** Aplicação executada localmente por meio do XAMPP.
-* **LINK_BANCO_DADOS:** Banco de dados MySQL local.
-* **LINK_API_SWAGGER:** Não se aplica nesta etapa do projeto.
-* **LINK_DEMONSTRAÇÃO:** Aplicação executada localmente em `[(http://localhost:5173/cadastro)]`
-
----
+# RF-003: Recuperação e Redefinição de Senha
 
 ## 🔎 1. Identificação do Requisito
 
@@ -52,11 +21,24 @@ Ao selecionar essa opção, o usuário deverá ser direcionado para uma tela na 
 
 Após receber o código, o usuário deverá informá-lo em uma segunda tela para que o sistema realize a validação. Caso o código esteja correto, o usuário poderá cadastrar uma nova senha e confirmar a senha informada.
 
-O sistema deverá verificar se as senhas são iguais antes de concluir a alteração. Quando o processo for realizado com sucesso, deverá apresentar uma confirmação visual, como **"Senha redefinida com sucesso!"**, e direcionar o usuário para a tela principal da plataforma.
+O sistema deverá verificar se a nova senha e sua confirmação são iguais antes de concluir a alteração.
 
-## 📋 2. DESCRIÇÃO E ATORES 
+Quando o processo for realizado com sucesso, o sistema deverá apresentar uma confirmação visual, como **"Senha redefinida com sucesso!"**, e direcionar o usuário para a tela principal da plataforma.
+
+Caso ocorra algum problema durante o processo, o sistema deverá apresentar mensagens de erro claras ao usuário, como **"Código inexistente"**, **"Senhas não coincidem"** ou mensagens correspondentes à situação encontrada.
+
+---
+
+## 📋 2. DESCRIÇÃO E ATORES (10%)
 
 **Objetivo:** Descrever o requisito com clareza e identificar todos os atores envolvidos.
+
+**O que avaliar:**
+- ✅ Descrição detalhada do requisito
+- ✅ Objetivo do negócio claro (3+ benefícios)
+- ✅ Todos os atores identificados
+- ✅ Papel de cada ator descrito
+- ✅ Permissões mapeadas (CRUD)
 
 ---
 
@@ -136,9 +118,19 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 | ✏️ **UPDATE** | ✅ | Atualiza a senha do usuário após todas as validações |
 | 🗑️ **DELETE** | ❌ | Não exclui a conta durante o processo de recuperação |
 
-## 🔄 3. ESPECIFICAÇÃO DE CASOS DE USO + REQUISITOS NÃO-FUNCIONAIS 
+---
+
+## 🔄 3. ESPECIFICAÇÃO DE CASOS DE USO + REQUISITOS NÃO-FUNCIONAIS (20%)
 
 **Objetivo:** Descrever detalhadamente como o requisito de recuperação e redefinição de senha é executado, incluindo pré-condições, pós-condições, fluxo principal, fluxos alternativos, regras de negócio e requisitos não-funcionais.
+
+**O que avaliar:**
+- ✅ Pré-condições definidas
+- ✅ Pós-condições definidas (sucesso e falha)
+- ✅ Fluxo principal com 8+ passos
+- ✅ Fluxos alternativos (mínimo 3)
+- ✅ Regras de negócio (RN-XX)
+- ✅ Requisitos Não-Funcionais (mínimo 3)
 
 ---
 
@@ -195,9 +187,103 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 
 ### ⚠️ Fluxo Alternativo A1: E-mail não cadastrado
 
-```text
 6a.1. Sistema verifica que o e-mail informado não está associado a uma conta.
+
 6a.2. Sistema interrompe o processo de recuperação.
+
 6a.3. Sistema exibe uma mensagem informando que o e-mail não foi localizado.
+
 6a.4. Usuário pode corrigir o e-mail informado.
+
 6a.5. Sistema realiza uma nova validação após a correção.
+
+---
+
+### ⚠️ Fluxo Alternativo A2: Código de recuperação inválido
+
+11a.1. Sistema identifica que o código informado não corresponde ao código enviado.
+
+11a.2. Sistema impede o avanço para a etapa de redefinição da senha.
+
+11a.3. Sistema exibe a mensagem: **"Código inexistente"**.
+
+11a.4. Usuário pode informar novamente o código recebido.
+
+11a.5. Sistema realiza uma nova validação do código.
+
+---
+
+### ⚠️ Fluxo Alternativo A3: Senhas não coincidem
+
+15a.1. Sistema identifica que a nova senha e a confirmação são diferentes.
+
+15a.2. Sistema impede a alteração da senha.
+
+15a.3. Sistema exibe a mensagem: **"Senhas não coincidem"**.
+
+15a.4. Usuário corrige os campos de senha.
+
+15a.5. Sistema realiza uma nova validação.
+
+---
+
+### ⚠️ Fluxo Alternativo A4: E-mail inválido
+
+6b.1. Sistema identifica que o formato do e-mail informado é inválido.
+
+6b.2. Sistema não inicia o envio do código de recuperação.
+
+6b.3. Sistema exibe uma mensagem informando que o e-mail é inválido.
+
+6b.4. Usuário corrige o endereço de e-mail.
+
+6b.5. Sistema realiza uma nova validação.
+
+---
+
+### ⚠️ Fluxo Alternativo A5: Falha no envio do código
+
+8a.1. Sistema tenta encaminhar o código para o e-mail cadastrado.
+
+8a.2. O serviço de e-mail não consegue realizar o envio.
+
+8a.3. Sistema informa visualmente que não foi possível enviar o código.
+
+8a.4. Usuário recebe a opção de tentar realizar o envio novamente.
+
+8a.5. Sistema realiza uma nova tentativa de envio.
+
+---
+
+### 📋 Regras de Negócio (RN)
+
+| ID | Regra | Descrição |
+|:---:|:---|:---|
+| **RN-01** | Usuário Cadastrado | Somente usuários que possuem uma conta cadastrada podem realizar a recuperação de senha. |
+| **RN-02** | E-mail Obrigatório | O usuário deve informar um e-mail para iniciar o processo de recuperação. |
+| **RN-03** | E-mail Válido | O e-mail informado deve possuir um formato válido para que a solicitação possa prosseguir. |
+| **RN-04** | E-mail Cadastrado | O e-mail informado deve estar associado a uma conta existente no sistema. |
+| **RN-05** | Código de Recuperação | O usuário deve informar corretamente o código recebido no e-mail para prosseguir com a redefinição. |
+| **RN-06** | Validação do Código | O sistema não deve permitir a redefinição da senha quando o código informado for inválido ou inexistente. |
+| **RN-07** | Nova Senha Obrigatória | O usuário deve informar uma nova senha para concluir a recuperação. |
+| **RN-08** | Confirmação de Senha | A nova senha e sua confirmação devem ser iguais para permitir a alteração. |
+| **RN-09** | Segurança da Senha | A nova senha não deve ser armazenada em texto puro, devendo ser protegida por mecanismo seguro de armazenamento. |
+| **RN-10** | Alteração Após Validação | A senha somente deve ser alterada após a validação correta do e-mail, código e confirmação da nova senha. |
+| **RN-11** | Feedback do Processo | O sistema deve informar visualmente ao usuário o sucesso ou os erros ocorridos durante o processo de recuperação. |
+| **RN-12** | Acessibilidade | As informações essenciais do processo de recuperação não devem depender exclusivamente de áudio para serem compreendidas. |
+
+---
+
+### ⚙️ Requisitos Não-Funcionais (RNF)
+
+| ID | Atributo | Requisito | Métrica | Justificativa |
+|:---:|:---|:---|:---|:---|
+| **RNF-01** | 🔐 Segurança | A senha redefinida deve ser armazenada utilizando hash seguro, não sendo permitida sua gravação em texto puro | Senha armazenada sem texto puro | Proteger as credenciais dos usuários |
+| **RNF-02** | 🛡️ Segurança | A comunicação entre usuário, sistema e servidor deve utilizar HTTPS | Comunicação realizada via HTTPS | Proteger os dados transmitidos durante a recuperação |
+| **RNF-03** | ⚡ Performance | As telas e validações do processo de recuperação devem apresentar resposta em até aproximadamente 2 segundos em condições normais | Tempo de resposta ≤ 2 segundos | Evitar que o usuário fique aguardando desnecessariamente |
+| **RNF-04** | ♿ Acessibilidade | As mensagens de erro, validação e sucesso devem ser apresentadas visualmente | Mensagens visuais disponíveis | Garantir que informações importantes não dependam exclusivamente de áudio |
+| **RNF-05** | 🤟 Acessibilidade | O processo deve disponibilizar suporte visual compatível com Libras quando necessário | Recursos visuais disponíveis quando aplicáveis | Facilitar o acesso de pessoas surdas às informações |
+| **RNF-06** | ⌨️ Acessibilidade | Os elementos das telas de recuperação devem permitir navegação e interação por teclado | Elementos acessíveis via teclado | Facilitar a utilização da funcionalidade |
+| **RNF-07** | 📱 Responsividade | As telas de recuperação devem adaptar-se a computadores, notebooks, tablets e smartphones | Interface adaptável a diferentes resoluções | Garantir uma boa experiência em diferentes dispositivos |
+| **RNF-08** | 💬 Usabilidade | O sistema deve apresentar feedback visual durante as etapas de validação, envio do código, erros e conclusão da recuperação | Feedback visual nas principais ações | Informar ao usuário o estado atual da operação |
+| **RNF-09** | 👁️ Acessibilidade | Textos, campos e botões devem possuir contraste visual adequado | Contraste adequado entre elementos | Facilitar a leitura e identificação dos elementos da interface |
