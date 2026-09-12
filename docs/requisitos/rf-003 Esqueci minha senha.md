@@ -1,3 +1,36 @@
+# 📝 RF-002 — Tela de Cadastro de Usuários
+
+# 1. METADADOS DO PROJETO E DA EQUIPE
+
+## 1.1 Composição da Equipe
+
+|  ID | Nome Completo                 | Papel Primário          | Papel Secundário | E-mail / Contato                                                                                                                                    |
+| :-: | :---------------------------- | :---------------------- | :--------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
+|  1  | [André Mendes]                | Scrum Master            | Fullstack        | [[andre53774636@edu.df.senac.br](mailto:andre53774636@edu.df.senac.br)]                                                                             |
+|  2  | [Eduardo Amorim]                     | Desenvolvedor Front-End | —                | [[eduardo59381426@edu.df.senac.br](mailto:eduardo59381426@edu.df.senac.br)]                                                                         |
+|  3  | [Gabriel Souza / Vitor Silva] | Desenvolvedor Back-End  | —                | [[gabriel49414966@edu.df.senac.br](mailto:gabriel49414966@edu.df.senac.br) / [vitor59422706@edu.df.senac.br](mailto:vitor59422706@edu.df.senac.br)] |
+|  4  | [Henrique Alves]              | DBA / Banco de Dados    | —                | [[henrique51782196@edu.df.senac.br](mailto:henrique51782196@edu.df.senac.br)]                                                                       |
+|  5  | [Angel Pacheco]               | QA / SecDevOps          | —                | [[angel59381406@edu.df.senac.br](mailto:angel59381406@edu.df.senac.br)]                                                                             |
+|  6  | [Angel Pacheco]               | Fullstack (opcional)    | —                | [[angel59381406@edu.df.senac.br](mailto:angel59381406@edu.df.senac.br)]                                                                             |
+
+## 1.2 Identificação
+
+* **NOME_DO_PROJETO:** Librando
+
+* **DESCRICAO_BREVE:**
+  Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à comunidade surda. Nesta etapa do projeto, foi desenvolvida a tela de login com autenticação de usuários utilizando HTML, CSS, PHP e MySQL.
+
+## 1.3 Localização dos Artefatos(Alterar ao longo do projeto)
+
+* **LINK_REPOSITORIO_GITHUB:** `(https://github.com/angeldanylo35-ux/librando00/)`
+* **BRANCH_PRINCIPAL:** `main`
+* **LINK_APLICACAO_DEPLOY:** Aplicação executada localmente por meio do XAMPP.
+* **LINK_BANCO_DADOS:** Banco de dados MySQL local.
+* **LINK_API_SWAGGER:** Não se aplica nesta etapa do projeto.
+* **LINK_DEMONSTRAÇÃO:** Aplicação executada localmente em `[(http://localhost:5173/cadastro)]`
+
+---
+
 # RF-003: Recuperação e Redefinição de Senha
 
 ## 🔎 1. Identificação do Requisito
