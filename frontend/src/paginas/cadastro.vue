@@ -151,8 +151,10 @@ async function handleCadastro() {
     mensagem.value = data.mensagem;
 
     if (data.sucesso) {
-      setTimeout(() => router.push('/login'), 1200); // RN-11: manda pro login
+  mensagem.value = data.mensagem;
+  sucesso.value = true;
     }
+    
   } catch (erro) {
     sucesso.value = false;
     mensagem.value =

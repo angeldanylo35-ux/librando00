@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Login from '../paginas/login.vue';
 import Cadastro from '../paginas/cadastro.vue';
+import VerificarEmail from '../paginas/verificar-email.vue';
 
 const routes = [
   {
@@ -12,6 +13,11 @@ const routes = [
     path: '/cadastro',
     name: 'cadastro',
     component: Cadastro,
+  },
+  {
+    path: '/verificar-email',
+    name: 'verificar-email',
+    component: VerificarEmail,
   },
   // adicione as próximas telas aqui, ex:
   // { path: '/', name: 'home', component: Home },
