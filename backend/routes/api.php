@@ -4,4 +4,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/cadastro', [AuthController::class, 'cadastro']);
+Route::get('/verificar-email', [AuthController::class, 'verificarEmail']);
 ?>
