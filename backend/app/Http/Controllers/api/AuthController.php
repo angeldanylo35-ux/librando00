@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Mail\RecuperacaoSenha;
+use App\Models\RecuperacaoSenha as RecuperacaoSenhaModel;
 
 class AuthController extends Controller
 {
@@ -107,6 +109,117 @@ class AuthController extends Controller
             'mensagem' => 'Um link de confirmação foi enviado para seu e-mail. O link é válido por 5 minutos.',
         ], 201);
     }
+
+
+
+    public function esqueciSenha(Request $request)
+    {
+    $validator = Validator::make($request->all(), [
+        'email' => 'required|email',
+    ], [
+        'required' => 'Informe seu e-mail.',
+        'email' => 'Informe um e-mail válido.',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'sucesso' => false,
+            'mensagem' => $validator->errors()->first(),
+        ], 400);
+    }
+
+    $usuario = Usuario::where('email', $request->email)->first();
+
+    if (!$usuario) {
+        return response()->json([
+            'sucesso' => false,
+            'mensagem' => 'Não encontramos uma conta com esse e-mail.',
+        ], 404);
+    }
+
+
+
+    // Remove tokens antigos desse e-mail
+    RecuperacaoSenhaModel::where('email', $request->email)->delete();
+
+    // Gera um token aleatório
+    $token = Str::random(64);
+
+    RecuperacaoSenhaModel::create([
+        'email' => $request->email,
+        'token' => hash('sha256', $token),
+        'expira_em' => now()->addMinutes(5),
+    ]);
+
+    // Link que será aberto pelo Vue
+    $link = 'http://localhost:5173/redefinir-senha?token=' . $token;
+
+    Mail::to($request->email)->send(
+        new RecuperacaoSenha($link)
+    );
+
+    return response()->json([
+        'sucesso' => true,
+        'mensagem' => 'Um link para redefinir sua senha foi enviado para seu e-mail.',
+    ], 200);
+    }
+
+    public function redefinirSenha(Request $request)
+    {
+    $validator = Validator::make($request->all(), [
+        'token' => 'required|string',
+        'senha' => 'required|string|min:6',
+        'confirmar_senha' => 'required|same:senha',
+    ], [
+        'required' => 'Preencha todos os campos.',
+        'senha.min' => 'A senha precisa ter ao menos 6 caracteres.',
+        'confirmar_senha.same' => 'As senhas não coincidem.',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'sucesso' => false,
+            'mensagem' => $validator->errors()->first(),
+        ], 400);
+    }
+
+    $recuperacao = RecuperacaoSenhaModel::where(
+        'token',
+        hash('sha256', $request->token)
+    )
+    ->where('expira_em', '>', now())
+    ->first();
+
+    if (!$recuperacao) {
+        return response()->json([
+            'sucesso' => false,
+            'mensagem' => 'O link de recuperação é inválido ou expirou.',
+        ], 400);
+    }
+
+    $usuario = Usuario::where('email', $recuperacao->email)->first();
+
+    if (!$usuario) {
+        return response()->json([
+            'sucesso' => false,
+            'mensagem' => 'Usuário não encontrado.',
+        ], 404);
+    }
+
+    $usuario->update([
+        'senha' => Hash::make($request->senha),
+    ]);
+
+    // Invalida o token depois de usado
+    $recuperacao->delete();
+
+    return response()->json([
+        'sucesso' => true,
+        'mensagem' => 'Senha alterada com sucesso!',
+    ], 200);
+    }
+
+
 
     public function verificarEmail(Request $request)
     {
