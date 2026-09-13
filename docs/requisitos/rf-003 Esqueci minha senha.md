@@ -309,7 +309,7 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 
 
 ###MOCKUP RAZCUNHO: 
-
+```
 ┌──────────────────────────┬─────────────────────────────┐
 │                          │                             │
 │  🤟 Librando             │     Esqueci minha senha     │
@@ -329,3 +329,4 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 │                          │  Lembrou sua senha? Entrar  │
 │                          │                             │
 └──────────────────────────┴─────────────────────────────┘
+```
