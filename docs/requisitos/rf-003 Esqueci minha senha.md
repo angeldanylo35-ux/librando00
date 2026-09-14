@@ -422,4 +422,116 @@ O fluxo funciona da seguinte maneira:
 - **Tablet (até 980px):** Layout single-column com padding maior
 - **Desktop (980px+):** Layout potencialmente two-column se apropriado
 
+## 🏗️ 5. ARQUITETURA E ADR
+#### Exemplo Prático — RF-003: Arquitetura Completa
 
+### Diagrama de Componentes
+```text
+┌─────────────────────────┐
+│         FRONTEND        │
+│ Vue.js 3 + Vite         │
+│ Vue Router + Axios      │
+└────────────┬────────────┘
+             │ HTTP/JSON (POST /api/auth/forgot-password)
+             ▼
+┌─────────────────────────┐
+│         BACKEND         │
+│ PHP + Laravel 12        │
+│ AuthController          │
+│ Serviço de E-mail       │
+└────────────┬────────────┘
+             │ Eloquent ORM
+             ▼
+┌─────────────────────────┤
+│     BANCO DE DADOS      │
+│          MySQL          │
+│  Tabela `usuarios`      │
+│  (reset_token, expires) │
+└─────────────────────────┘
+```
+
+ADR-001 — Escolha do banco de dados
+
+Status: Aceito
+
+Contexto:
+A funcionalidade de recuperação de senha exige o armazenamento seguro e temporário de tokens de redefinição e seus respectivos tempos de expiração associados a um usuário cadastrado.
+
+Decisão:
+Adotar colunas específicas (reset_token e token_expires_at) na tabela existente usuarios do MySQL gerenciado pelas migrations do Laravel.
+
+Motivo:
+O MySQL garante consistência relacional e integridade para as contas dos usuários. Adicionar campos de controle de token na mesma tabela evita a criação desnecessária de tabelas adicionais para um fluxo linear de recuperação, aproveitando a infraestrutura relacional já validada no projeto.
+
+Consequências:
++ Armazenamento direto e vinculado à entidade do usuário.
++ Facilidade de consulta e limpeza via Eloquent ORM.
+- Requer tratamento de expiração e invalidação do token após o uso.
+
+ADR-002: Escolha do Back-end
+
+Status: Aceito
+
+Contexto:
+Necessidade de processar requisições de recuperação de senha de forma segura, validando a existência do e-mail, gerando tokens criptográficos e disparando o serviço de envio de e-mails.
+
+Decisão:
+Adotar o Laravel 12 (PHP 8.2+) utilizando controladores dedicados a autenticação e recuperação de credenciais.
+
+Motivo:
+O Laravel fornece recursos robustos para manipulação de strings criptografadas e integração com envio de e-mails, garantindo que o fluxo ocorra de forma isolada e segura no servidor.
+
+Consequências:
++ Validação server-side rigorosa e segura do e-mail informado antes de disparar qualquer processo de redefinição.
++ Integração nativa com o sistema de envio de e-mails e manipulação de strings criptografadas do framework.
+- Obrigatoriedade de configurar corretamente o serviço de disparo de correio eletrônico (SMTP/Mail) nos ambientes de desenvolvimento e produção.
+
+ADR-003 — Escolha do Front-end
+
+Status: Aceito
+
+Contexto:
+A interface de recuperação de senha precisa guiar o usuário em etapas claras (informar e-mail, verificar mensagens e redefinir a senha) com boa usabilidade e feedback visual imediato.
+
+Decisão:
+Adotar o Vue.js com Vite para renderizar a tela de recuperação em layout de duas colunas, utilizando o Axios para comunicação assíncrona com os endpoints da API.
+
+Motivo:
+O Vue.js permite o controle dinâmico de estados visuais, proporcionando uma experiência fluida e alinhada ao restante da aplicação.
+
+Consequências:
++ Reutilização eficiente dos componentes visuais e de layout já consolidados no ecossistema da aplicação frontend.
++ Feedback visual dinâmico e imediato para guiar o usuário durante as etapas de recuperação de acesso.
+
+ADR-004 — Comunicação e Segurança no Processo de Recuperação
+
+Status: Aceito
+
+Contexto:
+O envio de solicitações de recuperação de senha expõe pontos sensíveis da aplicação, exigindo comunicação padronizada via API e proteção contra exposição de dados de usuários.
+
+Decisão:
+Utilizar endpoints REST específicos no Laravel consumidos via Axios, garantindo que o sistema retorne mensagens genéricas de sucesso no envio de e-mail para evitar a enumeração de contas cadastradas.
+
+Motivo:
+Seguir as boas práticas de segurança recomendadas pela OWASP evita que atacantes descubram quais e-mails estão cadastrados na base de dados.
+
+Consequências:
++ Maior blindagem de segurança da aplicação contra técnicas de enumeração de contas (protegendo dados cadastrados contra ataques maliciosos).
++ Separação estruturada e limpa entre as responsabilidades de validação da interface web e da API de serviços.
+- Necessidade de projetar mensagens de erro genéricas na interface para proteger a privacidade dos usuários sem prejudicar a usabilidade de quem possui conta legítima.
+
+
+### Tecnologias Escolhidas
+
+| Camada | Tecnologia | Versão | Justificativa |
+|--------|-----------|--------|---------------|
+| Frontend | Vue.js 3 | 3.x | Construção da interface reativa e gerenciamento dos estados do formulário |
+| Roteamento | Vue Router | 4.x | Navegação entre a tela de login e o fluxo de recuperação de senha |
+| Cliente HTTP | Axios | 1.x | Realização de requisições assíncronas (POST) para a API de recuperação |
+| Build Tool | Vite | 5.x | Ferramenta de build rápida e servidor de desenvolvimento para o frontend Vue |
+| Backend | Laravel | 12.x | Framework PHP para a criação da API RESTful e controle dos tokens |
+| Linguagem Backend | PHP | 8.2+ | Linguagem base para execução do framework Laravel e lógica de negócio |
+| Serviço de E-mail | Laravel Mail / SMTP | 12.x | Envio automatizado do código ou link de recuperação para o e-mail do usuário |
+| Banco de Dados | MySQL | 8.x | Armazenamento relacional dos dados de usuário e campos de controle de token |
+| Hash / Segurança | Bcrypt (Hash::make)| PHP / Laravel | Criptografia irreversível e segura para o armazenamento da nova senha |
