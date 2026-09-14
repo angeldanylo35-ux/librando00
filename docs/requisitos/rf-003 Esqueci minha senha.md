@@ -535,3 +535,137 @@ Consequências:
 | Serviço de E-mail | Laravel Mail / SMTP | 12.x | Envio automatizado do código ou link de recuperação para o e-mail do usuário |
 | Banco de Dados | MySQL | 8.x | Armazenamento relacional dos dados de usuário e campos de controle de token |
 | Hash / Segurança | Bcrypt (Hash::make)| PHP / Laravel | Criptografia irreversível e segura para o armazenamento da nova senha |
+
+## 🔒 6. VALIDAÇÃO DE SEGURANÇA OWASP
+
+VALIDAÇÂO DE SEGURANÇA OWASP
+
+Foram analisadas as principais vulnerabilidades aplicáveis ao sistema, tomando como referência as recomendações da OWASP.
+
+- SQL Injection: Utilização do Eloquent ORM com consultas preparadas (*Prepared Statements* via PDO) na persistência e busca de dados de usuários e tokens no banco de dados MySQL.
+- Armazenamento de senhas: Utilização de `Hash::make()` (Bcrypt) para criptografia irreversível e segura da nova senha antes de salvá-la permanentemente na base de dados.
+- Segurança de Tokens de Recuperação: Geração de tokens criptografados exclusivos para o fluxo de redefinição, dotados de tempo de expiração restrito e invalidação automática após o uso único.
+- Prevenção de Enumeração de Contas: Implementação de respostas genéricas e padronizadas no endpoint de envio de link/código, impedindo que usuários mal-intencionados descubran quais e-mails estão cadastrados na plataforma.
+- XSS (Cross-Site Scripting): Tratamento e interpolação segura de dados exibidos pela interface em Vue.js, complementados por validação e sanitização rigorosas das entradas no back-end.
+- Validação de Entrada: Todos os dados recebidos do cliente (e-mail, código de verificação, nova senha e confirmação) passam por validação server-side estrita com regras declarativas do Laravel.
+- Controle de Acesso e Rotas: Verificação de integridade e validade dos parâmetros no servidor antes de autorizar a alteração de credenciais em rotas protegidas da API.
+
+## 📚 7. DOCUMENTAÇÃO API (SWAGGER/OPENAPI)
+
+**Objetivo:** Documentar endpoints REST da API usando Swagger/OpenAPI.
+
+#### Exemplo Prático — RF-003: Documentação Swagger
+
+**Arquivo:** `docs/api/swagger.json`
+
+```json
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Librando API - Recuperação de Senha",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/auth/forgot-password": {
+      "post": {
+        "summary": "Solicitar recuperação de senha",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "usuario@email.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "E-mail de recuperação enviado com sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "E-mail não encontrado"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      }
+    },
+    "/api/auth/reset-password": {
+      "post": {
+        "summary": "Redefinir senha com token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["token", "email", "password", "password_confirmation"],
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "example": "123456"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "usuario@email.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "novaSenha123"
+                  },
+                  "password_confirmation": {
+                    "type": "string",
+                    "example": "novaSenha123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Senha redefinida com sucesso"
+          },
+          "400": {
+            "description": "Token inválido ou expirado"
+          },
+          "422": {
+            "description": "As senhas não coincidem ou não atendem aos requisitos mínimos"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+**Para visualizar a documentação:**
+O arquivo `swagger.json` pode ser aberto em uma ferramenta compatível com Swagger UI, permitindo visualizar os endpoints, parâmetros, respostas e códigos HTTP da API.
+
+**Endpoints documentados:**
+
+* `POST /api/auth/forgot-password` — Solicitar envio de link ou código de recuperação para o e-mail cadastrado.
+* `POST /api/auth/reset-password` — Validar o token temporário e cadastrar a nova senha do usuário.
+
+**Autenticação:**
+
+O usuário informa o e-mail na interface web para iniciar a recuperação.
+O backend Laravel valida se o e-mail existe no banco de dados e gera um token temporário com prazo de expiração.
+Após receber as instruções, o usuário envia o token, o e-mail e a nova senha (com confirmação).
+A nova senha é validada e criptografada utilizando `Hash::make()` (Bcrypt) antes de atualizar o registro no banco MySQL.
+Em caso de sucesso, o sistema retorna o status HTTP 200 confirmando a alteração.
