@@ -308,7 +308,9 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 
 
 
-###MOCKUP RAZCUNHO: 
+###🎨 4. PROTÓTIPO FUNCIONAL (HTML + CSS + PHP + MySQL + RENDER)
+
+**Mockup - Tela 1: Solicitação de E-mail (Estado Inicial)**
 ```
 ┌──────────────────────────┬─────────────────────────────┐
 │                          │                             │
@@ -330,3 +332,94 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 │                          │                             │
 └──────────────────────────┴─────────────────────────────┘
 ```
+
+**Tela 2: Formulário Preenchido / Validação Visual (Com E-mail Válido)**
+```
+┌──────────────────────────┬─────────────────────────────┐
+│                          │                             │
+│  🤟 Librando             │     Esqueci minha senha     │
+│                          │                             │
+│  Recupere sua            │  Digite seu e-mail para     │
+│  conta                   │  receber o link...          │
+│  Librando.               │                             │
+│                          │  E-mail                     │
+│  Não se preocupe...      │  ┌───────────────────────┐  │
+│                          │  │ usuario@email.com   ✅│  │
+│                          │  └───────────────────────┘  │
+│                          │                             │
+│                          │  ┌───────────────────────┐  │
+│                          │  │     Enviar link       │  │
+│                          │  └───────────────────────┘  │
+│                          │                             │
+│                          │  Lembrou sua senha? Entrar  │
+│                          │                             │
+└──────────────────────────┴─────────────────────────────┘
+```
+
+**Tela 3: Erro de Validação (E-mail não cadastrado ou inválido)**
+```
+┌──────────────────────────┬─────────────────────────────┐
+│                          │                             │
+│  🤟 Librando             │     Esqueci minha senha     │
+│                          │                             │
+│  Recupere sua            │  Digite seu e-mail para     │
+│  conta                   │  receber o link...          │
+│  Librando.               │                             │
+│                          │  E-mail                     │
+│  Não se preocupe...      │  ┌───────────────────────┐  │
+│                          │  │ email.invalido      ❌│  │
+│                          │  └───────────────────────┘  │
+│                          │  E-mail não cadastrado.     │
+│                          │                             │
+│                          │  ┌───────────────────────┐  │
+│                          │  │     Enviar link       │  │
+│                          │  └───────────────────────┘  │
+│                          │                             │
+│                          │  Lembrou sua senha? Entrar  │
+│                          │                             │
+└──────────────────────────┴─────────────────────────────┘
+```
+
+
+
+
+**Descrição de Estados:**
+- **Estado Normal:** Campo de e-mail em branco, botão de envio habilitado.
+- **Estado Preenchido:** Validação visual do formato do e-mail com checkmark verde.
+- **Estado Erro:** Campo de e-mail destacado em vermelho acompanhado da mensagem de erro correspondente ("E-mail não cadastrado" ou "E-mail inválido").
+
+## Fluxo de Navegação
+
+O fluxo funciona da seguinte maneira:
+
+1. O usuário acessa a **Tela de Login** da plataforma e clica na opção "Esqueci minha senha".
+  
+2. O sistema direciona o usuário para a Tela de Recuperação de Senha.
+
+3. O usuário informa seu endereço de e-mail cadastrado no campo correspondente e clica no botão **ENVIAR LINK**.
+
+4. O sistema realiza as validações iniciais: verifica se o campo foi preenchido e se o formato do e-mail é válido. Caso haja erro, o usuário permanece na tela e recebe um alerta visual.
+
+5. Se as validações iniciais forem bem-sucedidas, o **frontend Vue** envia os dados para o **back-end Laravel** por meio de uma requisição `POST` para a rota de recuperação.
+
+6. O **back-end Laravel** recebe os dados e realiza as validações necessárias, verificando:
+
+  * Se o campo obrigatório foi preenchido;
+  * Se o e-mail possui formato válido;
+  * Se o e-mail está associado a uma conta existente no banco de dados MySQL.
+
+7. Caso o e-mail seja inválido ou não esteja cadastrado, o back-end retorna uma mensagem de erro como "E-mail não cadastrado". O usuário permanece na **Tela Esqueci Minha Senha** para corrigir a informação.
+
+8. Caso o e-mail seja válido e cadastrado, o sistema gera um código ou link temporário de recuperação, armazena no banco de dados com tempo de expiração e aciona o Serviço de E-mail para enviar as instruções.
+
+9. O sistema exibe uma mensagem visual de confirmação do envio das instruções para o e-mail informado.
+
+10. Caso o usuário selecione a opção "Lembrou sua senha? Entrar", ele será direcionado diretamente para a Tela de Login, sem submeter o formulário de recuperação.
+
+
+**Responsividade:**
+- **Mobile (até 980px):** Layout single-column, campos full-width
+- **Tablet (até 980px):** Layout single-column com padding maior
+- **Desktop (980px+):** Layout potencialmente two-column se apropriado
+
+
