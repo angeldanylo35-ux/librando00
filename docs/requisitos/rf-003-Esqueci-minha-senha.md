@@ -39,7 +39,6 @@ O projeto foi migrado para uma arquitetura separada entre **Back-end Laravel** e
 librando00-main/
 │
 ├── README.md
-├── Requisitos
 │
 ├── docs/
 │   ├── api/
