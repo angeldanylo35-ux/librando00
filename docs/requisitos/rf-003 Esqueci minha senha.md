@@ -408,6 +408,35 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 └──────────────────────────┴─────────────────────────────┘
 ```
 
+**Mockup - Tela 5: Erro de Validação (Senhas não coincidem)**
+```
+┌──────────────────────────┬─────────────────────────────┐
+│                          │                             │
+│  🤟 Librando             │      Redefinir senha        │
+│                          │                             │
+│  Defina sua              │  Digite sua nova senha e    │
+│  nova senha              │  confirme abaixo...         │
+│  Librando.               │                             │
+│                          │  Nova senha                 │
+│  Segurança em            │  ┌───────────────────────┐  │
+│  primeiro lugar.         │  │ senha123            ✅│  │
+│                          │  └───────────────────────┘  │
+│                          │                             │
+│                          │  Confirmar senha            │
+│                          │  ┌───────────────────────┐  │
+│                          │  │ senhaerrada         ❌│  │
+│                          │  └───────────────────────┘  │
+│                          │  As senhas não coincidem.   │
+│                          │                             │
+│                          │  ┌───────────────────────┐  │
+│                          │  │   Salvar nova senha   │  │
+│                          │  └───────────────────────┘  │
+│                          │                             │
+│                          │  Voltar para o Login        │
+│                          │                             │
+└──────────────────────────┴─────────────────────────────┘
+```
+
 **Descrição de Estados:**
 - **Estado Normal:** Campo de e-mail em branco, botão de envio habilitado.
 - **Estado Preenchido:** Validação visual do formato do e-mail com checkmark verde.
