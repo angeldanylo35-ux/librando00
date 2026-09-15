@@ -440,7 +440,9 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 **Descrição de Estados:**
 - **Estado Normal:** Campo de e-mail em branco, botão de envio habilitado.
 - **Estado Preenchido:** Validação visual do formato do e-mail com checkmark verde.
-- **Estado Erro:** Campo de e-mail destacado em vermelho acompanhado da mensagem de erro correspondente ("E-mail não cadastrado" ou "E-mail inválido").
+- **Estado Preenchido (Redefinição):** Validação visual aplicada com checkmark verde nos campos de nova senha e confirmação de senha, indicando que ambos foram preenchidos corretamente, atendem ao requisito mínimo de caracteres e são idênticos entre si antes de submeter a alteração.
+- **Estado Erro(E-mail):** Campo de e-mail destacado em vermelho acompanhado da mensagem de erro correspondente ("E-mail não cadastrado" ou "E-mail inválido").
+- **Estado Erro (Senhas):** Campo de confirmação destacado em vermelho acompanhado da mensagem "As senhas não coincidem" caso os valores informados nos campos de senha sejam divergentes.
 
 ## Fluxo de Navegação
 
