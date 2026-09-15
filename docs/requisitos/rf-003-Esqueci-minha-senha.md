@@ -144,7 +144,7 @@ librando00-main/
 * **Documentação dos requisitos:** `docs/requisitos/`
 * **RF-001 — Login:** `docs/requisitos/rf-001-login.md`
 * **RF-002 — Cadastro:** `docs/requisitos/rf-002-cadastrar.md`
-* **RF-003 — Esqueci minha senha:** `docs/requisitos/rf-003 Esqueci minha senha.md`
+* **RF-003 — Esqueci minha senha:** `docs/requisitos/rf-003-Esqueci-minha-senha.md`
 * **Documentação da API:** `docs/api/swagger.json`
 
 ### ⚙️ Back-end
