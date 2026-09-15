@@ -544,7 +544,7 @@ Contexto:
 Necessidade de processar requisições de recuperação de senha de forma segura, validando a existência do e-mail, gerando tokens criptográficos e disparando o serviço de envio de e-mails.
 
 Decisão:
-Adotar o Laravel 12 (PHP 8.2+) utilizando controladores dedicados a autenticação e recuperação de credenciais.
+Adotar o Laravel 12 (PHP 8.3+) utilizando controladores dedicados a autenticação e recuperação de credenciais.
 
 Motivo:
 O Laravel fornece recursos robustos para manipulação de strings criptografadas e integração com envio de e-mails, garantindo que o fluxo ocorra de forma isolada e segura no servidor.
@@ -599,7 +599,7 @@ Consequências:
 | Cliente HTTP | Axios | 1.x | Realização de requisições assíncronas (POST) para a API de recuperação |
 | Build Tool | Vite | 5.x | Ferramenta de build rápida e servidor de desenvolvimento para o frontend Vue |
 | Backend | Laravel | 12.x | Framework PHP para a criação da API RESTful e controle dos tokens |
-| Linguagem Backend | PHP | 8.2+ | Linguagem base para execução do framework Laravel e lógica de negócio |
+| Linguagem Backend | PHP | 8.3+ | Linguagem base para execução do framework Laravel e lógica de negócio |
 | Serviço de E-mail | Laravel Mail / SMTP | 12.x | Envio automatizado do código ou link de recuperação para o e-mail do usuário |
 | Banco de Dados | MySQL | 8.x | Armazenamento relacional dos dados de usuário e campos de controle de token |
 | Hash / Segurança | Bcrypt (Hash::make)| PHP / Laravel | Criptografia irreversível e segura para o armazenamento da nova senha |
