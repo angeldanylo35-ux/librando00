@@ -31,6 +31,137 @@ Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à 
 
 ---
 
+# 2. ESTRUTURA DE DIRETÓRIOS DO PROJETO
+
+O projeto foi migrado para uma arquitetura separada entre **Back-end Laravel** e **Front-end Vue.js**, mantendo a organização dos arquivos de acordo com as convenções do framework Laravel.
+
+```text
+librando00-main/
+│
+├── README.md
+├── Requisitos
+│
+├── docs/
+│   ├── api/
+│   │   └── swagger.json
+│   │
+│   └── requisitos/
+│       ├── rf-001-login.md
+│       ├── rf-002-cadastrar.md
+│       └── rf-003 Esqueci minha senha.md
+│
+├── backend/
+│   │
+│   ├── app/
+│   │   ├── Http/
+│   │   │   └── Controllers/
+│   │   │       ├── Controller.php
+│   │   │       └── api/
+│   │   │           └── AuthController.php
+│   │   │
+│   │   ├── Mail/
+│   │   │   ├── VerificacaoCadastro.php
+│   │   │   └── RecuperacaoSenha.php
+│   │   │
+│   │   ├── Models/
+│   │   │   ├── User.php
+│   │   │   ├── Usuario.php
+│   │   │   ├── CadastroPendente.php
+│   │   │   └── RecuperacaoSenha.php
+│   │   │
+│   │   ├── Notifications/
+│   │   └── Providers/
+│   │
+│   ├── database/
+│   │   ├── factories/
+│   │   ├── migrations/
+│   │   │   ├── 0001_01_01_000000_create_users_table.php
+│   │   │   ├── 0001_01_01_000001_create_cache_table.php
+│   │   │   ├── 0001_01_01_000002_create_jobs_table.php
+│   │   │   ├── 2026_09_06_021505_create_usuarios_table.php
+│   │   │   ├── 2026_09_06_024645_create_personal_access_tokens_table.php
+│   │   │   ├── create_cadastros_pendentes_table.php
+│   │   │   └── create_recuperacao_senhas_table.php
+│   │   │
+│   │   └── seeders/
+│   │
+│   ├── resources/
+│   │   └── views/
+│   │       └── emails/
+│   │           ├── verificacao-cadastro.blade.php
+│   │           └── recuperacao-senha.blade.php
+│   │
+│   ├── routes/
+│   │   ├── api.php
+│   │   ├── web.php
+│   │   └── console.php
+│   │
+│   ├── config/
+│   ├── bootstrap/
+│   ├── public/
+│   ├── storage/
+│   ├── tests/
+│   ├── artisan
+│   ├── composer.json
+│   └── .env
+│
+└── frontend/
+    │
+    ├── public/
+    │
+    ├── src/
+    │   │
+    │   ├── assets/
+    │   │   └── estetico.css
+    │   │
+    │   ├── components/
+    │   │
+    │   ├── paginas/
+    │   │   ├── login.vue
+    │   │   ├── cadastro.vue
+    │   │   ├── verificar-email.vue
+    │   │   ├── esqueci-senha.vue
+    │   │   └── redefinir-senha.vue
+    │   │
+    │   ├── router/
+    │   │   └── index.js
+    │   │
+    │   ├── services/
+    │   │   └── api.js
+    │   │
+    │   ├── App.vue
+    │   └── style.css
+    │
+    ├── index.html
+    ├── package.json
+    ├── package-lock.json
+    └── vite.config.js
+```
+## Localização dos Arquivos
+
+* **Documentação:** `docs/requisitos/RF-002-cadastrar.md`
+* **Back-end Laravel:** `backend/`
+* **Controllers da API:** `backend/app/Http/Controllers/api/`
+* **Autenticação:** `backend/app/Http/Controllers/api/AuthController.php`
+* **Models:** `backend/app/Models/`
+* **Migrations:** `backend/database/migrations/`
+* **Seeders:** `backend/database/seeders/`
+* **Rotas da API:** `backend/routes/api.php`
+* **Rotas web:** `backend/routes/web.php`
+* **Configurações do Laravel:** `backend/config/`
+* **Testes automatizados:** `backend/tests/`
+* **Ponto de entrada público do Laravel:** `backend/public/index.php`
+* **Interface Vue.js:** `frontend/`
+* **Páginas do front-end:** `frontend/src/paginas/`
+* **Componentes Vue:** `frontend/src/components/`
+* **Configuração das rotas Vue:** `frontend/src/router/`
+* **Comunicação com a API:** `frontend/src/services/api.js`
+* **Estilos:** `frontend/src/assets/` e `frontend/src/style.css`
+* **Guia geral:** `README.md`
+
+---
+
+
 ## 🔎 1. Identificação do Requisito
 
 | 📌 Campo | 📄 Informação |
