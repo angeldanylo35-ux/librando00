@@ -47,7 +47,7 @@ librando00-main/
 │   └── requisitos/
 │       ├── rf-001-login.md
 │       ├── rf-002-cadastrar.md
-│       └── rf-003 Esqueci minha senha.md
+│       └── rf-003-Esqueci-minha-senha.md
 │
 ├── backend/
 │   │
