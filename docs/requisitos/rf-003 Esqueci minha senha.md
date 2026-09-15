@@ -376,10 +376,10 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 │                          │  └───────────────────────┘  │
 │                          │                             │
 │                          │  ┌───────────────────────┐  │
-│                          │  │   Salvar nova senha   │  │
+│                          │  │     Alterar Senha     │  │
 │                          │  └───────────────────────┘  │
 │                          │                             │
-│                          │  Voltar para o Login        │
+│                          │   Lembrou da Senha? Entrar  │
 │                          │                             │
 └──────────────────────────┴─────────────────────────────┘
 ```
@@ -429,10 +429,10 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 │                          │  As senhas não coincidem.   │
 │                          │                             │
 │                          │  ┌───────────────────────┐  │
-│                          │  │   Salvar nova senha   │  │
+│                          │  │     Alterar Senha     │  │
 │                          │  └───────────────────────┘  │
 │                          │                             │
-│                          │  Voltar para o Login        │
+│                          │   Lembrou da Senha? Entrar  │
 │                          │                             │
 └──────────────────────────┴─────────────────────────────┘
 ```
