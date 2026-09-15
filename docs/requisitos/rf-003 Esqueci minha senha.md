@@ -466,7 +466,7 @@ O fluxo funciona da seguinte maneira:
 
 7. Caso o e-mail seja inválido ou não esteja cadastrado, o back-end retorna uma mensagem de erro como "E-mail não cadastrado". O usuário permanece na **Tela Esqueci Minha Senha** para corrigir a informação.
 
-8. Caso o e-mail seja válido e cadastrado, o sistema gera um código ou link temporário de recuperação, armazena no banco de dados com tempo de expiração e aciona o Serviço de E-mail para enviar as instruções.
+8. Caso o e-mail seja válido e cadastrado, o sistema gera um link temporário de recuperação, armazena no banco de dados com tempo de expiração e aciona o Serviço de E-mail para enviar as instruções.
 
 9. O sistema exibe uma mensagem visual de confirmação do envio das instruções para o e-mail informado.
 
