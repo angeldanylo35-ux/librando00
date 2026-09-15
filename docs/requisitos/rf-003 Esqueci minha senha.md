@@ -333,7 +333,7 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 └──────────────────────────┴─────────────────────────────┘
 ```
 
-**Tela 2: Formulário Preenchido / Validação Visual (Com E-mail Válido)**
+**Mockup - Tela 2: Formulário Preenchido / Validação Visual (Com E-mail Válido)**
 ```
 ┌──────────────────────────┬─────────────────────────────┐
 │                          │                             │
@@ -356,7 +356,7 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 └──────────────────────────┴─────────────────────────────┘
 ```
 
-**Tela 3: Redefinição de Senha (Nova Senha e Confirmação)**
+**Mockup - Tela 3: Redefinição de Senha (Nova Senha e Confirmação)**
 ```
 ┌──────────────────────────┬─────────────────────────────┐
 │                          │                             │
@@ -384,7 +384,7 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 └──────────────────────────┴─────────────────────────────┘
 ```
 
-**Tela 4: Erro de Validação (E-mail não cadastrado ou inválido)**
+**Mockup - Tela 4: Erro de Validação (E-mail não cadastrado ou inválido)**
 ```
 ┌──────────────────────────┬─────────────────────────────┐
 │                          │                             │
@@ -407,9 +407,6 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 │                          │                             │
 └──────────────────────────┴─────────────────────────────┘
 ```
-
-
-
 
 **Descrição de Estados:**
 - **Estado Normal:** Campo de e-mail em branco, botão de envio habilitado.
