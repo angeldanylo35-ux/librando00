@@ -783,90 +783,405 @@ Foram analisadas as principais vulnerabilidades aplicáveis ao sistema, tomando 
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Librando API - Recuperação de Senha",
+    "title": "Librando API",
+    "description": "API de autenticação e gerenciamento de usuários da plataforma Librando.",
     "version": "1.0.0"
   },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000/api",
+      "description": "Servidor local"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Autenticação",
+      "description": "Operações relacionadas a login, cadastro e recuperação de senha."
+    }
+  ],
   "paths": {
-    "/api/auth/forgot-password": {
+    "/login": {
       "post": {
-        "summary": "Solicitar recuperação de senha",
+        "tags": [
+          "Autenticação"
+        ],
+        "summary": "Realizar login",
+        "description": "Autentica um usuário utilizando e-mail e senha.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": ["email"],
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "example": "usuario@email.com"
-                  }
-                }
+                "$ref": "#/components/schemas/LoginRequest"
+              },
+              "example": {
+                "email": "usuario@email.com",
+                "senha": "123456"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "E-mail de recuperação enviado com sucesso"
+            "description": "Login realizado com sucesso.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sucesso": true,
+                  "mensagem": "Login efetuado com sucesso!",
+                  "nome": "João da Silva"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Dados inválidos"
+            "description": "Dados inválidos.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sucesso": false,
+                  "mensagem": "Preencha todos os campos."
+                }
+              }
+            }
           },
-          "404": {
-            "description": "E-mail não encontrado"
-          },
-          "500": {
-            "description": "Erro interno do servidor"
+          "401": {
+            "description": "E-mail ou senha incorretos.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sucesso": false,
+                  "mensagem": "E-mail ou senha inválidos."
+                }
+              }
+            }
           }
         }
       }
     },
-    "/api/auth/reset-password": {
+
+    "/cadastro": {
       "post": {
-        "summary": "Redefinir senha com token",
+        "tags": [
+          "Autenticação"
+        ],
+        "summary": "Cadastrar usuário",
+        "description": "Inicia o cadastro de um novo usuário e envia um link de confirmação para o e-mail informado.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": ["token", "email", "password", "password_confirmation"],
-                "properties": {
-                  "token": {
-                    "type": "string",
-                    "example": "123456"
-                  },
-                  "email": {
-                    "type": "string",
-                    "example": "usuario@email.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "example": "novaSenha123"
-                  },
-                  "password_confirmation": {
-                    "type": "string",
-                    "example": "novaSenha123"
-                  }
+                "$ref": "#/components/schemas/CadastroRequest"
+              },
+              "example": {
+                "nome": "João da Silva",
+                "email": "joao@email.com",
+                "nome_usuario": "joaosilva",
+                "data_nascimento": "2000-05-15",
+                "senha": "123456",
+                "confirmar_senha": "123456"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cadastro pendente criado e e-mail de confirmação enviado.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sucesso": true,
+                  "mensagem": "Um link de confirmação foi enviado para seu e-mail. O link é válido por 5 minutos."
                 }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos ou usuário já cadastrado.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sucesso": false,
+                  "mensagem": "Este e-mail já está cadastrado."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/verificar-email": {
+      "get": {
+        "tags": [
+          "Autenticação"
+        ],
+        "summary": "Verificar e-mail",
+        "description": "Confirma o cadastro do usuário através do token enviado por e-mail.",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "description": "Token recebido no link de confirmação.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "E-mail confirmado com sucesso.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sucesso": true,
+                  "mensagem": "E-mail confirmado! Cadastro realizado com sucesso.",
+                  "nome": "João da Silva"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Token inválido, ausente ou expirado.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sucesso": false,
+                  "mensagem": "O link de verificação é inválido ou expirou."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/esqueci-senha": {
+      "post": {
+        "tags": [
+          "Autenticação"
+        ],
+        "summary": "Solicitar recuperação de senha",
+        "description": "Envia um link para redefinição de senha para o e-mail cadastrado.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EsqueciSenhaRequest"
+              },
+              "example": {
+                "email": "usuario@email.com"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Senha redefinida com sucesso"
+            "description": "Link de recuperação enviado.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sucesso": true,
+                  "mensagem": "Um link para redefinir sua senha foi enviado para seu e-mail."
+                }
+              }
+            }
           },
           "400": {
-            "description": "Token inválido ou expirado"
+            "description": "E-mail inválido ou não informado.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sucesso": false,
+                  "mensagem": "Informe um e-mail válido."
+                }
+              }
+            }
           },
-          "422": {
-            "description": "As senhas não coincidem ou não atendem aos requisitos mínimos"
+          "404": {
+            "description": "Usuário não encontrado.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sucesso": false,
+                  "mensagem": "Não encontramos uma conta com esse e-mail."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/redefinir-senha": {
+      "post": {
+        "tags": [
+          "Autenticação"
+        ],
+        "summary": "Redefinir senha",
+        "description": "Altera a senha do usuário utilizando o token recebido no e-mail de recuperação.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RedefinirSenhaRequest"
+              },
+              "example": {
+                "token": "token-recebido-no-email",
+                "senha": "novaSenha123",
+                "confirmar_senha": "novaSenha123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Senha alterada com sucesso.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sucesso": true,
+                  "mensagem": "Senha alterada com sucesso!"
+                }
+              }
+            }
           },
-          "500": {
-            "description": "Erro interno do servidor"
+          "400": {
+            "description": "Dados inválidos ou token expirado.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sucesso": false,
+                  "mensagem": "O link de recuperação é inválido ou expirou."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sucesso": false,
+                  "mensagem": "Usuário não encontrado."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "senha"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "usuario@email.com"
+          },
+          "senha": {
+            "type": "string",
+            "format": "password",
+            "example": "123456"
+          }
+        }
+      },
+
+      "CadastroRequest": {
+        "type": "object",
+        "required": [
+          "nome",
+          "email",
+          "data_nascimento",
+          "nome_usuario",
+          "senha",
+          "confirmar_senha"
+        ],
+        "properties": {
+          "nome": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "João da Silva"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 150,
+            "example": "joao@email.com"
+          },
+          "data_nascimento": {
+            "type": "string",
+            "format": "date",
+            "example": "2000-05-15"
+          },
+          "nome_usuario": {
+            "type": "string",
+            "maxLength": 50,
+            "example": "joaosilva"
+          },
+          "senha": {
+            "type": "string",
+            "format": "password",
+            "minLength": 6,
+            "example": "123456"
+          },
+          "confirmar_senha": {
+            "type": "string",
+            "format": "password",
+            "minLength": 6,
+            "example": "123456"
+          }
+        }
+      },
+
+      "EsqueciSenhaRequest": {
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "usuario@email.com"
+          }
+        }
+      },
+
+      "RedefinirSenhaRequest": {
+        "type": "object",
+        "required": [
+          "token",
+          "senha",
+          "confirmar_senha"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "token-recebido-no-email"
+          },
+          "senha": {
+            "type": "string",
+            "format": "password",
+            "minLength": 6,
+            "example": "novaSenha123"
+          },
+          "confirmar_senha": {
+            "type": "string",
+            "format": "password",
+            "minLength": 6,
+            "example": "novaSenha123"
           }
         }
       }
