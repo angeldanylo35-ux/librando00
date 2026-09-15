@@ -18,7 +18,7 @@
 * **NOME_DO_PROJETO:** Librando
 
 * **DESCRICAO_BREVE:**
-  Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à comunidade surda. Nesta etapa do projeto, foi desenvolvida a tela de login com autenticação de usuários utilizando HTML, CSS, PHP e MySQL.
+Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à comunidade surda. Nesta etapa do projeto, foram desenvolvidas as telas de recuperação e redefinição de senha, permitindo que os usuários solicitem a recuperação de acesso e definam uma nova senha de forma segura. Foram utilizadas as tecnologias Laravel, Vue.js, Vite, Axios, PHP e MySQL.
 
 ## 1.3 Localização dos Artefatos(Alterar ao longo do projeto)
 
