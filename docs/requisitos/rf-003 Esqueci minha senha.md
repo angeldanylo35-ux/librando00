@@ -470,7 +470,19 @@ O fluxo funciona da seguinte maneira:
 
 9. O sistema exibe uma mensagem visual de confirmação do envio das instruções para o e-mail informado.
 
-10. Caso o usuário selecione a opção "Lembrou sua senha? Entrar", ele será direcionado diretamente para a Tela de Login, sem submeter o formulário de recuperação.
+10. Na Tela de Redefinição de Senha, o usuário preenche os seguintes dados:
+* Nova senha;
+* Confirmação de senha.
+
+11. O usuário seleciona o botão SALVAR NOVA SENHA.
+
+12. O sistema valida se os campos foram preenchidos corretamente, se atendem ao tamanho mínimo e se a nova senha coincide com a confirmação. Caso haja divergência ou campos inválidos, o usuário recebe um alerta visual e permanece na tela.
+
+13. Estando os dados corretos, o back-end aplica a criptografia via Bcrypt `Hash::make()` e atualiza o registro do usuário no banco de dados MySQL, invalidando o token utilizado.
+
+14. O sistema exibe uma mensagem de sucesso e redireciona o usuário para a Tela de Login.
+
+15. Caso o usuário selecione a opção "Lembrou sua senha? Entrar" ou "Voltar para o Login" em qualquer etapa anterior, ele será direcionado diretamente para a Tela de Login, sem submeter os formulários.
 
 
 **Responsividade:**
