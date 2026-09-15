@@ -306,7 +306,7 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 | **RNF-08** | 💬 Usabilidade | O sistema deve apresentar feedback visual durante as etapas de validação, envio do código, erros e conclusão da recuperação | Feedback visual nas principais ações | Informar ao usuário o estado atual da operação |
 | **RNF-09** | 👁️ Acessibilidade | Textos, campos e botões devem possuir contraste visual adequado | Contraste adequado entre elementos | Facilitar a leitura e identificação dos elementos da interface |
 
-
+```
 
 ##🎨 4. PROTÓTIPO FUNCIONAL (HTML + CSS + PHP + MySQL + RENDER)
 
