@@ -308,7 +308,7 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 
 
 
-###🎨 4. PROTÓTIPO FUNCIONAL (HTML + CSS + PHP + MySQL + RENDER)
+##🎨 4. PROTÓTIPO FUNCIONAL (HTML + CSS + PHP + MySQL + RENDER)
 
 **Mockup - Tela 1: Solicitação de E-mail (Estado Inicial)**
 ```
