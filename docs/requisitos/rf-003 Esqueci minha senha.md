@@ -356,7 +356,35 @@ Caso ocorra algum problema, o sistema deverá apresentar uma mensagem de erro co
 └──────────────────────────┴─────────────────────────────┘
 ```
 
-**Tela 3: Erro de Validação (E-mail não cadastrado ou inválido)**
+**Tela 3: Redefinição de Senha (Nova Senha e Confirmação)**
+```
+┌──────────────────────────┬─────────────────────────────┐
+│                          │                             │
+│  🤟 Librando             │      Redefinir senha        │
+│                          │                             │
+│  Defina sua              │  Digite sua nova senha e    │
+│  nova senha              │  confirme abaixo...         │
+│  Librando.               │                             │
+│                          │  Nova senha                 │
+│  Segurança em            │  ┌───────────────────────┐  │
+│  primeiro lugar.         │  │ ••••••••••••        ✅│  │
+│                          │  └───────────────────────┘  │
+│                          │                             │
+│                          │  Confirmar senha            │
+│                          │  ┌───────────────────────┐  │
+│                          │  │ ••••••••••••        ✅│  │
+│                          │  └───────────────────────┘  │
+│                          │                             │
+│                          │  ┌───────────────────────┐  │
+│                          │  │   Salvar nova senha   │  │
+│                          │  └───────────────────────┘  │
+│                          │                             │
+│                          │  Voltar para o Login        │
+│                          │                             │
+└──────────────────────────┴─────────────────────────────┘
+```
+
+**Tela 4: Erro de Validação (E-mail não cadastrado ou inválido)**
 ```
 ┌──────────────────────────┬─────────────────────────────┐
 │                          │                             │
