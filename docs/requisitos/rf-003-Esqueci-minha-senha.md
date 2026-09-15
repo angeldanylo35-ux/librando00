@@ -1,4 +1,4 @@
-# 📝 RF-003 — Esqueci minha senha
+# 📝 RF-003: Recuperação e Redefinição de Senha
 
 # 1. METADADOS DO PROJETO E DA EQUIPE
 
@@ -30,8 +30,6 @@ Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à 
 * **LINK_DEMONSTRAÇÃO:** Aplicação executada localmente em `[(http://localhost:5173/esqueci-senha)]`
 
 ---
-
-# RF-003: Recuperação e Redefinição de Senha
 
 ## 🔎 1. Identificação do Requisito
 
