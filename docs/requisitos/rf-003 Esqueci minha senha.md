@@ -1,4 +1,4 @@
-# 📝 RF-003 — Tela de Cadastro de Usuários
+# 📝 RF-003 — Esqueci minha senha
 
 # 1. METADADOS DO PROJETO E DA EQUIPE
 
