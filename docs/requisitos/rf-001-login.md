@@ -133,17 +133,50 @@ librando00-main/
     └── vite.config.js
 ```
 
-## Localização dos Arquivos
+### 📚 Documentação
 
-* **Documentação:** `docs/requisitos/RF-001-login.md`
-* **Página de login:** `src/rf-001-login/index.html`
-* **Estilos CSS:** `src/rf-001-login/index.html`
-* **Processamento do login:** `src/rf-001-login/login.php`
-* **Conexão com o banco:** `src/rf-001-login/conexao.php`
-* **Script de criação do banco:** `database/ddl/rf-001-usuarios-ddl.sql`
-* **Dados de teste:** `database/seeds/usuarios-seeds.sql`
-* **Guia geral:** `README.md`
+* **Documentação geral:** `README.md`
+* **Documentação dos requisitos:** `docs/requisitos/`
+* **RF-001 — Login:** `docs/requisitos/rf-001-login.md`
+* **RF-002 — Cadastro:** `docs/requisitos/rf-002-cadastrar.md`
+* **RF-003 — Esqueci minha senha:** `docs/requisitos/rf-003-Esqueci-minha-senha.md`
+* **Documentação da API:** `docs/api/swagger.json`
 
+### ⚙️ Back-end
+
+* **Back-end Laravel:** `backend/`
+* **Controllers da API:** `backend/app/Http/Controllers/api/`
+* **Autenticação:** `backend/app/Http/Controllers/api/AuthController.php`
+* **Models:** `backend/app/Models/`
+* **Model de usuário:** `backend/app/Models/Usuario.php`
+* **Model de cadastro pendente:** `backend/app/Models/CadastroPendente.php`
+* **Model de recuperação de senha:** `backend/app/Models/RecuperacaoSenha.php`
+* **E-mails:** `backend/app/Mail/`
+* **E-mail de confirmação:** `backend/app/Mail/VerificacaoCadastro.php`
+* **E-mail de recuperação:** `backend/app/Mail/RecuperacaoSenha.php`
+* **Migrations:** `backend/database/migrations/`
+* **Seeders:** `backend/database/seeders/`
+* **Rotas da API:** `backend/routes/api.php`
+* **Rotas web:** `backend/routes/web.php`
+* **Configurações do Laravel:** `backend/config/`
+* **Testes automatizados:** `backend/tests/`
+* **Ponto de entrada público do Laravel:** `backend/public/index.php`
+* **Templates dos e-mails:** `backend/resources/views/emails/`
+
+### 🎨 Front-end
+
+* **Interface Vue.js:** `frontend/`
+* **Páginas do front-end:** `frontend/src/paginas/`
+* **Tela de login:** `frontend/src/paginas/login.vue`
+* **Tela de cadastro:** `frontend/src/paginas/cadastro.vue`
+* **Verificação de e-mail:** `frontend/src/paginas/verificar-email.vue`
+* **Esqueci minha senha:** `frontend/src/paginas/esqueci-senha.vue`
+* **Redefinição de senha:** `frontend/src/paginas/redefinir-senha.vue`
+* **Componentes Vue:** `frontend/src/components/`
+* **Configuração das rotas Vue:** `frontend/src/router/index.js`
+* **Comunicação com a API:** `frontend/src/services/api.js`
+* **Estilos:** `frontend/src/assets/` e `frontend/src/style.css`
+* **Configuração do Vite:** `frontend/vite.config.js`
 ---
 
 # 3. DETALHAMENTO TÉCNICO DE UM REQUISITO FUNCIONAL
