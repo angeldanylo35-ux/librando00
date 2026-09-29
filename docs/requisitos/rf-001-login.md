@@ -20,44 +20,117 @@
 
 ## 1.3 Localização dos Artefatos
 
-* **LINK_REPOSITORIO_GITHUB:** `https://github.com/[seu-usuario]/[seu-repositorio]`
+* **LINK_REPOSITORIO_GITHUB:** `https://(https://github.com/angeldanylo35-ux/librando00)`
 * **BRANCH_PRINCIPAL:** `main`
 * **LINK_APLICACAO_DEPLOY:** Aplicação executada localmente por meio do XAMPP.
 * **LINK_BANCO_DADOS:** Banco de dados MySQL local.
 * **LINK_API_SWAGGER:** Não se aplica nesta etapa do projeto.
-* **LINK_DEMONSTRAÇÃO:** Aplicação executada localmente em `(https://librando.onrender.com)`
+* **LINK_DEMONSTRAÇÃO:** Aplicação executada localmente em `(http://localhost:5173/esqueci-senha)`
 
 ---
 
 # 2. ESTRUTURA DE DIRETÓRIOS DO PROJETO
 
 ```text
-librando/
-│
-├── docs/
-│   └── requisitos/
-│       └── RF-001-login.md
-│
-├── src/
-│   └── rf-001-login/
-│       ├── index.html
-│       ├── login.php
-│       ├── conexao.php
-│       └── README.md
-│
-├── database/
-│   ├── ddl/
-│   │   └── rf-001-usuarios-ddl.sql
-│   │
-│   └── seeds/
-│       └── usuarios-seeds.sql
-│
-├── .github/
-│   └── workflows/
+librando00-main/
 │
 ├── README.md
 │
-└── .gitignore
+├── docs/
+│   ├── api/
+│   │   └── swagger.json
+│   │
+│   └── requisitos/
+│       ├── rf-001-login.md
+│       ├── rf-002-cadastrar.md
+│       └── rf-003-Esqueci-minha-senha.md
+│
+├── backend/
+│   │
+│   ├── app/
+│   │   ├── Http/
+│   │   │   └── Controllers/
+│   │   │       ├── Controller.php
+│   │   │       └── api/
+│   │   │           └── AuthController.php
+│   │   │
+│   │   ├── Mail/
+│   │   │   ├── VerificacaoCadastro.php
+│   │   │   └── RecuperacaoSenha.php
+│   │   │
+│   │   ├── Models/
+│   │   │   ├── User.php
+│   │   │   ├── Usuario.php
+│   │   │   ├── CadastroPendente.php
+│   │   │   └── RecuperacaoSenha.php
+│   │   │
+│   │   ├── Notifications/
+│   │   └── Providers/
+│   │
+│   ├── database/
+│   │   ├── factories/
+│   │   ├── migrations/
+│   │   │   ├── 0001_01_01_000000_create_users_table.php
+│   │   │   ├── 0001_01_01_000001_create_cache_table.php
+│   │   │   ├── 0001_01_01_000002_create_jobs_table.php
+│   │   │   ├── 2026_09_06_021505_create_usuarios_table.php
+│   │   │   ├── 2026_09_06_024645_create_personal_access_tokens_table.php
+│   │   │   ├── create_cadastros_pendentes_table.php
+│   │   │   └── create_recuperacao_senhas_table.php
+│   │   │
+│   │   └── seeders/
+│   │
+│   ├── resources/
+│   │   └── views/
+│   │       └── emails/
+│   │           ├── verificacao-cadastro.blade.php
+│   │           └── recuperacao-senha.blade.php
+│   │
+│   ├── routes/
+│   │   ├── api.php
+│   │   ├── web.php
+│   │   └── console.php
+│   │
+│   ├── config/
+│   ├── bootstrap/
+│   ├── public/
+│   ├── storage/
+│   ├── tests/
+│   ├── artisan
+│   ├── composer.json
+│   └── .env
+│
+└── frontend/
+    │
+    ├── public/
+    │
+    ├── src/
+    │   │
+    │   ├── assets/
+    │   │   └── estetico.css
+    │   │
+    │   ├── components/
+    │   │
+    │   ├── paginas/
+    │   │   ├── login.vue
+    │   │   ├── cadastro.vue
+    │   │   ├── verificar-email.vue
+    │   │   ├── esqueci-senha.vue
+    │   │   └── redefinir-senha.vue
+    │   │
+    │   ├── router/
+    │   │   └── index.js
+    │   │
+    │   ├── services/
+    │   │   └── api.js
+    │   │
+    │   ├── App.vue
+    │   └── style.css
+    │
+    ├── index.html
+    ├── package.json
+    ├── package-lock.json
+    └── vite.config.js
 ```
 
 ## Localização dos Arquivos
