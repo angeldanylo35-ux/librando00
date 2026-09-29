@@ -261,7 +261,7 @@ Após o cadastro, o usuário recebe uma confirmação visual e é direcionado pa
 | **UPDATE** | ❌ | Não pode alterar contas de outros usuários |
 | **DELETE** | ❌ | Não pode excluir contas de outros usuários |
 
-## 3. ⚙️ Sistema
+## 2. ⚙️ Sistema
 
 **🎭 Tipo:** Ator Automático
 
@@ -306,7 +306,6 @@ Permitir que um usuário não cadastrado crie uma nova conta na plataforma, desd
 ### 👥 Atores
 
 - 👤 **Usuário Não Cadastrado** — inicia e realiza o cadastro.
-- 👨‍💼 **Administrador** — possui responsabilidades administrativas relacionadas aos usuários.
 - ⚙️ **Sistema** — realiza automaticamente as validações e o processamento do cadastro.
 
 ---
