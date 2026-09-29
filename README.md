@@ -1,3 +1,20 @@
+### 🖐️ Librando
+
+Projeto acadêmico de uma rede social voltada para **pessoas surdas**, com a proposta de facilitar a comunicação e interação entre usuários.
+
+**Tecnologias:** Laravel, Vue.js, JavaScript, MySQL e Git.
+
+**Principais funcionalidades:**
+
+* Cadastro de usuários
+* Login e autenticação
+* Recuperação de senha
+* Validação de dados
+* Integração entre Front-end e Back-end
+* API para comunicação entre as partes do sistema
+
+---
+
 # Como Rodar o Librando
 
 ## 1. Acessar a pasta do Backend
