@@ -655,41 +655,124 @@ O fluxo funciona da seguinte maneira:
 └──────────────────────────────────────────────┘
 ```
 
-ADR-001 — Escolha do banco de dados
+# Registros de Decisão de Arquitetura (ADR) — RF001 Login
 
-Status: Aceito
+---
 
-Contexto:
-O sistema precisa de um banco de dados para armazenar
-os usuários e validar o login.
+## ADR-001 — Escolha do Banco de Dados
 
-Decisão:
-Será utilizado SQLite.
+* **Status:** Aceito
+* **Data:** 2026-09-29
 
-Motivo:
-O projeto possui pequeno volume de dados e o SQLite
-é simples de configurar e não exige um servidor de banco
-de dados separado.
+### Contexto
+O sistema necessita de um mecanismo de persistência para armazenar os dados cadastrais dos usuários e consultar suas credenciais durante o processo de validação do login.
 
-Consequências:
-+ Fácil configuração
-+ Baixo custo
-+ Simples para desenvolvimento
-- Menos adequado para grandes volumes de usuários
+### Decisão
+Utilizar o **SQLite** como gerenciador de banco de dados relacional da aplicação.
 
-ADR-002 — Escolha do back-end
+### Motivo
+O projeto possui uma estimativa inicial de baixo volume de dados e tráfego moderado. O SQLite não requer a instalação ou manutenção de um servidor de banco de dados dedicado, reduzindo a complexidade do ambiente.
 
-Contexto:
-Precisamos implementar a autenticação dos usuários.
+### Consequências
+* **Positivas:**
+  * **Simplicidade de configuração:** Armazenamento em arquivo único local, facilitando o ambiente de desenvolvimento e testes.
+  * **Baixo custo de infraestrutura:** Elimina a necessidade de provisionar e pagar por um servidor separado.
+  * **Portabilidade:** Facilidade para realizar backups e migrações do banco de dados.
+* **Negativas:**
+  * **Escalabilidade limitada:** Menos adequado para cenários com alto volume de gravação concorrente ou grande quantidade de usuários simultâneos.
 
-Decisão:
-Utilizar PHP no back-end.
+---
 
-Motivo:
-PHP é compatível com a hospedagem escolhida e atende
-às necessidades do projeto.
+## ADR-002 — Escolha da Tecnologia Back-end
 
-Status: Aceito
+* **Status:** Aceito
+* **Data:** 2026-09-29
+
+### Contexto
+Precisamos definir a linguagem e tecnologia que processará a regra de negócio do servidor, incluindo a autenticação de usuários, validação de segurança e integração com a base de dados.
+
+### Decisão
+Utilizar a linguagem **PHP** no desenvolvimento do back-end.
+
+### Motivo
+O PHP oferece suporte nativo na hospedagem já selecionada para o projeto, além de atender integralmente aos requisitos técnicos de autenticação e manipulação do banco de dados com curva de aprendizagem reduzida.
+
+### Consequências
+* **Positivas:**
+  * **Compatibilidade imediata:** Integração direta e sem atritos com o ambiente de hospedagem definido.
+  * **Produtividade:** Desenvolvimento ágil para fluxos de autenticação e CRUDs.
+  * **Ecossistema maduro:** Vasta disponibilidade de bibliotecas e documentação.
+* **Negativas:**
+  * **Gargalos de concorrência:** Pode requerer arquiteturas específicas caso o volume de requisições em tempo real cresça significativamente no futuro.
+
+---
+
+## ADR-003 — Gerenciamento de Sessões do Usuário
+
+* **Status:** Aceito
+* **Data:** 2026-09-29
+
+### Contexto
+Após o login bem-sucedido, o sistema precisa manter o estado de autenticação do usuário para permitir o acesso a páginas e recursos restritos.
+
+### Decisão
+Utilizar **Sessões Nativas do PHP** (`$_SESSION`) com *cookies* de sessão protegidos com as flags `HttpOnly` e `SameSite=Lax`.
+
+### Motivo
+Como o back-end em PHP e o banco SQLite estão no mesmo ambiente e a aplicação é estruturada de forma tradicional (renderizada no servidor), as sessões nativas são simples e de alta performance para esse cenário.
+
+### Consequências
+* **Positivas:**
+  * **Simplicidade de implementação:** Não requer bibliotecas externas ou tokens complexos.
+  * **Segurança:** As *flags* `HttpOnly` e `SameSite` impedem que o *cookie* seja acessado via scripts de terceiros (XSS).
+* **Negativas:**
+  * **Dificuldade de escalabilidade horizontal:** Sessões em arquivo local impedem que o sistema rode em múltiplos servidores sem um armazenador central de sessões (ex.: Redis).
+
+---
+
+## ADR-004 — Algoritmo de Hashing para Senhas
+
+* **Status:** Aceito
+* **Data:** 2026-09-29
+
+### Contexto
+Para atender aos requisitos de segurança do `RF001-Login`, as senhas dos usuários não podem ser armazenadas em texto puro no banco de dados SQLite.
+
+### Decisão
+Adotar a função nativa do PHP `password_hash()` utilizando o algoritmo **BCRYPT**.
+
+### Motivo
+O BCRYPT inclui *salt* automático e fator de custo reconfigurável, sendo o padrão de segurança recomendado para a linguagem PHP sempre que se trata de credenciais de usuários.
+
+### Consequências
+* **Positivas:**
+  * **Proteção contra vazamentos:** Isola as senhas contra ataques de dicionário e *rainbow tables*.
+  * **Manutenção fácil:** Função nativa e mantida pelo próprio PHP.
+* **Negativas:**
+  * **Uso de processamento:** Requer mais CPU do que algoritmos simples como MD5 ou SHA1 (o que é intencional por segurança).
+
+---
+
+## ADR-005 — Estratégia de Validação e Sanitização de Dados
+
+* **Status:** Aceito
+* **Data:** 2026-09-29
+
+### Contexto
+Os formulários de cadastro e login podem receber dados maliciosos ou mal formatados, resultando em falhas de segurança como SQL Injection ou XSS.
+
+### Decisão
+Utilizar **PDO (PHP Data Objects)** com *Prepared Statements* para qualquer consulta ao SQLite, além de sanitização com `filter_input()` do PHP para as entradas do usuário.
+
+### Motivo
+O uso de parâmetros preparados elimina o risco de injeção de SQL no banco de dados e padroniza a captura de entradas na camada back-end.
+
+### Consequências
+* **Positivas:**
+  * **Segurança elevada:** Previne contaminações e injeções maliciosas no banco de dados SQLite.
+  * **Código limpo:** Evita a necessidade de montar strings SQL concatenando variáveis manualmente.
+* **Negativas:**
+  * **Exigência de disciplina:** Toda nova consulta ao banco deve obrigatoriamente seguir o padrão de *Prepared Statements*.
 
 ### Tecnologias Escolhidas
 
