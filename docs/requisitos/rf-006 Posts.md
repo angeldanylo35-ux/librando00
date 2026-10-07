@@ -17,13 +17,13 @@
 - **LINK_BANCO_DADOS:** [Supabase, Firebase, MongoDB Atlas, etc.] (com acesso de leitura para professor)
 - **LINK_DEMONSTRAÇÃO:** [URL funcional da aplicação em produção] Comentário
 
-1.3 Escopo Fixo
+### 1.3 Escopo Fixo
 - REQUISITOS_FUNCIONAIS_TOTAIS: 10 Requisitos Funcionais (N = 10)
 - VALOR_TOTAL_DISCIPLINA: 100%
 - VALOR_POR_REQUISITO: 10% (100% ÷ 10)
 - CADA REQUISITO TEM UM DOCUMENTO ÚNICO
 
-1.4 Composição da Equipe
+### 1.4 Composição da Equipe
 |  ID | Nome Completo                 | Papel Primário          | Papel Secundário | E-mail / Contato                                                                                                                                    |
 | :-: | :---------------------------- | :---------------------- | :--------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
 |  1  | [André Mendes]                | Scrum Master            | Fullstack        | [[andre53774636@edu.df.senac.br](mailto:andre53774636@edu.df.senac.br)]                                                                             |
