@@ -101,7 +101,7 @@ Processar e controlar automaticamente o fluxo de criação e publicação das po
 | **UPDATE** | ✅ | Atualizar informações relacionadas ao processamento da publicação quando necessário. |
 | **DELETE** | ✅ | Cancelar ou remover registros quando necessário para o funcionamento do sistema. |
 
-# 🔄 3. ESPECIFICAÇÃO DE CASOS DE USO + REQUISITOS NÃO-FUNCIONAIS (15%) ⭐ PESO REDUZIDO DE 18% PARA 15%
+# 🔄 3. ESPECIFICAÇÃO DE CASOS DE USO + REQUISITOS NÃO-FUNCIONAIS 
 
 ### 🎯 Objetivo
 
