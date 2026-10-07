@@ -3,7 +3,9 @@
 ## 🎯 1. IDENTIFICAÇÃO DO REQUISITO&#x20;
 
 **ID:** RF-006
+
 **Título:** Criação e Publicação de Postagens
+
 **Tipo:** Requisito Funcional
 **Prioridade:** ALTA
 **Complexidade:** MÉDIA/ALTA (estimado 8 story points)
