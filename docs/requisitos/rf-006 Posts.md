@@ -2,11 +2,8 @@
 
 1. METADADOS DO PROJETO E DA EQUIPE
 1.1 Identificação
-- NOME_DO_PROJETO: [Nome do Sistema - máx 50 caracteres]
-- Exemplo: Grand Plaza Hotel Management System
-- DESCRICAO_BREVE: [1-2 linhas sobre o que o sistema faz]
-- Exemplo: Sistema web para gerenciamento completo de hóspedes, reservas,
-check-in/check-out e faturamento de hotel.
+- NOME_DO_PROJETO: Librando a rede social para surdos
+- DESCRICAO_BREVE: 
 
 1.2 Localização dos Artefatos
 - LINK_REPOSITORIO_GITHUB: https://github.com/[seu-usuario]/[seu-repo]
