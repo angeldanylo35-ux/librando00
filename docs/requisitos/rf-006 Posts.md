@@ -1,7 +1,5 @@
 # 📝 RF-006: CRIAÇÃO E PUBLICAÇÃO DE POSTAGENS
 
-# 📝 RF-006: CRIAÇÃO E PUBLICAÇÃO DE POSTAGENS
-
 ---
 
 ## 1. METADADOS DO PROJETO E DA EQUIPE
@@ -25,7 +23,15 @@
 - VALOR_POR_REQUISITO: 10% (100% ÷ 10)
 - CADA REQUISITO TEM UM DOCUMENTO ÚNICO
 
-
+1.4 Composição da Equipe
+|  ID | Nome Completo                 | Papel Primário          | Papel Secundário | E-mail / Contato                                                                                                                                    |
+| :-: | :---------------------------- | :---------------------- | :--------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
+|  1  | [André Mendes]                | Scrum Master            | Fullstack        | [[andre53774636@edu.df.senac.br](mailto:andre53774636@edu.df.senac.br)]                                                                             |
+|  2  | [Eduardo Amorim]                     | Desenvolvedor Front-End | —                | [[eduardo59381426@edu.df.senac.br](mailto:eduardo59381426@edu.df.senac.br)]                                                                         |
+|  3  | [Gabriel Souza / Vitor Silva] | Desenvolvedor Back-End  | —                | [[gabriel49414966@edu.df.senac.br](mailto:gabriel49414966@edu.df.senac.br) / [vitor59422706@edu.df.senac.br](mailto:vitor59422706@edu.df.senac.br)] |
+|  4  | [Henrique Alves]              | DBA / Banco de Dados    | —                | [[henrique51782196@edu.df.senac.br](mailto:henrique51782196@edu.df.senac.br)]                                                                       |
+|  5  | [Angel Pacheco]               | QA / SecDevOps          | —                | [[angel59381406@edu.df.senac.br](mailto:angel59381406@edu.df.senac.br)]                                                                             |
+|  6  | [Angel Pacheco]               | Fullstack (opcional)    | —                | [[angel59381406@edu.df.senac.br](mailto:angel59381406@edu.df.senac.br)]                                                                             |
 ---
 
 ## 🎯 1. IDENTIFICAÇÃO DO REQUISITO 
