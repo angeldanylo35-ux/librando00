@@ -7,10 +7,15 @@
 **Título:** Criação e Publicação de Postagens
 
 **Tipo:** Requisito Funcional
+
 **Prioridade:** ALTA
+
 **Complexidade:** MÉDIA/ALTA (estimado 8 story points)
+
 **Status:** EM DESENVOLVIMENTO
+
 **Data de Criação:** 07/10/2026
+
 **Última Atualização:** 07/10/2026
 
 ### Breve Descrição
