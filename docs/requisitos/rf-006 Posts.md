@@ -10,14 +10,16 @@ Identificar claramente o requisito responsável pela criação e publicação de
 
 ### 📋 Identificação do Requisito
 
-- 🆔 **ID:** RF-006
-- 📝 **Título:** Criação e Publicação de Postagens
-- ⚙️ **Tipo:** Requisito Funcional
-- 🚨 **Prioridade:** ALTA
-- 📊 **Complexidade:** MÉDIA/ALTA (estimado 8 Story Points)
-- 🔄 **Status:** EM DESENVOLVIMENTO
-- 📅 **Data de Criação:** 07/10/2026
-- 🔄 **Última Atualização:** 07/10/2026
+| 🏷️ Informação | 📄 Descrição |
+|---|---|
+| 🆔 **ID** | RF-006 |
+| 📝 **Título** | Criação e Publicação de Postagens |
+| ⚙️ **Tipo** | Requisito Funcional |
+| 🚨 **Prioridade** | ALTA |
+| 📊 **Complexidade** | MÉDIA/ALTA (estimado 8 Story Points) |
+| 🔄 **Status** | EM DESENVOLVIMENTO |
+| 📅 **Data de Criação** | 07/10/2026 |
+| 🔄 **Última Atualização** | 07/10/2026 |
 
 ### 📌 Breve Descrição
 
