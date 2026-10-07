@@ -1,7 +1,5 @@
 # RF-006: CRIAÇÃO E PUBLICAÇÃO DE POSTAGENS
 
-> ⚠ **LEMBRETE:** Este documento contempla **somente um requisito funcional**. Para múltiplos requisitos, devem ser criados documentos separados.
-
 ---
 
 ## 🎯 1. IDENTIFICAÇÃO DO REQUISITO (2%) ⭐ PESO: 2%
@@ -9,17 +7,6 @@
 ### Objetivo
 
 Identificar claramente o requisito responsável pela criação e publicação de postagens na plataforma Librando, apresentando seu tipo, prioridade, complexidade e situação atual.
-
-### O que avaliar
-
-- ID presente e corretamente identificado como RF-006.
-- Título claro e conciso.
-- Tipo definido como Requisito Funcional.
-- Prioridade definida e justificada.
-- Complexidade estimada em Story Points.
-- Status do requisito informado.
-- Datas de criação e atualização informadas.
-- Breve descrição clara sobre a finalidade do requisito.
 
 ### Identificação do Requisito
 
@@ -40,17 +27,6 @@ A funcionalidade deve priorizar a comunicação visual e proporcionar uma experi
 
 O usuário poderá criar uma publicação, selecionar o tipo de conteúdo, visualizar uma prévia, publicar ou cancelar a operação.
 
-### CRITÉRIOS DE ACEITE PARA 2/2:
-
-- ID identificado corretamente como RF-006.
-- Título descritivo e relacionado à funcionalidade.
-- Tipo identificado como Requisito Funcional.
-- Prioridade definida e justificada.
-- Complexidade estimada em Story Points.
-- Status informado.
-- Datas de criação e atualização informadas.
-- Breve descrição apresenta claramente a finalidade do requisito.
-
 ---
 
 ## 📋 2. DESCRIÇÃO E ATORES (6%) ⭐ PESO REDUZIDO DE 10% PARA 6%
@@ -58,16 +34,6 @@ O usuário poderá criar uma publicação, selecionar o tipo de conteúdo, visua
 ### Objetivo
 
 Descrever claramente o requisito de criação e publicação de postagens, apresentando seu objetivo dentro da plataforma Librando, seus benefícios e todos os atores envolvidos na execução da funcionalidade.
-
-### O que avaliar
-
-- Descrição detalhada do requisito.
-- Objetivo de negócio claramente definido.
-- Apresentação de pelo menos 3 benefícios.
-- Todos os atores envolvidos identificados.
-- Papel de cada ator definido.
-- Responsabilidade de cada ator definida.
-- Permissões CRUD mapeadas para cada ator.
 
 ### Descrição Detalhada
 
@@ -110,24 +76,7 @@ Criar o conteúdo, selecionar o formato da publicação, inserir as informaçõe
 
 ---
 
-#### 2. ADMINISTRADOR SURDO — Ator Secundário
-
-**Papel:**  
-Acompanhar e realizar ações de moderação sobre os conteúdos publicados na plataforma.
-
-**Responsabilidade:**  
-Visualizar publicações e realizar ações administrativas quando uma publicação estiver em desacordo com as regras da plataforma.
-
-**Permissões CRUD:**
-
-- **CREATE:** Não contemplado como responsabilidade principal deste requisito.
-- **READ:** Visualizar publicações para fins de moderação.
-- **UPDATE:** Realizar alterações administrativas quando aplicável à moderação.
-- **DELETE:** Remover publicações que violem as regras da plataforma, conforme suas permissões.
-
----
-
-#### 3. SISTEMA — Ator Automático
+#### 2. SISTEMA — Ator Automático
 
 **Papel:**  
 Processar e controlar automaticamente o fluxo de criação e publicação das postagens.
@@ -147,16 +96,3 @@ Processar e controlar automaticamente o fluxo de criação e publicação das po
 - **READ:** Consultar os dados necessários para validação e publicação.
 - **UPDATE:** Atualizar informações relacionadas ao processamento da publicação quando necessário.
 - **DELETE:** Cancelar ou remover registros quando necessário para o funcionamento do sistema.
-
-### CRITÉRIOS DE ACEITE PARA 10/10:
-
-- Descrição detalhada apresenta claramente a finalidade do requisito.
-- O objetivo de negócio está claramente definido.
-- São apresentados pelo menos 3 benefícios relacionados ao requisito.
-- Todos os atores envolvidos estão identificados.
-- O papel de cada ator está claramente definido.
-- A responsabilidade de cada ator está especificada.
-- As permissões CRUD estão mapeadas.
-- Existe um ator principal claramente identificado.
-- Existem atores secundários e/ou automáticos identificados.
-- A descrição está relacionada ao contexto da plataforma Librando.
