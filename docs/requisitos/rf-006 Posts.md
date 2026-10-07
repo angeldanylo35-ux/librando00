@@ -1,5 +1,23 @@
 # 📝 RF-006: CRIAÇÃO E PUBLICAÇÃO DE POSTAGENS
 
+1. METADADOS DO PROJETO E DA EQUIPE
+1.1 Identificação
+- NOME_DO_PROJETO: [Nome do Sistema - máx 50 caracteres]
+- Exemplo: Grand Plaza Hotel Management System
+- DESCRICAO_BREVE: [1-2 linhas sobre o que o sistema faz]
+- Exemplo: Sistema web para gerenciamento completo de hóspedes, reservas,
+check-in/check-out e faturamento de hotel.
+
+1.2 Localização dos Artefatos
+- LINK_REPOSITORIO_GITHUB: https://github.com/[seu-usuario]/[seu-repo]
+- BRANCH_PRINCIPAL: main ou develop
+- LINK_APLICACAO_DEPLOY: https://[seu-projeto].github.io (GitHub Pages) ou Vercel,
+Netlify, etc.
+- LINK_BANCO_DADOS: [Supabase, Firebase, MongoDB Atlas, etc.] (com acesso de
+leitura para professor)
+- LINK_DEMONSTRAÇÃO: [URL funcional da aplicação em produção]
+Comentário
+
 ---
 
 ## 🎯 1. IDENTIFICAÇÃO DO REQUISITO 
