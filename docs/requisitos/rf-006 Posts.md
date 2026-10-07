@@ -2,7 +2,7 @@
 
 ---
 
-## 🎯 1. IDENTIFICAÇÃO DO REQUISITO (2%) ⭐ PESO: 2%
+## 🎯 1. IDENTIFICAÇÃO DO REQUISITO 
 
 ### Objetivo
 
@@ -29,7 +29,7 @@ O usuário poderá criar uma publicação, selecionar o tipo de conteúdo, visua
 
 ---
 
-## 📋 2. DESCRIÇÃO E ATORES (6%) ⭐ PESO REDUZIDO DE 10% PARA 6%
+## 📋 2. DESCRIÇÃO E ATORES
 
 ### Objetivo
 
