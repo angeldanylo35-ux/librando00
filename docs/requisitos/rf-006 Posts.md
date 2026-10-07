@@ -1,6 +1,7 @@
 # 📝 RF-006: CRIAÇÃO E PUBLICAÇÃO DE POSTAGENS
 
 1. METADADOS DO PROJETO E DA EQUIPE
+   
 1.1 Identificação
 - NOME_DO_PROJETO: Librando a rede social para surdos
 - DESCRICAO_BREVE: 
