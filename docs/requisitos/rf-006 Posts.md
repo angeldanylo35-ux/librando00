@@ -19,6 +19,13 @@
 - **LINK_BANCO_DADOS:** [Supabase, Firebase, MongoDB Atlas, etc.] (com acesso de leitura para professor)
 - **LINK_DEMONSTRAÇÃO:** [URL funcional da aplicação em produção] Comentário
 
+1.3 Escopo Fixo
+- REQUISITOS_FUNCIONAIS_TOTAIS: 10 Requisitos Funcionais (N = 10)
+- VALOR_TOTAL_DISCIPLINA: 100%
+- VALOR_POR_REQUISITO: 10% (100% ÷ 10)
+- CADA REQUISITO TEM UM DOCUMENTO ÚNICO
+
+
 ---
 
 ## 🎯 1. IDENTIFICAÇÃO DO REQUISITO 
