@@ -9,7 +9,7 @@
 ### 1.1 Identificação
 
 - **NOME_DO_PROJETO:** Librando a rede social para surdos
-- **DESCRICAO_BREVE:**
+- **DESCRICAO_BREVE:** Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à comunidade surda. Nesta etapa do projeto, foram desenvolvidas as telas de recuperação e redefinição de senha, permitindo que os usuários solicitem a recuperação de acesso e definam uma nova senha de forma segura. Foram utilizadas as tecnologias Laravel, Vue.js, Vite, Axios, PHP e MySQL.
 
 ### 1.2 Localização dos Artefatos
 
