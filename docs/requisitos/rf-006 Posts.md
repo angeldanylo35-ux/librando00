@@ -3,7 +3,6 @@
 ## 🎯 1. IDENTIFICAÇÃO DO REQUISITO&#x20;
 
 **ID:** RF-006
-
 **Título:** Criação e Publicação de Postagens
 **Tipo:** Requisito Funcional
 **Prioridade:** ALTA
