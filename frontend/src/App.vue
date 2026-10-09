@@ -1,7 +1,7 @@
-<template>
-  <router-view />
-</template>
-
 <script setup>
-// Componentes globais (ex: widget VLibras) entram aqui futuramente
+import Feed from '@/paginas/Feed.vue'
 </script>
+
+<template>
+  <Feed />
+</template>
