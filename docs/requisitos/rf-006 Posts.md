@@ -55,7 +55,7 @@ Identificar claramente o requisito responsável pela criação e publicação de
 
 ### 📌 Breve Descrição
 
-O sistema deve permitir que usuários cadastrados criem e publiquem conteúdos na rede social Librando, utilizando diferentes formatos de mídia, como **texto, imagens, GIFs, vídeos e enquetes**. 📝🖼️🎞️🎥📊
+O sistema deve permitir que usuários cadastrados criem e publiquem conteúdos na rede social Librando, utilizando diferentes formatos de mídia, como **texto, imagens, GIFs e vídeos**. 📝🖼️🎞️🎥📊
 
 A funcionalidade deve priorizar a **comunicação visual** e proporcionar uma experiência simples e acessível para a comunidade surda, de acordo com a proposta da plataforma. 🤟♿
 
@@ -78,7 +78,7 @@ A funcionalidade permitirá a criação de diferentes tipos de publicações, po
 Entre os principais benefícios estão:
 
 1. 🤟 **Facilitar a comunicação visual** entre os usuários da plataforma.
-2. 📱 **Permitir o compartilhamento de diferentes formatos de conteúdo**, como textos, imagens, GIFs, vídeos e enquetes.
+2. 📱 **Permitir o compartilhamento de diferentes formatos de conteúdo**, como textos, imagens, GIFs e vídeos.
 3. 💬 **Estimular a interação e participação da comunidade** dentro da rede social.
 4. 📰 **Centralizar os conteúdos produzidos pelos usuários** no feed da plataforma.
 5. ♿ **Contribuir para a proposta de acessibilidade da Librando**, priorizando recursos adequados à comunidade surda.
@@ -235,7 +235,7 @@ Descrever detalhadamente como o requisito de **criação e publicação de posta
 |---|---|---|
 | **RN-01** | Usuário Autenticado | Somente usuários cadastrados e autenticados podem criar e publicar postagens. |
 | **RN-02** | Conteúdo Obrigatório | A publicação deve possuir conteúdo válido antes de ser publicada. |
-| **RN-03** | Tipos de Conteúdo | O sistema deve permitir publicações nos formatos definidos pela plataforma: texto, imagem, GIF, vídeo e enquete. |
+| **RN-03** | Tipos de Conteúdo | O sistema deve permitir publicações nos formatos definidos pela plataforma: texto, imagem, GIF e vídeo. |
 | **RN-04** | Validação de Mídia | Arquivos enviados devem ser validados antes de serem associados à publicação. |
 | **RN-05** | Publicação no Feed | A publicação somente deve ser disponibilizada no feed após a conclusão do processo de publicação. |
 | **RN-06** | Cancelamento | O usuário pode cancelar a criação da publicação antes de confirmá-la. |
