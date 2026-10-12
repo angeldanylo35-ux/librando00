@@ -172,8 +172,10 @@ async function handleLogin() {
     sucesso.value = data.sucesso;
     mensagem.value = data.mensagem;
 
-      if (data.sucesso) {
+           if (data.sucesso) {
+      localStorage.setItem('token', data.token);
       localStorage.setItem('nome', data.nome);
+      localStorage.setItem('nome_usuario', data.nome_usuario);
       router.push('/feed');
     }
   } catch (erro) {

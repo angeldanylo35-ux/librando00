@@ -1,10 +1,12 @@
-
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import api from '../services/api'
+
+const router = useRouter()
 
 /* ------------------------------------------------------------------
- * Ícones (SVG de traço, 24x24). Só o miolo do <svg> para manter o
- * template limpo.
+ * Ícones (SVG de traço, 24x24)
  * ------------------------------------------------------------------ */
 const icons = {
   home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
@@ -32,7 +34,28 @@ const icons = {
   film: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M7 5l2 4M12 5l2 4M17 5l2 4"/>',
   caption: '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 11h4M7 15h2m4-4h4m-4 4h4"/>',
   swap: '<path d="M7 7h12l-3-3M17 17H5l3 3"/>',
+  poll: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
 }
+
+/* ------------------------------------------------------------------
+ * Usuário logado (salvo no login)
+ * ------------------------------------------------------------------ */
+const nome = localStorage.getItem('nome') || 'Usuário'
+const nomeUsuario = localStorage.getItem('nome_usuario') || 'usuario'
+
+function iniciais(texto) {
+  return (
+    (texto || '?')
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((p) => p[0])
+      .join('')
+      .toUpperCase() || '?'
+  )
+}
+
+const meuInicial = iniciais(nome)
 
 /* ------------------------------------------------------------------
  * Dados estáticos (menu, sugestões, hashtags)
@@ -45,7 +68,7 @@ const navItems = [
   { label: 'Notificações', icon: 'heart' },
   { label: 'Salvos', icon: 'bookmark' },
   { label: 'Meu perfil', icon: 'user' },
-  { label: 'Mais', icon: 'menu' } 
+  { label: 'Mais', icon: 'menu' },
 ]
 
 const suggestions = [
@@ -63,120 +86,196 @@ const trending = [
 
 const footerLinks = ['Sobre', 'Acessibilidade', 'Ajuda', 'Privacidade', 'Termos', 'Diretrizes da comunidade']
 
-/* ------------------------------------------------------------------
- * Abas do feed (visuais)
- * ------------------------------------------------------------------ */
 const tabs = ['Para você', 'Seguindo']
 const activeTab = ref('Para você')
 
 /* ------------------------------------------------------------------
- * Feed (único estado funcional da página)
+ * Feed (vem da API)
  * ------------------------------------------------------------------ */
-let nextId = 3
+const posts = ref([])
+const carregandoFeed = ref(true)
+const erroFeed = ref('')
 
-const posts = ref([
-  {
-    id: 1,
-    user: 'ana.em.libras',
-    initials: 'AE',
-    verified: true,
-    role: 'Educadora de Libras · São Paulo',
-    time: '2 h',
-    title: 'Pequenos sinais, grandes conexões.',
-    subtitle: '5 expressões para levar para o seu dia a dia.',
-    duration: '0:48',
-    hasVideo: true,
-    likes: '1.248',
-    comments: 86,
-    caption: 'Um bom dia pode ser o começo de uma conversa incrível. Vamos aprender juntos? 💜',
-    own: false,
-  },
-  {
-    id: 2,
-    user: 'lucas.sinaliza',
-    initials: 'LS',
-    verified: true,
-    role: 'Criador de conteúdo · Rio de Janeiro',
-    time: '2 h',
-    title: 'A cultura surda tem muito a dizer.',
-    subtitle: 'Histórias, identidade e uma comunidade que conecta.',
-    duration: '1:12',
-    hasVideo: true,
-    likes: '964',
-    comments: 41,
-    caption: 'Conversa leve sobre identidade e comunidade. Conta pra gente o que você pensa!',
-    own: false,
-  },
-])
+function tempo(iso) {
+  const seg = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)
+  if (seg < 60) return 'agora'
+  if (seg < 3600) return `${Math.floor(seg / 60)} min`
+  if (seg < 86400) return `${Math.floor(seg / 3600)} h`
+  return `${Math.floor(seg / 86400)} d`
+}
+
+function mapearPost(p) {
+  return {
+    id: p.id,
+    tipo: p.tipo,
+    user: p.usuario.nome_usuario,
+    initials: iniciais(p.usuario.nome),
+    role: p.usuario.nome,
+    time: tempo(p.criado_em),
+    caption: p.conteudo || '',
+    midiaUrl: p.midia_url,
+    opcoes: p.opcoes || [],
+    likes: '0',
+    comments: 0,
+    own: p.usuario.nome_usuario === nomeUsuario,
+  }
+}
+
+function tratarErroAuth(erro) {
+  if (erro.response?.status === 401) {
+    localStorage.removeItem('token')
+    router.push('/login')
+    return true
+  }
+  return false
+}
+
+async function carregarFeed() {
+  carregandoFeed.value = true
+  erroFeed.value = ''
+  try {
+    const { data } = await api.get('/posts')
+    posts.value = data.posts.map(mapearPost)
+  } catch (erro) {
+    if (tratarErroAuth(erro)) return
+    erroFeed.value = 'Não foi possível carregar o feed.'
+  } finally {
+    carregandoFeed.value = false
+  }
+}
+
+onMounted(carregarFeed)
 
 /* ------------------------------------------------------------------
  * Caixa de criação de post
  * ------------------------------------------------------------------ */
 const MAX_CHARS = 280
 const draft = ref('')
-const videoAttached = ref(false)
-const captionAttached = ref(false)
+const arquivo = ref(null)
+const previewUrl = ref('')
+const modoEnquete = ref(false)
+const opcoes = ref(['', ''])
 const composerFocused = ref(false)
+const publicando = ref(false)
+const feedback = ref('')
+const feedbackOk = ref(false)
+const inputArquivo = ref(null)
 
 const remaining = computed(() => MAX_CHARS - draft.value.length)
-const canPublish = computed(
-  () => draft.value.trim().length > 0 || videoAttached.value,
-)
 
-function toggleVideo() {
-  videoAttached.value = !videoAttached.value
-  if (!videoAttached.value) captionAttached.value = false
+const tipoAtual = computed(() => {
+  if (modoEnquete.value) return 'enquete'
+  const mime = arquivo.value?.type ?? ''
+  if (mime === 'image/gif') return 'gif'
+  if (mime.startsWith('image/')) return 'imagem'
+  if (mime.startsWith('video/')) return 'video'
+  return 'texto'
+})
+
+const canPublish = computed(() => {
+  if (publicando.value) return false
+  if (modoEnquete.value) {
+    const preenchidas = opcoes.value.filter((o) => o.trim()).length
+    return draft.value.trim().length > 0 && preenchidas >= 2
+  }
+  return draft.value.trim().length > 0 || !!arquivo.value
+})
+
+function abrirSeletor() {
+  inputArquivo.value?.click()
 }
 
-function toggleCaption() {
-  // A legenda só faz sentido com um vídeo anexado
-  if (!videoAttached.value) videoAttached.value = true
-  captionAttached.value = !captionAttached.value
+function escolherArquivo(event) {
+  const f = event.target.files[0] ?? null
+  if (!f) return
+  modoEnquete.value = false
+  arquivo.value = f
+  previewUrl.value = URL.createObjectURL(f)
+  feedback.value = ''
 }
 
-function publish() {
+function removerArquivo() {
+  arquivo.value = null
+  previewUrl.value = ''
+  if (inputArquivo.value) inputArquivo.value.value = ''
+}
+
+function alternarEnquete() {
+  modoEnquete.value = !modoEnquete.value
+  if (modoEnquete.value) removerArquivo()
+}
+
+function adicionarOpcao() {
+  if (opcoes.value.length < 4) opcoes.value.push('')
+}
+
+function removerOpcao(i) {
+  if (opcoes.value.length > 2) opcoes.value.splice(i, 1)
+}
+
+function cancelar() {
+  draft.value = ''
+  removerArquivo()
+  modoEnquete.value = false
+  opcoes.value = ['', '']
+  feedback.value = ''
+}
+
+async function publish() {
   if (!canPublish.value) return
 
-  const text = draft.value.trim()
-  posts.value.unshift({
-    id: nextId++,
-    user: 'marina.costa',
-    initials: 'MC',
-    verified: false,
-    role: 'Marina Costa',
-    time: 'agora',
-    title: videoAttached.value ? text.slice(0, 60) || 'Novo vídeo em Libras' : '',
-    subtitle: videoAttached.value && captionAttached.value ? 'Com legenda' : '',
-    duration: '0:00',
-    hasVideo: videoAttached.value,
-    likes: '0',
-    comments: 0,
-    caption: text,
-    own: true,
-  })
+  publicando.value = true
+  feedback.value = ''
 
-  draft.value = ''
-  videoAttached.value = false
-  captionAttached.value = false
-  composerFocused.value = false
+  const form = new FormData()
+  form.append('tipo', tipoAtual.value)
+  form.append('conteudo', draft.value.trim())
+
+  if (arquivo.value) form.append('midia', arquivo.value)
+
+  if (modoEnquete.value) {
+    opcoes.value
+      .map((o) => o.trim())
+      .filter(Boolean)
+      .forEach((o) => form.append('opcoes[]', o))
+  }
+
+  try {
+    const { data } = await api.post('/posts', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    posts.value.unshift(mapearPost(data.post))
+    cancelar()
+    feedbackOk.value = true
+    feedback.value = data.mensagem
+    setTimeout(() => (feedback.value = ''), 4000)
+  } catch (erro) {
+    if (tratarErroAuth(erro)) return
+    feedbackOk.value = false
+    feedback.value =
+      erro.response?.data?.mensagem ??
+      'Não foi possível realizar a publicação. Tente novamente.'
+  } finally {
+    publicando.value = false
+  }
 }
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F8F9FA] font-sans text-[#1A1A1A] antialiased">
+  <div class="min-h-screen bg-[#F8F9FA] pl-56 text-left font-sans text-[#1A1A1A] antialiased">
     <!-- ============================ SIDEBAR ============================ -->
     <aside
-      class="fixed inset-y-0 left-0 z-20 flex w-[224px] flex-col border-r border-gray-200 bg-white px-4 py-8"
+      class="fixed inset-y-0 left-0 z-20 flex w-56 flex-col border-r border-gray-200 bg-white px-4 py-8"
     >
       <div class="px-1">
-        <h1 
-          class="text-[32px] font-extrabold leading-none tracking-tight" 
+        <h1
+          class="text-[32px] font-extrabold leading-none tracking-tight"
           style="color: #635BFF !important;"
         >
           librando.
         </h1>
-        <p 
-          class="mt-1.5 text-[11px] font-medium tracking-wide" 
+        <p
+          class="mt-1.5 text-[11px] font-medium tracking-wide"
           style="color: #1A1A1A !important;"
         >
           CONEXÕES EM LIBRAS
@@ -210,7 +309,7 @@ function publish() {
           <span>{{ item.label }}</span>
           <span
             v-if="item.badge"
-            class="ml-1 flex h-[22px] min-w-[22px] items-center justify-center rounded-full bg-[#635BFF] px-1.5 text-[12px] font-semibold text-white"
+            class="ml-1 flex h-5.5 min-w-5.5 items-center justify-center rounded-full bg-[#635BFF] px-1.5 text-[12px] font-semibold text-white"
           >
             {{ item.badge }}
           </span>
@@ -261,11 +360,11 @@ function publish() {
             <span
               class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-[13px] font-semibold text-white"
             >
-              MC
+              {{ meuInicial }}
             </span>
             <span class="min-w-0 flex-1">
-              <span class="block truncate text-[14px] font-semibold">Marina Costa</span>
-              <span class="block truncate text-[12px] text-gray-500">@marina.costa</span>
+              <span class="block truncate text-[14px] font-semibold">{{ nome }}</span>
+              <span class="block truncate text-[12px] text-gray-500">@{{ nomeUsuario }}</span>
             </span>
             <svg
               viewBox="0 0 24 24"
@@ -286,14 +385,17 @@ function publish() {
 
     <!-- ============================ CONTEÚDO ============================ -->
     <div
-      class="ml-[224px] mx-auto grid max-w-[1140px] grid-cols-[minmax(0,720px)_minmax(0,320px)] justify-center gap-[48px] px-8 py-8"
+      class="mx-auto grid max-w-285 grid-cols-1 lg:grid-cols-[minmax(0,720px)_minmax(0,320px)] justify-center gap-12 px-8 py-8"
     >
       <!-- ---------------------- COLUNA CENTRAL ---------------------- -->
-      <main>
+      <main class="min-w-0">
         <header class="mb-5 flex items-end justify-between">
-          <h2 class="text-[24px] font-bold tracking-tight" style="color: #1A1A1A !important; -webkit-text-fill-color: #1A1A1A !important; opacity: 1 !important; visibility: visible !important;">
-  Seu mundo em Libras.
-</h2>
+          <h2
+            class="text-[24px] font-bold tracking-tight"
+            style="color: #1A1A1A !important; -webkit-text-fill-color: #1A1A1A !important; opacity: 1 !important; visibility: visible !important;"
+          >
+            Seu mundo em Libras.
+          </h2>
           <div class="flex gap-6 text-[14px]" role="tablist">
             <button
               v-for="tab in tabs"
@@ -314,7 +416,7 @@ function publish() {
           </div>
         </header>
 
-        <!-- ------------- CAIXA DE CRIAÇÃO DE POST (funcional) ------------- -->
+        <!-- ------------- CAIXA DE CRIAÇÃO DE POST ------------- -->
         <section
           class="mb-5 rounded-2xl border border-gray-200 bg-white p-4 transition-shadow"
           :class="composerFocused ? 'ring-2 ring-[#635BFF]/30' : ''"
@@ -324,7 +426,7 @@ function publish() {
             <span
               class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-[13px] font-semibold text-white"
             >
-              MC
+              {{ meuInicial }}
             </span>
             <div class="min-w-0 flex-1">
               <label for="composer" class="sr-only">O que quer compartilhar?</label>
@@ -333,7 +435,11 @@ function publish() {
                 v-model="draft"
                 :maxlength="MAX_CHARS"
                 rows="2"
-                placeholder="O que quer compartilhar em Libras ou texto?"
+                :placeholder="
+                  modoEnquete
+                    ? 'Escreva a pergunta da enquete'
+                    : 'O que quer compartilhar em Libras ou texto?'
+                "
                 class="w-full resize-none bg-transparent pt-2 text-[15px] leading-6 text-[#1A1A1A] placeholder:text-gray-500 focus:outline-none"
                 @focus="composerFocused = true"
                 @blur="composerFocused = false"
@@ -341,70 +447,87 @@ function publish() {
                 @keydown.meta.enter="publish"
               />
 
-              <!-- Anexos simulados -->
-              <div v-if="videoAttached" class="mt-2 flex flex-wrap gap-2">
-                <span
-                  class="inline-flex items-center gap-2 rounded-full bg-[#EEEDFF] px-3 py-1 text-[13px] font-medium text-[#635BFF]"
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    class="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                    v-html="icons.film"
+              <!-- Prévia da mídia escolhida -->
+              <div v-if="arquivo" class="mt-2">
+                <div class="relative inline-block max-w-full">
+                  <video
+                    v-if="tipoAtual === 'video'"
+                    :src="previewUrl"
+                    controls
+                    class="max-h-64 max-w-full rounded-xl"
                   />
-                  video-libras.mp4
+                  <img
+                    v-else
+                    :src="previewUrl"
+                    alt="Prévia da mídia"
+                    class="max-h-64 max-w-full rounded-xl"
+                  />
                   <button
                     type="button"
-                    class="text-[#635BFF]/70 hover:text-[#635BFF]"
-                    aria-label="Remover vídeo"
-                    @click="toggleVideo"
+                    class="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80"
+                    aria-label="Remover mídia"
+                    @click="removerArquivo"
                   >
                     ×
                   </button>
-                </span>
-                <span
-                  v-if="captionAttached"
-                  class="inline-flex items-center gap-2 rounded-full bg-[#EEEDFF] px-3 py-1 text-[13px] font-medium text-[#635BFF]"
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    class="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                    v-html="icons.caption"
-                  />
-                  legenda.srt
-                  <button
-                    type="button"
-                    class="text-[#635BFF]/70 hover:text-[#635BFF]"
-                    aria-label="Remover legenda"
-                    @click="captionAttached = false"
-                  >
-                    ×
-                  </button>
-                </span>
+                </div>
+                <p class="mt-1 text-[12px] text-gray-500">{{ arquivo.name }}</p>
               </div>
 
-              <div class="mt-3 flex items-center justify-between border-t border-gray-100 pt-3">
+              <!-- Opções da enquete -->
+              <div v-if="modoEnquete" class="mt-3 space-y-2">
+                <div v-for="(op, i) in opcoes" :key="i" class="flex items-center gap-2">
+                  <input
+                    v-model="opcoes[i]"
+                    type="text"
+                    maxlength="80"
+                    :placeholder="`Opção ${i + 1}`"
+                    class="w-full rounded-lg border border-gray-200 px-3 py-2 text-[14px] focus:border-[#635BFF] focus:outline-none"
+                  />
+                  <button
+                    v-if="opcoes.length > 2"
+                    type="button"
+                    class="text-gray-500 hover:text-red-600"
+                    aria-label="Remover opção"
+                    @click="removerOpcao(i)"
+                  >
+                    ×
+                  </button>
+                </div>
+                <button
+                  v-if="opcoes.length < 4"
+                  type="button"
+                  class="text-[13px] font-semibold text-[#635BFF]"
+                  @click="adicionarOpcao"
+                >
+                  + Adicionar opção
+                </button>
+              </div>
+
+              <!-- Mensagem de retorno -->
+              <p
+                v-if="feedback"
+                class="mt-3 rounded-lg px-3 py-2 text-[13px]"
+                :class="feedbackOk ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'"
+                role="status"
+              >
+                {{ feedback }}
+              </p>
+
+              <div class="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 pt-3">
                 <div class="flex items-center gap-2">
+                  <input
+                    ref="inputArquivo"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime"
+                    class="hidden"
+                    @change="escolherArquivo"
+                  />
                   <button
                     type="button"
-                    class="flex items-center gap-2 rounded-lg px-3 py-1.5 text-[14px] font-medium transition-colors"
-                    :class="
-                      videoAttached
-                        ? 'bg-[#EEEDFF] text-[#635BFF]'
-                        : 'text-[#1A1A1A] hover:bg-gray-100'
-                    "
-                    @click="toggleVideo"
+                    class="flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-[14px] font-medium transition-colors"
+                    :class="arquivo ? 'bg-[#EEEDFF] text-[#635BFF]' : 'text-[#1A1A1A] hover:bg-gray-100'"
+                    @click="abrirSeletor"
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -417,17 +540,13 @@ function publish() {
                       aria-hidden="true"
                       v-html="icons.film"
                     />
-                    Vídeo
+                    Vídeo / Imagem
                   </button>
                   <button
                     type="button"
-                    class="flex items-center gap-2 rounded-lg px-3 py-1.5 text-[14px] font-medium transition-colors"
-                    :class="
-                      captionAttached
-                        ? 'bg-[#EEEDFF] text-[#635BFF]'
-                        : 'text-[#1A1A1A] hover:bg-gray-100'
-                    "
-                    @click="toggleCaption"
+                    class="flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-[14px] font-medium transition-colors"
+                    :class="modoEnquete ? 'bg-[#EEEDFF] text-[#635BFF]' : 'text-[#1A1A1A] hover:bg-gray-100'"
+                    @click="alternarEnquete"
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -438,13 +557,13 @@ function publish() {
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       aria-hidden="true"
-                      v-html="icons.caption"
+                      v-html="icons.poll"
                     />
-                    Legenda
+                    Enquete
                   </button>
                 </div>
 
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3">
                   <span
                     v-if="draft.length > 0"
                     class="text-[13px] tabular-nums"
@@ -453,12 +572,20 @@ function publish() {
                     {{ remaining }}
                   </span>
                   <button
+                    v-if="draft || arquivo || modoEnquete"
+                    type="button"
+                    class="whitespace-nowrap rounded-lg px-3 py-2 text-[14px] font-medium text-gray-600 hover:bg-gray-100"
+                    @click="cancelar"
+                  >
+                    Cancelar
+                  </button>
+                  <button
                     type="button"
                     :disabled="!canPublish"
-                    class="rounded-lg bg-[#635BFF] px-5 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-[#5249e6] disabled:cursor-not-allowed disabled:opacity-40"
+                    class="whitespace-nowrap rounded-lg bg-[#635BFF] px-5 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-[#5249e6] disabled:cursor-not-allowed disabled:opacity-40"
                     @click="publish"
                   >
-                    Publicar
+                    {{ publicando ? 'Publicando...' : 'Publicar' }}
                   </button>
                 </div>
               </div>
@@ -467,6 +594,19 @@ function publish() {
         </section>
 
         <!-- ------------------------- POSTS ------------------------- -->
+        <p v-if="carregandoFeed" class="py-8 text-center text-[14px] text-gray-500">
+          Carregando publicações...
+        </p>
+        <p v-else-if="erroFeed" class="py-8 text-center text-[14px] text-red-600">
+          {{ erroFeed }}
+        </p>
+        <p
+          v-else-if="posts.length === 0"
+          class="py-8 text-center text-[14px] text-gray-500"
+        >
+          Ainda não há publicações. Seja o primeiro a compartilhar!
+        </p>
+
         <article
           v-for="post in posts"
           :key="post.id"
@@ -479,23 +619,9 @@ function publish() {
             >
               {{ post.initials }}
             </span>
-            <div class="min-w-0 flex-1 leading-tight">
+            <div class="min-w-0 flex-1 text-left leading-tight">
               <p class="flex items-center gap-1.5 text-[15px] font-semibold">
                 {{ post.user }}
-                <svg
-                  v-if="post.verified"
-                  viewBox="0 0 24 24"
-                  class="h-4 w-4 text-[#635BFF]"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-label="Perfil verificado"
-                >
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="m8.500 12.200 2.300 2.300 4.700-4.800" />
-                </svg>
                 <span class="font-normal text-gray-500">· {{ post.time }}</span>
               </p>
               <p class="mt-0.5 truncate text-[13px] text-gray-500">{{ post.role }}</p>
@@ -522,83 +648,38 @@ function publish() {
             </button>
           </div>
 
-          <!-- Player (representativo) -->
-          <div
-            v-if="post.hasVideo"
-            class="relative flex aspect-[720/440] flex-col justify-between overflow-hidden bg-gradient-to-br from-gray-500 via-gray-700 to-gray-900 text-white"
-          >
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+          <!-- Mídia -->
+          <video
+            v-if="post.tipo === 'video' && post.midiaUrl"
+            :src="post.midiaUrl"
+            controls
+            preload="metadata"
+            class="block max-h-130 w-full bg-black object-contain"
+          />
+          <img
+            v-else-if="(post.tipo === 'imagem' || post.tipo === 'gif') && post.midiaUrl"
+            :src="post.midiaUrl"
+            :alt="post.caption || 'Imagem publicada'"
+            class="block max-h-130 w-full object-cover"
+          />
 
-            <div class="relative flex items-start justify-between p-5">
-              <span
-                class="inline-flex items-center gap-2 rounded-md bg-black/50 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide backdrop-blur"
+          <!-- Enquete -->
+          <div v-else-if="post.tipo === 'enquete'" class="px-5 pb-1 text-left">
+            <p class="text-[16px] font-medium leading-7">{{ post.caption }}</p>
+            <ul class="mt-3 space-y-2">
+              <li
+                v-for="op in post.opcoes"
+                :key="op.id"
+                class="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-2.5 text-[14px]"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  class="h-3.5 w-3.5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                  v-html="icons.film"
-                />
-                Vídeo em Libras
-              </span>
-              <span class="rounded-md bg-black/50 p-1.5 backdrop-blur" aria-label="Legendas">
-                <svg
-                  viewBox="0 0 24 24"
-                  class="h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                  v-html="icons.caption"
-                />
-              </span>
-            </div>
-
-            <!-- Botão play central -->
-            <button
-              type="button"
-              class="absolute left-1/2 top-[42%] flex h-[60px] w-[60px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-black/30 backdrop-blur"
-              aria-label="Reproduzir vídeo"
-            >
-              <svg viewBox="0 0 24 24" class="ml-0.5 h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
-                <path d="M8 5.500v13l11-6.500z" />
-              </svg>
-            </button>
-
-            <div class="relative px-6 pb-4">
-              <h3 v-if="post.title" class="text-[30px] font-bold leading-tight tracking-tight">
-                {{ post.title }}
-              </h3>
-              <p v-if="post.subtitle" class="mt-1 text-[14px] text-white/90">{{ post.subtitle }}</p>
-
-              <!-- Controles -->
-              <div class="mt-4 flex items-center gap-4 text-[12px]">
-                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M8 5.500v13l11-6.500z" />
-                </svg>
-                <span class="tabular-nums">0:00 / {{ post.duration }}</span>
-                <div class="relative h-[3px] flex-1 rounded-full bg-white/30">
-                  <div class="absolute inset-y-0 left-0 w-[6%] rounded-full bg-[#635BFF]" />
-                </div>
-                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M4 9.500h3.500L12 6v12l-4.500-3.500H4zM16 9.500l4 5m0-5-4 5" />
-                </svg>
-                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
-                </svg>
-              </div>
-            </div>
+                <span>{{ op.texto }}</span>
+                <span class="text-[12px] text-gray-500">{{ op.votos }} votos</span>
+              </li>
+            </ul>
           </div>
 
           <!-- Post só de texto -->
-          <div v-else class="px-5 pb-1 text-[16px] leading-7">
+          <div v-else class="px-5 pb-1 text-left text-[16px] leading-7">
             {{ post.caption }}
           </div>
 
@@ -621,17 +702,10 @@ function publish() {
           </div>
 
           <!-- Legenda + comentários -->
-          <div class="px-5 pb-4 pt-3 text-[14px]">
-            <p v-if="post.hasVideo && post.caption">
-              <span class="mr-1.5">{{ post.user }}</span>{{ post.caption }}
+          <div class="px-5 pb-4 pt-3 text-left text-[14px]">
+            <p v-if="post.midiaUrl && post.caption">
+              <span class="mr-1.5 font-semibold">{{ post.user }}</span>{{ post.caption }}
             </p>
-            <button
-              v-if="post.comments > 0"
-              type="button"
-              class="mt-2 text-[13px] text-gray-500"
-            >
-              Ver todos os {{ post.comments }} comentários
-            </button>
 
             <div class="mt-3 flex items-center gap-3 border-t border-gray-200 pt-3">
               <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true" v-html="icons.smile" />
@@ -643,7 +717,7 @@ function publish() {
       </main>
 
       <!-- ---------------------- COLUNA DIREITA ---------------------- -->
-      <aside class="sticky top-8 h-fit self-start">
+      <aside class="sticky top-8 hidden h-fit self-start lg:block">
         <!-- Pesquisa -->
         <div class="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3">
           <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" v-html="icons.search" />
@@ -657,10 +731,10 @@ function publish() {
 
         <!-- Perfil atual -->
         <div class="mt-6 flex items-center gap-3">
-          <span class="flex h-12 w-12 items-center justify-center rounded-full bg-[#1A1A1A] text-[14px] font-semibold text-white">MC</span>
+          <span class="flex h-12 w-12 items-center justify-center rounded-full bg-[#1A1A1A] text-[14px] font-semibold text-white">{{ meuInicial }}</span>
           <div class="min-w-0 flex-1 leading-tight">
-            <p class="text-[14px] font-medium">marina.costa</p>
-            <p class="mt-0.5 text-[13px] text-gray-500">Marina Costa</p>
+            <p class="text-[14px] font-medium">{{ nomeUsuario }}</p>
+            <p class="mt-0.5 text-[13px] text-gray-500">{{ nome }}</p>
           </div>
           <button type="button" class="text-[12px] font-semibold text-[#635BFF]">Trocar</button>
         </div>

@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Usuario extends Model
+class Usuario extends Authenticatable
 {
+    use HasApiTokens;
+
     protected $table = 'usuarios';
 
     protected $fillable = [
@@ -24,4 +27,16 @@ class Usuario extends Model
     protected $casts = [
         'data_nascimento' => 'date',
     ];
+
+    // Como a coluna da senha se chama "senha" (e não "password"),
+    // o Laravel precisa saber onde buscá-la
+    public function getAuthPassword()
+    {
+        return $this->senha;
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class, 'usuario_id');
+    }
 }
