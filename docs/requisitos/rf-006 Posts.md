@@ -4,252 +4,341 @@
 
 ## 1. METADADOS DO PROJETO E DA EQUIPE
 
-### 1.1 Identificação
+### 1.1 Composição da Equipe
 
-- **NOME_DO_PROJETO:** Librando a rede social para surdos
-- **DESCRICAO_BREVE:** Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à comunidade surda. Nesta etapa do projeto, foram desenvolvidas as telas de recuperação e redefinição de senha, permitindo que os usuários solicitem a recuperação de acesso e definam uma nova senha de forma segura. Foram utilizadas as tecnologias Laravel, Vue.js, Vite, Axios, PHP e MySQL.
+| ID | Nome Completo | Papel Primário | Papel Secundário | E-mail / Contato |
+| --- | --- | --- | --- | --- |
+| 1 | [André Mendes] | Scrum Master | Fullstack | [[andre53774636@edu.df.senac.br](mailto:andre53774636@edu.df.senac.br)] |
+| 2 | [Eduardo Amorim] | Desenvolvedor Front-End | — | [[eduardo59381426@edu.df.senac.br](mailto:eduardo59381426@edu.df.senac.br)] |
+| 3 | [Gabriel Souza / Vitor Silva] | Desenvolvedor Back-End | — | [[gabriel49414966@edu.df.senac.br](mailto:gabriel49414966@edu.df.senac.br) / [vitor59422706@edu.df.senac.br](mailto:vitor59422706@edu.df.senac.br)] |
+| 4 | [Henrique Alves] | DBA / Banco de Dados | — | [[henrique51782196@edu.df.senac.br](mailto:henrique51782196@edu.df.senac.br)] |
+| 5 | [Angel Pacheco] | QA / SecDevOps | — | [[angel59381406@edu.df.senac.br](mailto:angel59381406@edu.df.senac.br)] |
+| 6 | [Angel Pacheco] | Fullstack (opcional) | — | [[angel59381406@edu.df.senac.br](mailto:angel59381406@edu.df.senac.br)] |
 
-### 1.2 Localização dos Artefatos
+### 1.2 Identificação
 
-- **LINK_REPOSITORIO_GITHUB:** https://github.com/seu-usuario/[seu-repo]
-- **BRANCH_PRINCIPAL:** main ou develop
-- **LINK_APLICACAO_DEPLOY:** https://[seu-projeto].github.io (GitHub Pages) ou Vercel, Netlify, etc.
-- **LINK_BANCO_DADOS:** [Supabase, Firebase, MongoDB Atlas, etc.] (com acesso de leitura para professor)
-- **LINK_DEMONSTRAÇÃO:** [URL funcional da aplicação em produção] Comentário
+* **NOME_DO_PROJETO:** Librando
+* **DESCRICAO_BREVE:** Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à comunidade surda. Nesta etapa do projeto, foi desenvolvida a funcionalidade de criação e publicação de postagens, permitindo que os usuários compartilhem conteúdos na rede social utilizando diferentes formatos de mídia, como texto, imagens, GIFs e vídeos. Foram utilizadas as tecnologias Laravel, Vue.js, Vite, Axios, PHP e MySQL.
 
-### 1.3 Escopo Fixo
-- REQUISITOS_FUNCIONAIS_TOTAIS: 10 Requisitos Funcionais (N = 10)
-- VALOR_TOTAL_DISCIPLINA: 100%
-- VALOR_POR_REQUISITO: 10% (100% ÷ 10)
-- CADA REQUISITO TEM UM DOCUMENTO ÚNICO
+### 1.3 Localização dos Artefatos
 
-### 1.4 Composição da Equipe
-|  ID | Nome Completo                 | Papel Primário          | Papel Secundário | E-mail / Contato                                                                                                                                    |
-| :-: | :---------------------------- | :---------------------- | :--------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-|  1  | [André Mendes]                | Scrum Master            | Fullstack        | [[andre53774636@edu.df.senac.br](mailto:andre53774636@edu.df.senac.br)]                                                                             |
-|  2  | [Eduardo Amorim]                     | Desenvolvedor Front-End | —                | [[eduardo59381426@edu.df.senac.br](mailto:eduardo59381426@edu.df.senac.br)]                                                                         |
-|  3  | [Gabriel Souza / Vitor Silva] | Desenvolvedor Back-End  | —                | [[gabriel49414966@edu.df.senac.br](mailto:gabriel49414966@edu.df.senac.br) / [vitor59422706@edu.df.senac.br](mailto:vitor59422706@edu.df.senac.br)] |
-|  4  | [Henrique Alves]              | DBA / Banco de Dados    | —                | [[henrique51782196@edu.df.senac.br](mailto:henrique51782196@edu.df.senac.br)]                                                                       |
-|  5  | [Angel Pacheco]               | QA / SecDevOps          | —                | [[angel59381406@edu.df.senac.br](mailto:angel59381406@edu.df.senac.br)]                                                                             |
-|  6  | [Angel Pacheco]               | Fullstack (opcional)    | —                | [[angel59381406@edu.df.senac.br](mailto:angel59381406@edu.df.senac.br)]                                                                             |
+* **LINK_REPOSITORIO_GITHUB:** `[https://github.com/angeldanylo35-ux/librando00/](https://github.com/angeldanylo35-ux/librando00/)`
+* **BRANCH_PRINCIPAL:** `main`
+* **LINK_APLICACAO_DEPLOY:** Aplicação executada localmente por meio do XAMPP.
+* **LINK_BANCO_DADOS:** Banco de dados MySQL local.
+* **LINK_API_SWAGGER:** `docs/api/swagger.json`
+* **LINK_DEMONSTRAÇÃO:** Aplicação executada localmente em `http://localhost:5173/feed`
+
 ---
 
-## 🎯 1. IDENTIFICAÇÃO DO REQUISITO 
+# 2. ESTRUTURA DE DIRETÓRIOS DO PROJETO
 
-### 🎯 Objetivo
+O projeto utiliza uma arquitetura separada entre **Back-end Laravel** e **Front-end Vue.js**, mantendo a organização dos arquivos de acordo com as convenções do framework Laravel.
 
-Identificar claramente o requisito responsável pela criação e publicação de postagens na plataforma Librando, apresentando seu tipo, prioridade, complexidade e situação atual.
+```text
+librando00-main/
+│
+├── README.md
+│
+├── docs/
+│   ├── api/
+│   │   └── swagger.json
+│   │
+│   └── requisitos/
+│       ├── rf-001-login.md
+│       ├── rf-002-cadastrar.md
+│       ├── rf-003-Esqueci-minha-senha.md
+│       ├── rf-004-Tela-Inicial-Usuario.md
+│       └── rf-006-Posts.md
+│
+├── backend/
+│   │
+│   ├── app/
+│   │   ├── Http/
+│   │   │   └── Controllers/
+│   │   │       ├── Controller.php
+│   │   │       └── api/
+│   │   │           ├── AuthController.php
+│   │   │           └── PostController.php
+│   │   │
+│   │   ├── Models/
+│   │   │   ├── User.php
+│   │   │   ├── Usuario.php
+│   │   │   ├── Post.php
+│   │   │   └── enqueteopcao.php
+│   │   │
+│   │   ├── Notifications/
+│   │   └── Providers/
+│   │
+│   ├── database/
+│   │   ├── factories/
+│   │   ├── migrations/
+│   │   │   ├── 2026_10_12_020211_create_posts_table.php
+│   │   │   └── 2026_10_12_020212_create_enquete_opcoes_table.php
+│   │   │
+│   │   └── seeders/
+│   │
+│   ├── resources/
+│   │   └── views/
+│   │
+│   ├── routes/
+│   │   ├── api.php
+│   │   ├── web.php
+│   │   └── console.php
+│   │
+│   ├── config/
+│   ├── bootstrap/
+│   ├── public/
+│   ├── storage/
+│   ├── tests/
+│   ├── artisan
+│   ├── composer.json
+│   └── .env
+│
+└── frontend/
+    │
+    ├── public/
+    │
+    ├── src/
+    │   │
+    │   ├── assets/
+    │   │   └── estetico.css
+    │   │
+    │   ├── components/
+    │   │
+    │   ├── paginas/
+    │   │   ├── Feed.vue
+    │   │   ├── login.vue
+    │   │   └── cadastro.vue
+    │   │
+    │   ├── router/
+    │   │   └── index.js
+    │   │
+    │   ├── services/
+    │   │   └── api.js
+    │   │
+    │   ├── App.vue
+    │   └── style.css
+    │
+    ├── index.html
+    ├── package.json
+    ├── package-lock.json
+    └── vite.config.js
 
-### 📋 Identificação do Requisito
+```
 
-| 🏷️ Informação | 📄 Descrição |
-|---|---|
-| 🆔 **ID** | RF-006 |
-| 📝 **Título** | Criação e Publicação de Postagens |
-| ⚙️ **Tipo** | Requisito Funcional |
-| 🚨 **Prioridade** | ALTA |
-| 📊 **Complexidade** | MÉDIA/ALTA (estimado 8 Story Points) |
-| 🔄 **Status** | EM DESENVOLVIMENTO |
-| 📅 **Data de Criação** | 07/10/2026 |
-| 🔄 **Última Atualização** | 07/10/2026 |
+## Localização dos Arquivos
 
-### 📌 Breve Descrição
+### 📚 Documentação
 
-O sistema deve permitir que usuários cadastrados criem e publiquem conteúdos na rede social Librando, utilizando diferentes formatos de mídia, como **texto, imagens, GIFs e vídeos**. 📝🖼️🎞️🎥📊
+* **Documentação geral:** `README.md`
+* **Documentação dos requisitos:** `docs/requisitos/`
+* **RF-006 — Posts:** `docs/requisitos/rf-006 Posts.md`
+* **Documentação da API:** `docs/api/swagger.json`
 
-A funcionalidade deve priorizar a **comunicação visual** e proporcionar uma experiência simples e acessível para a comunidade surda, de acordo com a proposta da plataforma. 🤟♿
+### ⚙️ Back-end
 
-O usuário poderá criar uma publicação, selecionar o tipo de conteúdo, visualizar uma prévia, publicar ou cancelar a operação. 👤📱
+* **Back-end Laravel:** `backend/`
+* **Controllers da API:** `backend/app/Http/Controllers/api/`
+* **Controller de Posts:** `backend/app/Http/Controllers/api/PostController.php`
+* **Models:** `backend/app/Models/`
+* **Model de Post:** `backend/app/Models/Post.php`
+* **Model de Enquete/Opção:** `backend/app/Models/enqueteopcao.php`
+* **Migrations de Posts:** `backend/database/migrations/2026_10_12_020211_create_posts_table.php`
+* **Rotas da API:** `backend/routes/api.php`
+
+### 🎨 Front-end
+
+* **Interface Vue.js:** `frontend/`
+* **Página de Feed/Postagens:** `frontend/src/paginas/Feed.vue`
+* **Configuração das rotas Vue:** `frontend/src/router/index.js`
+* **Comunicação com a API:** `frontend/src/services/api.js`
+
+---
+
+## 🔎 1. Identificação do Requisito
+
+| 📌 Campo | 📄 Informação |
+| --- | --- |
+| **🆔 ID** | RF-006 |
+| **📋 Título** | Criação e Publicação de Postagens |
+| **📂 Tipo** | Requisito Funcional |
+| **🚨 Prioridade** | ALTA |
+| **⚙️ Complexidade** | MÉDIA/ALTA |
+| **📊 Status** | EM DESENVOLVIMENTO |
+| **📅 Data de Criação** | 07/10/2026 |
+| **🔄 Última Atualização** | 07/10/2026 |
+
+### 📖 Descrição
+
+O sistema deve permitir que usuários cadastrados criem e publiquem conteúdos na rede social Librando, utilizando diferentes formatos de mídia, como **texto, imagens, GIFs e vídeos**.
+
+A funcionalidade prioriza a **comunicação visual**, proporcionando uma experiência simples e acessível para a comunidade surda. O usuário pode criar uma publicação, selecionar o formato de conteúdo desejado, visualizar uma prévia, e confirmar ou cancelar a operação.
 
 ---
 
 ## 📋 2. DESCRIÇÃO E ATORES
 
-### 🎯 Objetivo
+**Objetivo:** Descrever o requisito com clareza e identificar todos os atores envolvidos.
 
-Descrever claramente o requisito de criação e publicação de postagens, apresentando seu objetivo dentro da plataforma Librando, seus benefícios e todos os atores envolvidos na execução da funcionalidade. 👥
+---
 
-### 📝 Descrição Detalhada
+### 📖 Descrição Detalhada
 
-O requisito existe para permitir que os usuários cadastrados da plataforma Librando possam criar e compartilhar conteúdos com a comunidade. 🌐
+**Por que este requisito existe?**
 
-A funcionalidade permitirá a criação de diferentes tipos de publicações, possibilitando que o usuário escolha o formato mais adequado para transmitir sua informação. 📝🖼️🎥
+A funcionalidade existe para permitir que os usuários cadastrados da plataforma Librando possam criar e compartilhar conteúdos informativos e interativos com a comunidade.
 
 Entre os principais benefícios estão:
 
-1. 🤟 **Facilitar a comunicação visual** entre os usuários da plataforma.
-2. 📱 **Permitir o compartilhamento de diferentes formatos de conteúdo**, como textos, imagens, GIFs e vídeos.
-3. 💬 **Estimular a interação e participação da comunidade** dentro da rede social.
-4. 📰 **Centralizar os conteúdos produzidos pelos usuários** no feed da plataforma.
-5. ♿ **Contribuir para a proposta de acessibilidade da Librando**, priorizando recursos adequados à comunidade surda.
+* 🤟 **Facilitar a comunicação visual** entre os usuários da plataforma.
+* 📱 **Permitir o compartilhamento de diferentes formatos de conteúdo** (texto, imagens, GIFs e vídeos).
+* 💬 **Estimular a interação e participação da comunidade** dentro da rede social.
+* 📰 **Centralizar os conteúdos produzidos** no feed principal da aplicação.
 
-### 🌐 Contexto do Negócio
+### 🏢 Contexto do Negócio
 
-A Librando é uma rede social voltada para a **comunidade surda e para a acessibilidade**, tendo como foco a comunicação visual e a interação entre seus usuários. 🤟♿
-
-Nesse contexto, a criação e publicação de postagens é uma funcionalidade essencial para permitir que os usuários compartilhem informações, opiniões, mídias e outros conteúdos com os demais participantes da plataforma. 💬🖼️🎥
-
-A funcionalidade deve proporcionar uma experiência **simples, acessível e adequada à proposta da rede social**. 💻📱
-
-### 👥 Atores do Sistema
-
-#### 1. 👤 USUÁRIO CADASTRADO — Ator Principal
-
-**🎭 Papel:**  
-Utilizar a funcionalidade de criação e publicação de postagens.
-
-**📌 Responsabilidade:**  
-Criar o conteúdo, selecionar o formato da publicação, inserir as informações necessárias, visualizar a publicação antes do envio e confirmar ou cancelar sua publicação.
-
-**🔐 Permissões CRUD:**
-
-| 🔧 Operação | Permissão | 📌 Descrição |
-|---|:---:|---|
-| **CREATE** | ✅ | Criar novas publicações. |
-| **READ** | ✅ | Visualizar publicações disponíveis no feed. |
-| **UPDATE** | ❌ | Não contemplado neste requisito. |
-| **DELETE** | ❌ | Não contemplado neste requisito. |
+A Librando é uma rede social voltada para a **comunidade surda e para a acessibilidade**, tendo como foco a comunicação visual. A criação e publicação de postagens é uma funcionalidade essencial para conectar os usuários por meio de publicações dinâmicas e acessíveis.
 
 ---
 
-#### 2. ⚙️ SISTEMA — Ator Automático
+## 👥 Atores do Sistema
 
-**🎭 Papel:**  
-Processar e controlar automaticamente o fluxo de criação e publicação das postagens.
+### 1. 👤 USUÁRIO CADASTRADO (Ator Principal)
 
-**📌 Responsabilidade:**
+* **Papel:** Criar e publicar conteúdos no feed da plataforma.
+* **Responsabilidade:** Inserir o conteúdo, selecionar mídias, visualizar a prévia e confirmar a publicação.
 
-- 🔎 Validar os dados enviados pelo usuário.
-- 📁 Processar os arquivos enviados.
-- ✔️ Verificar os dados necessários para a publicação.
-- 💾 Registrar a publicação.
-- 📰 Disponibilizar o conteúdo no feed após a publicação.
-- ⚠️ Informar o usuário sobre erros ou problemas durante o processo.
+**Permissões:**
 
-**🔐 Permissões CRUD:**
-
-| 🔧 Operação | Permissão | 📌 Descrição |
-|---|:---:|---|
-| **CREATE** | ✅ | Registrar a publicação no sistema. |
-| **READ** | ✅ | Consultar os dados necessários para validação e publicação. |
-| **UPDATE** | ✅ | Atualizar informações relacionadas ao processamento da publicação quando necessário. |
-| **DELETE** | ✅ | Cancelar ou remover registros quando necessário para o funcionamento do sistema. |
-
-# 🔄 3. ESPECIFICAÇÃO DE CASOS DE USO + REQUISITOS NÃO-FUNCIONAIS 
-
-### 🎯 Objetivo
-
-Descrever detalhadamente como o requisito de **criação e publicação de postagens** é executado na plataforma Librando, apresentando suas pré-condições, pós-condições, fluxo principal, fluxos alternativos, regras de negócio e requisitos não-funcionais.
+| Operação | Permissão | Descrição |
+| --- | --- | --- |
+| ➕ **CREATE** | ✅ | Criar novas publicações |
+| 🔎 **READ** | ✅ | Visualizar publicações no feed |
+| ✏️ **UPDATE** | ❌ | Não contemplado neste requisito |
+| 🗑️ **DELETE** | ❌ | Não contemplado neste requisito |
 
 ---
 
-## 📱 Caso de Uso (UC-006): Criar e Publicar Postagem
+### 2. ⚙️ SISTEMA (Ator Automático)
 
-### 🔐 Pré-Condições
+* **Papel:** Processar, validar e registrar as postagens enviadas.
+* **Responsabilidade:** Validar dados e arquivos, registrar a publicação no banco de dados e disponibilizá-la no feed.
 
-- ✅ Usuário cadastrado na plataforma.
-- ✅ Usuário autenticado no sistema.
-- ✅ Usuário possui acesso à funcionalidade de criação de postagem.
-- ✅ Sistema disponível para receber e processar a publicação.
-- ✅ Serviço de armazenamento disponível para arquivos de mídia, quando necessário.
+**Permissões:**
 
----
-
-### ✅ Pós-Condições (Sucesso)
-
-- ✅ Publicação registrada no sistema.
-- ✅ Conteúdo associado ao usuário responsável pela publicação.
-- ✅ Publicação disponibilizada no feed.
-- ✅ Arquivos de mídia armazenados corretamente, quando utilizados.
-- ✅ Usuário recebe confirmação visual de que a publicação foi realizada.
+| Operação | Permissão | Descrição |
+| --- | --- | --- |
+| ➕ **CREATE** | ✅ | Registrar a postagem no banco de dados |
+| 🔎 **READ** | ✅ | Consultar dados para validação e exibição |
+| ✏️ **UPDATE** | ✅ | Atualizar dados de processamento se necessário |
+| 🗑️ **DELETE** | ✅ | Remover registros corrompidos ou cancelados |
 
 ---
 
-### ❌ Pós-Condições (Falha)
+## 🔄 3. ESPECIFICAÇÃO DE CASOS DE USO + REQUISITOS NÃO-FUNCIONAIS
 
-- ❌ Publicação não é registrada no sistema.
-- ❌ Conteúdo incompleto não é disponibilizado no feed.
-- ⚠️ Usuário recebe uma mensagem informando o erro ocorrido.
-- 🔄 Usuário pode corrigir os dados ou tentar realizar a publicação novamente.
+**Objetivo:** Descrever detalhadamente como a criação e publicação de postagens é executada.
 
 ---
 
-## 🔄 Fluxo Principal
+## 📌 Caso de Uso (UC-006): Criar e Publicar Postagem
 
-1. 👤 Usuário acessa a funcionalidade **"Criar Publicação"**.
-2. 🖥️ Sistema exibe a interface de criação de postagem.
-3. 📝 Usuário seleciona o tipo de conteúdo que deseja publicar.
-4. ✍️ Usuário insere o conteúdo da publicação.
-5. 📎 Usuário adiciona arquivos de mídia, caso necessário.
-6. 🔎 Sistema valida os dados inseridos pelo usuário.
-7. 👁️ Sistema apresenta uma prévia da publicação.
-8. 👤 Usuário verifica o conteúdo da publicação.
-9. 📤 Usuário seleciona a opção **"Publicar"**.
-10. 🔎 Sistema realiza novamente a validação dos dados antes de concluir a publicação.
-11. 📁 Sistema processa os arquivos de mídia enviados, quando existentes.
-12. 💾 Sistema registra a publicação.
-13. 📰 Sistema disponibiliza a publicação no feed.
-14. ✅ Sistema exibe a mensagem **"Publicação realizada com sucesso!"**.
-15. 👤 Usuário visualiza sua publicação no feed.
+### Pré-Condições
 
----
+* ✅ Usuário cadastrado e autenticado na plataforma;
+* ✅ Acesso à tela de criação de postagens / feed;
+* ✅ Sistema de armazenamento de mídia disponível.
 
-## ⚠️ Fluxos Alternativos
+### Pós-Condições (Sucesso)
 
-### 🔴 Fluxo Alternativo A1: Conteúdo obrigatório não preenchido
+* ✅ Publicação registrada no banco de dados MySQL;
+* ✅ Conteúdo associado ao usuário criador;
+* ✅ Publicação exibida corretamente no feed;
+* ✅ Mensagem de sucesso exibida ao usuário.
 
-**4a.1.** Sistema identifica que o conteúdo obrigatório não foi preenchido.  
-**4a.2.** Sistema impede a publicação.  
-**4a.3.** Sistema exibe uma mensagem informando que o conteúdo é obrigatório.  
-**4a.4.** Campo necessário é destacado para o usuário.  
-**4a.5.** Usuário preenche o conteúdo necessário.  
-**4a.6.** Sistema realiza novamente a validação.
+### Pós-Condições (Falha)
+
+* ❌ Publicação não é salva nem exibida no feed;
+* ⚠️ Mensagem de erro informando o problema ocorrido;
+* 🔄 Usuário pode corrigir os dados e tentar novamente.
 
 ---
 
-### 📁 Fluxo Alternativo A2: Arquivo de mídia inválido
+### 🔄 Fluxo Principal
 
-**5a.1.** Usuário seleciona um arquivo para adicionar à publicação.  
-**5a.2.** Sistema verifica o arquivo enviado.  
-**5a.3.** Sistema identifica que o arquivo não atende aos requisitos permitidos.  
-**5a.4.** Sistema impede a utilização do arquivo na publicação.  
-**5a.5.** Sistema exibe uma mensagem informando que o arquivo é inválido.  
-**5a.6.** Usuário pode selecionar outro arquivo ou continuar sem a mídia.
-
----
-
-### 🌐 Fluxo Alternativo A3: Falha durante a publicação
-
-**9a.1.** Usuário confirma a publicação.  
-**9a.2.** Sistema tenta processar e registrar a publicação.  
-**9a.3.** Sistema identifica uma falha durante o processamento.  
-**9a.4.** Sistema impede que a publicação incompleta seja disponibilizada no feed.  
-**9a.5.** Sistema exibe a mensagem **"Não foi possível realizar a publicação. Tente novamente."**  
-**9a.6.** Usuário pode tentar realizar a publicação novamente.
+1. O usuário acessa a funcionalidade de criação de publicação.
+2. O sistema exibe a interface de postagem.
+3. O usuário seleciona o formato do conteúdo (texto, imagem, GIF ou vídeo).
+4. O usuário insere o texto e/ou anexa os arquivos de mídia.
+5. O sistema valida os dados inseridos.
+6. O sistema exibe uma prévia da publicação.
+7. O usuário confirma a ação clicando em **"Publicar"**.
+8. O back-end processa os arquivos e registra a postagem no banco de dados.
+9. O sistema exibe a mensagem **"Publicação realizada com sucesso!"** e atualiza o feed.
 
 ---
 
-## 📋 Regras de Negócio (RN)
+### ⚠️ Fluxos Alternativos
 
-| 🆔 ID | 📌 Regra | 📝 Descrição |
-|---|---|---|
-| **RN-01** | Usuário Autenticado | Somente usuários cadastrados e autenticados podem criar e publicar postagens. |
-| **RN-02** | Conteúdo Obrigatório | A publicação deve possuir conteúdo válido antes de ser publicada. |
-| **RN-03** | Tipos de Conteúdo | O sistema deve permitir publicações nos formatos definidos pela plataforma: texto, imagem, GIF e vídeo. |
-| **RN-04** | Validação de Mídia | Arquivos enviados devem ser validados antes de serem associados à publicação. |
-| **RN-05** | Publicação no Feed | A publicação somente deve ser disponibilizada no feed após a conclusão do processo de publicação. |
-| **RN-06** | Cancelamento | O usuário pode cancelar a criação da publicação antes de confirmá-la. |
-| **RN-07** | Dados da Publicação | A publicação deve ser associada ao usuário responsável por sua criação. |
-| **RN-08** | Conteúdo Incompleto | O sistema não deve disponibilizar no feed uma publicação que não tenha sido concluída corretamente. |
+* **A1: Conteúdo obrigatório não preenchido** — O sistema impede a publicação, destaca o campo necessário e exibe um aviso.
+* **A2: Arquivo de mídia inválido** — O sistema valida o formato do arquivo, bloqueia o envio caso não seja suportado e exibe uma mensagem de erro.
+* **A3: Falha durante o processamento** — O sistema interrompe o registro, exibe uma mensagem de erro genérica e permite nova tentativa.
 
 ---
 
-## ⚙️ Requisitos Não-Funcionais (RNF)
+### 📋 Regras de Negócio (RN)
 
-| 🆔 ID | 🏷️ Atributo | 📋 Requisito | 📏 Métrica | 💡 Justificativa |
-|---|---|---|---|---|
-| **RNF-01** | ⚡ Performance | A interface de criação de postagem deve apresentar as ações do usuário de forma rápida e responsiva. | Resposta das ações principais em até **2 segundos**, em condições normais de uso. | 🧑‍💻 Proporcionar uma experiência fluida durante a criação da publicação. |
-| **RNF-02** | ♿ Acessibilidade | A funcionalidade deve possuir uma interface acessível e adequada à proposta da Librando. | Elementos da interface devem possuir identificação visual clara e permitir a utilização dos recursos de criação. | 🤟 Facilitar a utilização da plataforma pela comunidade surda. |
-| **RNF-03** | 🔒 Segurança | O sistema deve permitir a criação de publicações somente por usuários autenticados. | **100%** das tentativas de publicação devem passar por validação de autenticação. | 🛡️ Impedir que usuários não autorizados publiquem conteúdos. |
-| **RNF-04** | 📱 Usabilidade | A interface de criação deve apresentar os tipos de publicação e ações disponíveis de forma clara. | Usuário deve conseguir identificar as principais ações sem necessidade de conhecimento técnico. | 👍 Facilitar o uso da funcionalidade. |
-| **RNF-05** | 🌐 Disponibilidade | A funcionalidade deve estar disponível enquanto o sistema estiver em funcionamento. | Disponibilidade mínima de **99%** em produção. | 🔄 Garantir que os usuários possam criar e publicar conteúdos de forma consistente. |
+| ID | Regra | Descrição |
+| --- | --- | --- |
+| **RN-01** | Autenticação Obrigatória | Somente usuários autenticados podem publicar. |
+| **RN-02** | Conteúdo Válido | A postagem deve conter texto ou mídia válida antes de ser enviada. |
+| **RN-03** | Formatos Permitidos | Suporte a texto, imagem, GIF e vídeo. |
+| **RN-04** | Validação de Mídia | Arquivos devem ser validados quanto a tipo e tamanho. |
+| **RN-05** | Associação de Usuário | Toda publicação deve estar vinculada ao seu autor. |
+
+---
+
+### ⚙️ Requisitos Não-Funcionais (RNF)
+
+| ID | Atributo | Requisito | Métrica | Justificativa |
+| --- | --- | --- | --- | --- |
+| **RNF-01** | ⚡ Performance | Resposta rápida nas ações de postagem | Resposta em até **2 segundos** | Garantir fluidez no uso |
+| **RNF-02** | ♿ Acessibilidade | Interface visual clara e adequada à Librando | Elementos com contraste e identificação visual | Acessibilidade para surdos |
+| **RNF-03** | 🔒 Segurança | Restrição de postagem para usuários logados | **100%** de validação de token/sessão | Evitar postagens anônimas não autorizadas |
+
+---
+
+## 🎨 4. PROTÓTIPO E FLUXO DE NAVEGAÇÃO
+
+* **Interface:** O usuário interage pelo componente `Feed.vue` e submete dados via Axios para o endpoint controlado pelo `PostController.php`.
+* **Responsividade:** Layout adaptável para dispositivos móveis, tablets e desktops utilizando Tailwind CSS.
+
+---
+
+## 🏗️ 5. ARQUITETURA E ADR
+
+### Diagrama de Componentes
+
+```text
+┌─────────────────────────┐
+│         FRONTEND        │
+│ Vue.js 3 + Vite         │
+│ Feed.vue + Axios        │
+└────────────┬────────────┘
+             │ HTTP/JSON (POST /api/posts)
+             ▼
+┌─────────────────────────┐
+│         BACKEND         │
+│ PHP + Laravel 12        │
+│ PostController          │
+└────────────┬────────────┘
+             │ Eloquent ORM
+             ▼
+┌─────────────────────────┤
+│      BANCO DE DADOS     │
+│         MySQL           │
+│    Tabela `posts`       │
+└─────────────────────────┘
+
+```
