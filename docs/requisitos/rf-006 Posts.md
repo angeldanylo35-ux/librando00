@@ -309,10 +309,93 @@ A Librando é uma rede social voltada para a **comunidade surda e para a acessib
 
 ---
 
-## 🎨 4. PROTÓTIPO E FLUXO DE NAVEGAÇÃO
+## 🎨 4. PROTÓTIPO FUNCIONAL (HTML + CSS + PHP + MySQL + RENDER)
 
-* **Interface:** O usuário interage pelo componente `Feed.vue` e submete dados via Axios para o endpoint controlado pelo `PostController.php`.
-* **Responsividade:** Layout adaptável para dispositivos móveis, tablets e desktops utilizando Tailwind CSS.
+**Mockup - Tela 1: Bloco de Postagem (Estado Inicial / Caixa Vazia)**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│  (AD)  O que quer compartilhar em Libras ou texto?          │
+│                                                             │
+│  ─────────────────────────────────────────────────────────  │
+│                                                             │
+│  [📷 Vídeo / Imagem]    [📊 Enquete]                        │
+│                                                             │
+│  ┌───────────┐                                              │
+│  │ Publicar  │                                              │
+│  └───────────┘                                              │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+
+```
+
+**Mockup - Tela 2: Bloco de Postagem (Estado Preenchido / Validação Visual)**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│  (AD)  Olá a todos! Vejam esse novo sinal em Libras!  ✅   │
+│                                                             │
+│  ─────────────────────────────────────────────────────────  │
+│                                                             │
+│  [📷 video_exemplo.mp4  ✅]    [📊 Enquete]                │
+│                                                             │
+│  ┌───────────┐                                              │
+│  │ Publicar  │                                              │
+│  └───────────┘                                              │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Mockup - Tela 3: Bloco de Postagem (Estado de Erro de Validação)**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│  (AD)  O que quer compartilhar em Libras ou texto?          │
+│        O conteúdo da postagem não pode estar vazio.       ❌│
+│                                                             │
+│  ─────────────────────────────────────────────────────────  │
+│                                                             │
+│  [📷 arquivo_invalido.exe ❌]    [📊 Enquete]               │
+│  Formato de arquivo não suportado.                          │
+│                                                             │
+│  ┌───────────┐                                              │
+│  │ Publicar  │                                              │
+│  └───────────┘                                              │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+
+```
+
+**Descrição de Estados:**
+
+* **Estado Normal:** Caixa de texto vazia, opções de inserção de mídia habilitadas e botão de publicação pronto.
+* **Estado Preenchido:** Texto inserido corretamente e arquivo de mídia compatível anexado, ambos sinalizados com checkmark verde.
+* **Estado Erro (Conteúdo Vazio):** Alerta visual indicando que a postagem não pode ser enviada sem texto ou mídia válida.
+* **Estado Erro (Arquivo Inválido):** Destaque em vermelho informando que o formato do arquivo anexado não é permitido pela plataforma.
+
+## Fluxo de Navegação
+
+O fluxo funciona da seguinte maneira:
+
+1. O usuário autenticado acessa a **Tela de Feed** da plataforma através do componente `Feed.vue`.
+2. O sistema exibe o painel de criação de postagem no topo da página.
+3. O usuário digita o conteúdo desejado e/ou seleciona arquivos de mídia (imagens, GIFs ou vídeos voltados à comunicação visual da comunidade surda).
+4. O sistema realiza as validações iniciais no front-end: verifica se há conteúdo preenchido e se o arquivo de mídia possui extensão e tamanho permitidos. Caso haja erro, alertas visuais são exibidos.
+5. Estando os dados corretos, o **front-end Vue** envia os dados via requisição `POST` através do Axios (`api.js`) para o endpoint protegido no back-end.
+6. O **back-end Laravel** recebe a requisição por meio do `PostController.php` e executa as validações de segurança (verificando a sessão/token do usuário autenticado).
+7. Caso o usuário não esteja autenticado ou os dados falhem nas regras de negócio, o back-end retorna uma resposta de erro e o sistema mantém o usuário na tela atual com o feedback visual.
+8. Caso tudo esteja correto, o back-end processa o armazenamento dos arquivos de mídia e registra o novo post na tabela `posts` do banco de dados MySQL utilizando o Eloquent ORM.
+9. O sistema exibe uma mensagem visual de sucesso (**"Publicação realizada com sucesso!"**), limpa o formulário de criação e atualiza dinamicamente o feed exibindo a nova postagem no topo.
+10. Se o usuário decidir sair da página ou navegar para outra rota (como Perfil), ele é redirecionado sem submeter dados incompletos.
+
+**Responsividade:**
+
+* **Mobile (até 980px):** Layout em coluna única, redimensionando o feed e a caixa de postagem para ocupar toda a largura da tela.
+* **Tablet (até 980px):** Layout otimizado em coluna única com espaçamento proporcional.
+* **Desktop (980px+):** Layout em duas colunas (barra lateral de navegação/informações à esquerda e feed interativo com painel de postagens à direita).
 
 ---
 
