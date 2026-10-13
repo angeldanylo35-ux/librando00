@@ -31,8 +31,11 @@ Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à 
 ### 1.3 Escopo Fixo
 
 REQUISITOS_FUNCIONAIS_TOTAIS: 10 Requisitos Funcionais (N = 10)
+
 VALOR_TOTAL_DISCIPLINA: 100%
+
 VALOR_POR_REQUISITO: 10% (100% ÷ 10)
+
 CADA REQUISITO TEM UM DOCUMENTO ÚNICO
 
 
