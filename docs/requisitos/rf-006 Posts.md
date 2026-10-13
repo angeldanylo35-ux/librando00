@@ -200,15 +200,17 @@ Processar e controlar automaticamente o fluxo de criação e publicação das po
 
 **📌 Responsabilidade:**
 
-
-
 🔎 Validar os dados enviados pelo usuário.
-📁 Processar os arquivos enviados.
-✔️ Verificar os dados necessários para a publicação.
-💾 Registrar a publicação.
-📰 Disponibilizar o conteúdo no feed após a publicação.
-⚠️ Informar o usuário sobre erros ou problemas durante o processo.
 
+📁 Processar os arquivos enviados.
+
+✔️ Verificar os dados necessários para a publicação.
+
+💾 Registrar a publicação.
+
+📰 Disponibilizar o conteúdo no feed após a publicação.
+
+⚠️ Informar o usuário sobre erros ou problemas durante o processo.
 
 **🔐 Permissões CRUD:**
 
