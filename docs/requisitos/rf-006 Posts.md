@@ -213,14 +213,12 @@ Processar e controlar automaticamente o fluxo de criação e publicação das po
 **🔐 Permissões CRUD:**
 
 
-
 | 🔧 Operação | Permissão | 📌 Descrição |
 |---|:---:|---|
-
-| **CREATE** | ✅ | Registrar a publicação no sistema. |
-| **READ** | ✅ | Consultar os dados necessários para validação e publicação. |
-| **UPDATE** | ✅ | Atualizar informações relacionadas ao processamento da publicação quando necessário. |
-| **DELETE** | ✅ | Cancelar ou remover registros quando necessário para o funcionamento do sistema. |
+| **CREATE** | ❌ | Não aplicável a ações automáticas do sistema neste requisito. |
+| **READ** | ✅ | Consultar os dados necessários para processar e exibir as publicações. |
+| **UPDATE** | ✅ | Atualizar o estado interno da publicação durante o processamento, quando necessário. |
+| **DELETE** | ✅ | Descartar registros incompletos ou temporários gerados durante o processamento, quando necessário. |
 
 
 
