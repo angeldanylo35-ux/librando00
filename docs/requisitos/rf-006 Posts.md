@@ -10,12 +10,18 @@
 
 
 
-### 1.1 Identificação
+### 📋 Identificação do Requisito
 
-
-
-**NOME_DO_PROJETO:** Librando a rede social para surdos
-**DESCRICAO_BREVE:** Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à comunidade surda. Nesta etapa do projeto, foram desenvolvidas as telas de recuperação e redefinição de senha, permitindo que os usuários solicitem a recuperação de acesso e definam uma nova senha de forma segura. Foram utilizadas as tecnologias Laravel, Vue.js, Vite, Axios, PHP e MySQL.
+| 🔢 | 🏷️ Informação | 📄 Descrição |
+|---:|---|---|
+| 1️⃣ | 🆔 **ID** | RF-006 |
+| 2️⃣ | 📝 **Título** | Criação e Publicação de Postagens |
+| 3️⃣ | ⚙️ **Tipo** | Requisito Funcional |
+| 4️⃣ | 🚨 **Prioridade** | ALTA |
+| 5️⃣ | 📊 **Complexidade** | MÉDIA/ALTA (estimado 8 Story Points) |
+| 6️⃣ | 🔄 **Status** | EM DESENVOLVIMENTO |
+| 7️⃣ | 📅 **Data de Criação** | 07/10/2026 |
+| 8️⃣ | 🔄 **Última Atualização** | 07/10/2026 |
 
 
 ### 1.2 Localização dos Artefatos
