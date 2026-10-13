@@ -438,7 +438,7 @@ Descrever detalhadamente como o requisito de **criação e publicação de posta
 
 ---
 
-## 🎨 4. PROTÓTIPO FUNCIONAL (HTML + CSS + CÓDIGO + BD + DEPLOY)
+## 🎨 4. PROTÓTIPO FUNCIONAL
 
 ### 4.1 Estrutura de Arquivos Entregáveis
 
