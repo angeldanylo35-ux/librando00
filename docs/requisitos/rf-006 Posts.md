@@ -266,7 +266,7 @@ Identificar claramente o requisito responsável pela criação e publicação de
 
 
 
-O sistema deve permitir que usuários cadastrados criem e publiquem conteúdos na rede social Librando, utilizando diferentes formatos de mídia, como **texto, imagens, GIFs e vídeos**. 📝🖼️🎞️🎥📊
+O sistema deve permitir que usuários cadastrados criem e publiquem conteúdos na rede social Librando, utilizando diferentes formatos de mídia, como **texto, imagens, GIFs e vídeos de até 50 MB por arquivo.**. 📝🖼️🎞️🎥📊
 
 
 
