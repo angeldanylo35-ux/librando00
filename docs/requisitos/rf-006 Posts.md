@@ -18,8 +18,6 @@ Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à 
 
 ### 1.2 Localização dos Artefatos
 
-
-
 **LINK_REPOSITORIO_GITHUB:** https://github.com/seu-usuario/[seu-repo]
 
 **BRANCH_PRINCIPAL:** main ou develop
@@ -29,7 +27,6 @@ Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à 
 **LINK_BANCO_DADOS:** [Supabase, Firebase, MongoDB Atlas, etc.] (com acesso de leitura para professor)
 
 **LINK_DEMONSTRAÇÃO:** [URL funcional da aplicação em produção] Comentário
-
 
 ### 1.3 Escopo Fixo
 
@@ -51,8 +48,6 @@ CADA REQUISITO TEM UM DOCUMENTO ÚNICO
 |  6  | [Angel Pacheco]               | Fullstack (opcional)    | —                | [[angel59381406@edu.df.senac.br](mailto:angel59381406@edu.df.senac.br)]                                                                             |
 
 ---
-
-
 
 ## 🎯 1. IDENTIFICAÇÃO DO REQUISITO 
 
