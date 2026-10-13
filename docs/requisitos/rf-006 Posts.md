@@ -703,3 +703,123 @@ CREATE INDEX idx_posts_created_at ON posts(created_at);
 | **Backend** | PHP / Laravel | 8.2 / 12 | Produtividade, segurança e robustez de API REST |
 | **Banco de Dados** | MySQL | 8.0+ | Confiabilidade, suporte relacional e transacional |
 | **Build Tool** | Vite | 5.x | Empacotamento rápido e otimizado para desenvolvimento |
+
+---
+
+## 🔒 6. VALIDAÇÃO DE SEGURANÇA OWASP
+
+### A01: Broken Access Control
+
+* **Vulnerabilidade:** Usuários não autenticados tentarem criar, editar ou publicar conteúdos diretamente via requisições à API sem validação de sessão.
+* **Implementação:**
+Utilização de Middlewares de autenticação no Laravel (`auth:sanctum`) para proteger as rotas de postagem:
+```php
+// backend/routes/api.php
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/posts', [PostController::class, 'store']);
+});
+
+```
+
+
+* **Teste:**
+```bash
+# Sem token de autenticação → Retorna HTTP 401 Unauthorized
+curl -X POST http://localhost:8000/api/posts -d "conteudo=Teste"
+
+# Com token válido → Retorna HTTP 201 Created
+curl -X POST http://localhost:8000/api/posts \
+  -H "Authorization: Bearer SEU_TOKEN_VALIDO" \
+  -d "conteudo=Olá comunidade surda!"
+
+```
+
+
+
+---
+
+### A03: Injection (SQL Injection)
+
+* **Vulnerabilidade:** Injeção de comandos SQL maliciosos através do campo de texto ou arquivos enviados na criação da postagem.
+* **Implementação:**
+O Laravel protege nativamente contra SQL Injection utilizando o Eloquent ORM e o Query Builder, que empregam *Prepared Statements* por padrão:
+```php
+// ❌ NUNCA FAÇA ISSO (Concatenação direta):
+// DB::raw("SELECT * FROM posts WHERE conteudo = '" . $request->conteudo . "'");
+
+// ✅ SEMPRE FAÇA ISSO (Eloquent ORM / Prepared Statements):
+$post = Post::create([
+    'usuario_id' => $request->user()->id,
+    'conteudo' => $request->input('conteudo'),
+    'tipo_midia' => $request->input('tipo_midia')
+]);
+
+```
+
+
+* **Teste:**
+```javascript
+// Tentativa de injetar SQL malicioso no conteúdo
+const payload = "Post de teste'; DROP TABLE posts; --";
+// Resultado: O banco de dados trata o payload inteiramente como uma string literal, preservando a integridade das tabelas.
+
+```
+
+
+
+---
+
+### A05: Broken Authentication
+
+* **Vulnerabilidade:** Sessões de usuários comprometidas ou tokens de acesso previsíveis que permitam falsificação de identidade ao publicar conteúdos.
+* **Implementação:**
+Emissão de tokens seguros utilizando o Laravel Sanctum com criptografia robusta e validação rigorosa de credenciais com Hash (`Bcrypt`):
+```php
+// Verificação de autenticidade da sessão/token na API de posts
+public function store(Request $request) {
+    $user = $request->user(); // Garante que o usuário autenticado é recuperado com segurança
+    if (!$user) {
+        return response()->json(['error' => 'Acesso negado'], 403);
+    }
+    // Prossegue com a criação do post...
+}
+
+```
+
+
+* **Teste:**
+```bash
+# Testar envio com token adulterado/expirado
+curl -X POST http://localhost:8000/api/posts \
+  -H "Authorization: Bearer token_falso_123"
+# Resultado esperado: HTTP 401 Unauthorized / Token inválido.
+
+```
+
+
+
+---
+
+### A07: Cross-Site Scripting (XSS)
+
+* **Vulnerabilidade:** Injeção de scripts maliciosos em JavaScript (`<script>alert('XSS')</script>`) dentro do campo de texto das postagens, executando códigos no navegador de outros usuários ao carregarem o feed.
+* **Implementação:**
+O framework Front-end Vue.js realiza o escape automático de dados ao utilizar a interpolação padrão (`{{ }}`), impedindo a execução direta de scripts HTML/JS injetados:
+```html
+<!-- ✅ SEGURO: O Vue.js converte tags HTML em texto puro automaticamente -->
+<p>{{ post.conteudo }}</p>
+
+<!-- ❌ EVITAR v-html com dados não sanitizados de usuários -->
+<!-- <div v-html="post.conteudo"></div> -->
+
+```
+
+
+* **Teste:**
+```html
+<!-- Entrada inserida pelo usuário malicioso -->
+<script>alert('XSS Attack');</script>
+
+<!-- Resultado na tela do Feed: O Vue renderiza de forma segura como texto plano na página, exibindo a string na tela sem disparar o script de alerta. -->
+
+```
