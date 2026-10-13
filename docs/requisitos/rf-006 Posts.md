@@ -174,16 +174,12 @@ Criar o conteúdo, selecionar o formato da publicação, inserir as informaçõe
 
 
 
+
 | 🔧 Operação | Permissão | 📌 Descrição |
-
 |---|:---:|---|
-
 | **CREATE** | ✅ | Criar novas publicações. |
-
 | **READ** | ✅ | Visualizar publicações disponíveis no feed. |
-
 | **UPDATE** | ❌ | Não contemplado neste requisito. |
-
 | **DELETE** | ❌ | Não contemplado neste requisito. |
 
 
