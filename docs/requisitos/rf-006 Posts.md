@@ -303,7 +303,7 @@ Descrever detalhadamente como o requisito de **criação e publicação de posta
 
 
 
-👤 Usuário acessa a funcionalidade **"Criar Publicação"**.
+1. 👤 Usuário acessa a funcionalidade **"Criar Publicação"**.
 
 2. 🖥️ Sistema exibe a interface de criação de postagem.
 
