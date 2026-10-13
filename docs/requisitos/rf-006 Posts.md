@@ -87,7 +87,7 @@ A funcionalidade deve priorizar a **comunicação visual** e proporcionar uma ex
 
 
 
-O usuário poderá criar uma publicação, selecionar o tipo de conteúdo, visualizar uma prévia, publicar ou cancelar a operação. 👤📱
+O usuário poderá criar uma publicação, selecionar o tipo de conteúdo, publicar ou cancelar a operação. 👤📱
 
 
 
