@@ -438,35 +438,134 @@ Descrever detalhadamente como o requisito de **criação e publicação de posta
 
 ---
 
+Ah, entendi perfeitamente! Olhando o modelo de exemplo que você enviou na Seção 4 do seu documento, o template traz o exemplo de um projeto menor ou feito em arquivo único (`index.html` com o código JS embutido), onde todo o código-fonte (HTML/JS) vai direto na documentação do requisito.
+
+No entanto, no seu projeto real do **Librando**, a arquitetura adotada separa o front-end em **Vue.js** (`Feed.vue`), o back-end em **Laravel** (`PostController.php`), e o banco de dados em **MySQL** (com as migrations DDL).
+
+Para atender rigorosamente ao que o seu modelo pede (colocar o código-fonte visível na seção 4 sem quebrar a arquitetura do seu projeto real), nós podemos adaptar a Seção 4 para exibir o código principal dos arquivos de implementação da feature (**o componente Vue do front-end** e **o controller do Laravel**), exatamente como o exemplo faz.
+
+Aqui está como você pode montar a **Seção 4** completa com o código-fonte embutido para o seu **RF-006**:
+
+---
+
 ## 🎨 4. PROTÓTIPO FUNCIONAL (HTML + CSS + CÓDIGO + BD + DEPLOY)
 
-### 4.1 Estrutura de Arquivos Entregáveis da Feature
+### 4.1 Estrutura de Arquivos Entregáveis
 
-```text
-frontend/src/paginas/
-└── Feed.vue (Interface de criação de postagens com estilos responsivos e Tailwind CSS)
+* **Frontend Vue:** `frontend/src/paginas/Feed.vue`
+* **Backend Laravel:** `backend/app/Http/Controllers/api/PostController.php`
+* **Banco de Dados (DDL):** `backend/database/migrations/2026_10_12_020211_create_posts_table.php`
+* **Deploy/Aplicação:** Executado localmente via XAMPP / Vite (`http://localhost:5173/feed`)
 
-backend/app/Http/Controllers/api/
-└── PostController.php (Controlador responsável pela lógica de criação, validação e salvamento)
+---
 
-backend/app/Models/
-└── Post.php (Model Eloquent para gerenciamento da tabela de posts)
+### 4.2 Código-Fonte do Componente Frontend (`Feed.vue`)
 
-database/migrations/
-└── 2026_10_12_020211_create_posts_table.php (Script de migração/DDL do banco de dados)
+```html
+<template>
+  <div class="max-w-2xl mx-auto p-4 bg-white rounded-lg shadow-md mt-6">
+    <!-- Bloco de Criação de Postagem -->
+    <form @submit.prevent="criarPostagem">
+      <div class="flex items-start space-x-3">
+        <div class="w-10 h-10 rounded-full bg-gray-800 text-white flex items-center justify-center font-bold">
+          AD
+        </div>
+        <div class="flex-1">
+          <textarea 
+            v-model="conteudo"
+            rows="3"
+            class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            placeholder="O que quer compartilhar em Libras ou texto?"
+            required
+          ></textarea>
+          <div v-if="erroValidacao" class="text-red-500 text-xs mt-1">O conteúdo da postagem não pode estar vazio.</div>
+        </div>
+      </div>
 
-docs/requisitos/
-└── rf-006-posts.md (Documentação detalhada do requisito)
+      <div class="border-t border-gray-200 my-3 pt-3 flex justify-between items-center">
+        <div class="flex space-x-4">
+          <label class="cursor-pointer text-gray-600 hover:text-indigo-600 flex items-center space-x-1 text-sm font-medium">
+            <span>📷 Vídeo / Imagem</span>
+            <input type="file" @change="tratarArquivo" class="hidden" accept="image/*,video/*">
+          </label>
+          <button type="button" class="text-gray-600 hover:text-indigo-600 text-sm font-medium">
+            📊 Enquete
+          </button>
+        </div>
+
+        <button 
+          type="submit" 
+          :disabled="carregando"
+          class="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition disabled:opacity-50"
+        >
+          {{ carregando ? 'Publicando...' : 'Publicar' }}
+        </button>
+      </div>
+    </form>
+
+    <div v-if="sucessoMensagem" class="mt-3 p-2 bg-green-100 text-green-700 text-sm rounded">
+      ✓ Publicação realizada com sucesso!
+    </div>
+  </div>
+</template>
+
+<script>
+import api from '@/services/api.js';
+
+export default {
+  data() {
+    return {
+      conteudo: '',
+      arquivo: null,
+      carregando: false,
+      erroValidacao: false,
+      sucessoMensagem: false
+    };
+  },
+  methods: {
+    tratarArquivo(event) {
+      this.arquivo = event.target.files[0];
+    },
+    async criarPostagem() {
+      if (!this.conteudo.trim()) {
+        this.erroValidacao = true;
+        return;
+      }
+      this.erroValidacao = false;
+      this.carregando = true;
+
+      try {
+        const formData = new FormData();
+        formData.append('conteudo', this.conteudo);
+        if (this.arquivo) formData.append('arquivo', this.arquivo);
+
+        const response = await api.post('/posts', formData);
+        
+        if (response.status === 201) {
+          this.sucessoMensagem = true;
+          this.conteudo = '';
+          this.arquivo = null;
+          setTimeout(() => { this.sucessoMensagem = false; }, 3000);
+        }
+      } catch (error) {
+        alert('Erro ao realizar a postagem. Tente novamente.');
+      } finally {
+        this.carregando = false;
+      }
+    }
+  }
+};
+</script>
 
 ```
 
 ---
 
-### 4.2 Script DDL do Banco de Dados (`posts_table.php` / SQL)
+### 4.3 Script DDL do Banco de Dados (`create_posts_table.php`)
 
 ```sql
 -- ============================================================================
--- RF-006: Criação e Publicação de Postagens (Tabela `posts`)
+-- RF-006: Script DDL para criação da tabela de postagens no MySQL
 -- ============================================================================
 
 CREATE TABLE IF NOT EXISTS posts (
@@ -482,7 +581,7 @@ CREATE TABLE IF NOT EXISTS posts (
     CONSTRAINT fk_posts_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
--- Índices para otimização de performance no Feed
+-- Índices de performance
 CREATE INDEX idx_posts_usuario_id ON posts(usuario_id);
 CREATE INDEX idx_posts_created_at ON posts(created_at);
 
@@ -490,7 +589,7 @@ CREATE INDEX idx_posts_created_at ON posts(created_at);
 
 ---
 
-### 4.3 Comprovium de Telas e Estados (Mockups Textuais)
+### 4.4 Comprovium de Telas e Estados (Mockups Textuais)
 
 **1. Estado Vazio (Inicial):**
 
@@ -506,56 +605,27 @@ CREATE INDEX idx_posts_created_at ON posts(created_at);
 
 ```
 
-**2. Estado Preenchido / Validação Visual (Sucesso):**
+**2. Estado Preenchido / Sucesso:**
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
 │ (AD) Olá pessoal! Vejam este sinal em Libras!          ✅   │
 │ ─────────────────────────────────────────────────────────── │
 │ [📷 video_sinal.mp4    ✅]    [📊 Enquete]                  │
-│ ┌───────────┐                                               │
-│ │ Publicar  │                                               │
-│ └───────────┘                                               │
+│ ✓ Publicação realizada com sucesso!                         │
 └─────────────────────────────────────────────────────────────┘
 
 ```
 
-**3. Estado de Carregamento (Loading):**
-
-```text
-┌─────────────────────────────────────────────────────────────┐
-│ ⏳ Processando publicação e enviando arquivos de mídia...   │
-└─────────────────────────────────────────────────────────────┘
-
-```
-
-**4. Estado de Erro (Validação Falhou):**
+**3. Estado de Erro (Conteúdo Vazio):**
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
 │ (AD)                                                     ❌ │
 │ O conteúdo da postagem não pode estar vazio.                │
-│ ─────────────────────────────────────────────────────────── │
-│ [📷 arquivo_invalido.exe ❌]                                │
-│ Formato de arquivo não suportado pela plataforma.           │
 └─────────────────────────────────────────────────────────────┘
 
 ```
-
----
-
-### 4.4 Critérios de Aceite Atendidos para Nota Máxima (50%)
-
-* **Interface Funcional:** Desenvolvida em Vue.js 3 (`Feed.vue`) utilizando Tailwind CSS para estilização e responsividade mobile/desktop.
-
-
-* **Código-Fonte Completo:** Implementado no ecossistema do projeto com rotas de API no Laravel (`api.php`), regras de controle no `PostController.php` e persistência via Eloquent ORM no Model `Post.php`.
-* **Script DDL:** Tabela `posts` estruturada via migrations do Laravel garantindo restrições de integridade e chaves estrangeiras com a tabela de usuários.
-* **Persistência em Banco de Dados:** Dados de texto e referências de mídia salvos com sucesso na base de dados MySQL local.
-* **Deploy e Acessibilidade:** Aplicação funcional integrada ao fluxo da rede social Librando, pronta para demonstração prática e validação acadêmica.
-
-
-Para adaptar a **Seção 5: Arquitetura e ADR** para o requisito **RF-006 (Criação e Publicação de Postagens)** seguindo rigorosamente o padrão solicitado (com diagrama, 4+ ADRs, tabela de tecnologias justificadas e fluxo de dados compatível com a stack Laravel/Vue.js do projeto), utilize a seguinte estrutura:
 
 ---
 
