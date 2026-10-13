@@ -435,3 +435,121 @@ Descrever detalhadamente como o requisito de **criação e publicação de posta
 | **RNF-03** | 🔒 Segurança | O sistema deve permitir a criação de publicações somente por usuários autenticados. | **100%** das tentativas de publicação devem passar por validação de autenticação. | 🛡️ Impedir que usuários não autorizados publiquem conteúdos. |
 | **RNF-04** | 📱 Usabilidade | A interface de criação deve apresentar os tipos de publicação e ações disponíveis de forma clara. | Usuário deve conseguir identificar as principais ações sem necessidade de conhecimento técnico. | 👍 Facilitar o uso da funcionalidade. |
 | **RNF-05** | 🌐 Disponibilidade | A funcionalidade deve estar disponível enquanto o sistema estiver em funcionamento. | Disponibilidade mínima de **99%** em produção. | 🔄 Garantir que os usuários possam criar e publicar conteúdos de forma consistente. |
+
+---
+
+## 🎨 4. PROTÓTIPO FUNCIONAL (HTML + CSS + CÓDIGO + BD + DEPLOY)
+
+### 4.1 Estrutura de Arquivos Entregáveis da Feature
+
+```text
+frontend/src/paginas/
+└── Feed.vue (Interface de criação de postagens com estilos responsivos e Tailwind CSS)
+
+backend/app/Http/Controllers/api/
+└── PostController.php (Controlador responsável pela lógica de criação, validação e salvamento)
+
+backend/app/Models/
+└── Post.php (Model Eloquent para gerenciamento da tabela de posts)
+
+database/migrations/
+└── 2026_10_12_020211_create_posts_table.php (Script de migração/DDL do banco de dados)
+
+docs/requisitos/
+└── rf-006-posts.md (Documentação detalhada do requisito)
+
+```
+
+---
+
+### 4.2 Script DDL do Banco de Dados (`posts_table.php` / SQL)
+
+```sql
+-- ============================================================================
+-- RF-006: Criação e Publicação de Postagens (Tabela `posts`)
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS posts (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    usuario_id BIGINT UNSIGNED NOT NULL,
+    conteudo TEXT NOT NULL,
+    tipo_midia VARCHAR(50) NULL,
+    arquivo_url VARCHAR(255) NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'ATIVO',
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT fk_posts_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+-- Índices para otimização de performance no Feed
+CREATE INDEX idx_posts_usuario_id ON posts(usuario_id);
+CREATE INDEX idx_posts_created_at ON posts(created_at);
+
+```
+
+---
+
+### 4.3 Comprovium de Telas e Estados (Mockups Textuais)
+
+**1. Estado Vazio (Inicial):**
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│ (AD) O que quer compartilhar em Libras ou texto?            │
+│ ─────────────────────────────────────────────────────────── │
+│ [📷 Vídeo / Imagem]    [📊 Enquete]                         │
+│ ┌───────────┐                                               │
+│ │ Publicar  │                                               │
+│ └───────────┘                                               │
+└─────────────────────────────────────────────────────────────┘
+
+```
+
+**2. Estado Preenchido / Validação Visual (Sucesso):**
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│ (AD) Olá pessoal! Vejam este sinal em Libras!          ✅   │
+│ ─────────────────────────────────────────────────────────── │
+│ [📷 video_sinal.mp4    ✅]    [📊 Enquete]                  │
+│ ┌───────────┐                                               │
+│ │ Publicar  │                                               │
+│ └───────────┘                                               │
+└─────────────────────────────────────────────────────────────┘
+
+```
+
+**3. Estado de Carregamento (Loading):**
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│ ⏳ Processando publicação e enviando arquivos de mídia...   │
+└─────────────────────────────────────────────────────────────┘
+
+```
+
+**4. Estado de Erro (Validação Falhou):**
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│ (AD)                                                     ❌ │
+│ O conteúdo da postagem não pode estar vazio.                │
+│ ─────────────────────────────────────────────────────────── │
+│ [📷 arquivo_invalido.exe ❌]                                │
+│ Formato de arquivo não suportado pela plataforma.           │
+└─────────────────────────────────────────────────────────────┘
+
+```
+
+---
+
+### 4.4 Critérios de Aceite Atendidos para Nota Máxima (50%)
+
+* **Interface Funcional:** Desenvolvida em Vue.js 3 (`Feed.vue`) utilizando Tailwind CSS para estilização e responsividade mobile/desktop.
+
+
+* **Código-Fonte Completo:** Implementado no ecossistema do projeto com rotas de API no Laravel (`api.php`), regras de controle no `PostController.php` e persistência via Eloquent ORM no Model `Post.php`.
+* **Script DDL:** Tabela `posts` estruturada via migrations do Laravel garantindo restrições de integridade e chaves estrangeiras com a tabela de usuários.
+* **Persistência em Banco de Dados:** Dados de texto e referências de mídia salvos com sucesso na base de dados MySQL local.
+* **Deploy e Acessibilidade:** Aplicação funcional integrada ao fluxo da rede social Librando, pronta para demonstração prática e validação acadêmica.
