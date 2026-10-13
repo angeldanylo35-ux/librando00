@@ -145,7 +145,7 @@ Entre os principais benefícios estão:
 
 
 
-1. 🤟 **Facilitar a comunicação visual** entre os usuários da plataforma.
+🤟 **Facilitar a comunicação visual** entre os usuários da plataforma.
 2. 📱 **Permitir o compartilhamento de diferentes formatos de conteúdo**, como textos, imagens, GIFs e vídeos.
 
 3. 💬 **Estimular a interação e participação da comunidade** dentro da rede social.
