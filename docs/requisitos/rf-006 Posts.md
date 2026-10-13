@@ -438,16 +438,6 @@ Descrever detalhadamente como o requisito de **criação e publicação de posta
 
 ---
 
-Ah, entendi perfeitamente! Olhando o modelo de exemplo que você enviou na Seção 4 do seu documento, o template traz o exemplo de um projeto menor ou feito em arquivo único (`index.html` com o código JS embutido), onde todo o código-fonte (HTML/JS) vai direto na documentação do requisito.
-
-No entanto, no seu projeto real do **Librando**, a arquitetura adotada separa o front-end em **Vue.js** (`Feed.vue`), o back-end em **Laravel** (`PostController.php`), e o banco de dados em **MySQL** (com as migrations DDL).
-
-Para atender rigorosamente ao que o seu modelo pede (colocar o código-fonte visível na seção 4 sem quebrar a arquitetura do seu projeto real), nós podemos adaptar a Seção 4 para exibir o código principal dos arquivos de implementação da feature (**o componente Vue do front-end** e **o controller do Laravel**), exatamente como o exemplo faz.
-
-Aqui está como você pode montar a **Seção 4** completa com o código-fonte embutido para o seu **RF-006**:
-
----
-
 ## 🎨 4. PROTÓTIPO FUNCIONAL (HTML + CSS + CÓDIGO + BD + DEPLOY)
 
 ### 4.1 Estrutura de Arquivos Entregáveis
