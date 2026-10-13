@@ -10,18 +10,7 @@
 
 
 
-### 🎯 1. Identificação do Requisito
 
-| 🔢 | 🏷️ Informação | 📄 Descrição |
-|---:|---|---|
-| 1️⃣ | 🆔 **ID** | RF-006 |
-| 2️⃣ | 📝 **Título** | Criação e Publicação de Postagens |
-| 3️⃣ | ⚙️ **Tipo** | Requisito Funcional |
-| 4️⃣ | 🚨 **Prioridade** | ALTA |
-| 5️⃣ | 📊 **Complexidade** | MÉDIA/ALTA (estimado 8 Story Points) |
-| 6️⃣ | 🔄 **Status** | EM DESENVOLVIMENTO |
-| 7️⃣ | 📅 **Data de Criação** | 07/10/2026 |
-| 8️⃣ | 🔄 **Última Atualização** | 13/10/2026 |
 
 
 ### 1.2 Localização dos Artefatos
