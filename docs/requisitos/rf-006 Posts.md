@@ -408,25 +408,15 @@ Descrever detalhadamente como o requisito de **criação e publicação de posta
 ## 📋 Regras de Negócio (RN)
 
 
-
 | 🆔 ID | 📌 Regra | 📝 Descrição |
-
 |---|---|---|
-
 | **RN-01** | Usuário Autenticado | Somente usuários cadastrados e autenticados podem criar e publicar postagens. |
-
 | **RN-02** | Conteúdo Obrigatório | A publicação deve possuir conteúdo válido antes de ser publicada. |
-
-| **RN-03** | Tipos de Conteúdo | O sistema deve permitir publicações nos formatos definidos pela plataforma: texto, imagem, GIF e vídeo. |
-
+| **RN-03** | Tipos de Conteúdo | O sistema deve permitir publicações nos formatos definidos pela plataforma: texto, imagem, GIF, vídeo e enquete. |
 | **RN-04** | Validação de Mídia | Arquivos enviados devem ser validados antes de serem associados à publicação. |
-
 | **RN-05** | Publicação no Feed | A publicação somente deve ser disponibilizada no feed após a conclusão do processo de publicação. |
-
 | **RN-06** | Cancelamento | O usuário pode cancelar a criação da publicação antes de confirmá-la. |
-
 | **RN-07** | Dados da Publicação | A publicação deve ser associada ao usuário responsável por sua criação. |
-
 | **RN-08** | Conteúdo Incompleto | O sistema não deve disponibilizar no feed uma publicação que não tenha sido concluída corretamente. |
 
 
