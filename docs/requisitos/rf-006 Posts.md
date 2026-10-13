@@ -21,9 +21,13 @@ Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à 
 
 
 **LINK_REPOSITORIO_GITHUB:** https://github.com/seu-usuario/[seu-repo]
+
 **BRANCH_PRINCIPAL:** main ou develop
+
 **LINK_APLICACAO_DEPLOY:** https://[seu-projeto].github.io (GitHub Pages) ou Vercel, Netlify, etc.
+
 **LINK_BANCO_DADOS:** [Supabase, Firebase, MongoDB Atlas, etc.] (com acesso de leitura para professor)
+
 **LINK_DEMONSTRAÇÃO:** [URL funcional da aplicação em produção] Comentário
 
 
