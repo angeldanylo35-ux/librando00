@@ -553,3 +553,93 @@ CREATE INDEX idx_posts_created_at ON posts(created_at);
 * **Script DDL:** Tabela `posts` estruturada via migrations do Laravel garantindo restrições de integridade e chaves estrangeiras com a tabela de usuários.
 * **Persistência em Banco de Dados:** Dados de texto e referências de mídia salvos com sucesso na base de dados MySQL local.
 * **Deploy e Acessibilidade:** Aplicação funcional integrada ao fluxo da rede social Librando, pronta para demonstração prática e validação acadêmica.
+
+
+Para adaptar a **Seção 5: Arquitetura e ADR** para o requisito **RF-006 (Criação e Publicação de Postagens)** seguindo rigorosamente o padrão solicitado (com diagrama, 4+ ADRs, tabela de tecnologias justificadas e fluxo de dados compatível com a stack Laravel/Vue.js do projeto), utilize a seguinte estrutura:
+
+---
+
+## 🏗️ 5. ARQUITETURA E ADR
+
+### Diagrama de Componentes
+
+```text
+┌──────────────────────────────────────┐
+│       Frontend (SPA / Vite)          │
+│ Vue.js 3 + Tailwind CSS              │
+│ • Feed.vue (Painel de Postagens)     │
+│ • api.js (Axios HTTP Client)         │
+│ • Hospedado localmente (Vite Server) │
+└──────────────────┬───────────────────┘
+                   │ HTTPS / CORS + Bearer Token
+                   ▼
+┌──────────────────────────────────────┐
+│        API REST Backend (Laravel)    │
+│ PHP 8.2 + Laravel 12                 │
+│ • POST /api/posts (criação de post)  │
+│ • GET /api/posts (listagem do feed)  │
+│ • Middleware de Autenticação (Sanctum│
+│ • Validação de Dados e Mídia         │
+│ • Hospedado localmente (XAMPP / PHP) │
+└──────────────────┬───────────────────┘
+                   │ Transação ACID (Eloquent ORM)
+                   ▼
+┌──────────────────────────────────────┐
+│           Banco de Dados             │
+│                MySQL                 │
+│ • Tabela: `posts`                    │
+│ • Tabela: `usuarios`                 │
+│ • Chaves Estrangeiras (FK)           │
+│ • Índices (usuario_id, created_at)   │
+└──────────────────────────────────────┘
+
+```
+
+---
+
+### Architecture Decision Records (ADRs)
+
+#### ADR-001: MySQL como Banco de Dados Relacional
+
+* **Status:** ACEITO
+* **Contexto:** Os dados das postagens e sua associação com os usuários requerem integridade referencial rigorosa e suporte a consultas relacionais eficientes para a construção do feed.
+* **Decisão:** Utilizar o MySQL gerenciado pelo Eloquent ORM do Laravel.
+* **Alternativas:** MongoDB (menos estruturado para relações diretas de feed), PostgreSQL (igualmente viável, mas o MySQL já padroniza o ecossistema do projeto).
+* **Consequências:** ✅ Excelente integração com o Laravel via Migrations e Eloquent, ✅ Suporte a transações e chaves estrangeiras, ⚠️ Requer manutenção de índices para performance no feed.
+
+#### ADR-002: Vue.js 3 com Arquitetura de Componentes para o Feed
+
+* **Status:** ACEITO
+* **Contexto:** A criação de postagens exige interatividade dinâmica em tempo real (como pré-visualização de mídia e atualização instantânea do feed).
+* **Decisão:** Adotar Vue.js 3 com Single File Components (`Feed.vue`) e estilização utilitária via Tailwind CSS.
+* **Alternativas:** Blade templates tradicionais do Laravel (menor interatividade dinâmica), React (curva de adaptação da equipe).
+* **Consequências:** ✅ Experiência de usuário fluida e reativa, ✅ Organização modular do código frontend, ⚠️ Necessidade de build via Vite.
+
+#### ADR-003: Validação Dual (Frontend Vue + Backend Laravel)
+
+* **Status:** ACEITO
+* **Contexto:** Garantir a consistência dos dados de texto e o bloqueio de arquivos maliciosos ou fora do formato permitido tanto na interface quanto na API.
+* **Decisão:** Implementar validações visuais no componente Vue e validações rígidas de regras de negócio no `PostController` do Laravel.
+* **Alternativas:** Validar apenas no backend (gera atraso na resposta de erro para o usuário) ou apenas no frontend (inseguro contra requisições diretas).
+* **Consequências:** ✅ Segurança robusta e feedback visual imediato para a comunidade surda, ✅ Prevenção contra dados corrompidos no banco, ⚠️ Duplicação lógica de regras de validação.
+
+#### ADR-004: Upload e Armazenamento Controlado de Mídias
+
+* **Status:** ACEITO
+* **Contexto:** O requisito prevê o suporte a diferentes formatos visuais (imagens, GIFs e vídeos), essenciais para a comunicação da comunidade surda.
+* **Decisão:** Processar os arquivos enviados via requisição `FormData` com Axios, armazenando-os de forma segura no servidor backend e registrando o caminho na tabela de posts.
+* **Alternativas:** Armazenar imagens em formato Base64 diretamente no banco de dados (inviável por impactar a performance e estourar o limite de tamanho das colunas).
+* **Consequências:** ✅ Alta performance do banco de dados salvando apenas caminhos/URLs, ✅ Suporte eficiente a arquivos multimídia, ⚠️ Necessidade de gerenciar diretórios públicos de armazenamento no servidor.
+
+---
+
+### Tecnologias Escolhidas
+
+| Camada | Tecnologia | Versão | Justificativa |
+| --- | --- | --- | --- |
+| **Frontend** | Vue.js | 3.x | Reatividade e componentização moderna |
+| **Estilização** | Tailwind CSS | 3.x | Agilidade na criação de layouts responsivos |
+| **Comunicação** | Axios | 1.x | Requisições HTTP assíncronas padronizadas |
+| **Backend** | PHP / Laravel | 8.2 / 12 | Produtividade, segurança e robustez de API REST |
+| **Banco de Dados** | MySQL | 8.0+ | Confiabilidade, suporte relacional e transacional |
+| **Build Tool** | Vite | 5.x | Empacotamento rápido e otimizado para desenvolvimento |
