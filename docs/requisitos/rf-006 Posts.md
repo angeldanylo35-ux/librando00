@@ -315,25 +315,21 @@ Descrever detalhadamente como o requisito de **criação e publicação de posta
 
 6. 🔎 Sistema valida os dados inseridos pelo usuário.
 
-7. 👁️ Sistema apresenta uma prévia da publicação.
+7. 👤 Usuário verifica o conteúdo da publicação.
 
-8. 👤 Usuário verifica o conteúdo da publicação.
+8. 📤 Usuário seleciona a opção **"Publicar"**.
 
-9. 📤 Usuário seleciona a opção **"Publicar"**.
+9. 🔎 Sistema realiza novamente a validação dos dados antes de concluir a publicação.
 
-10. 🔎 Sistema realiza novamente a validação dos dados antes de concluir a publicação.
+10. 📁 Sistema processa os arquivos de mídia enviados, quando existentes.
 
-11. 📁 Sistema processa os arquivos de mídia enviados, quando existentes.
+11. 💾 Sistema registra a publicação.
 
-12. 💾 Sistema registra a publicação.
+12. 📰 Sistema disponibiliza a publicação no feed.
 
-13. 📰 Sistema disponibiliza a publicação no feed.
+13. ✅ Sistema exibe a mensagem **"Publicação realizada com sucesso!"**.
 
-14. ✅ Sistema exibe a mensagem **"Publicação realizada com sucesso!"**.
-
-15. 👤 Usuário visualiza sua publicação no feed.
-
-
+14. 👤 Usuário visualiza sua publicação no feed.
 
 ---
 
