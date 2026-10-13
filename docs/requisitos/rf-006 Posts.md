@@ -215,15 +215,11 @@ Processar e controlar automaticamente o fluxo de criação e publicação das po
 
 
 | 🔧 Operação | Permissão | 📌 Descrição |
-
 |---|:---:|---|
 
 | **CREATE** | ✅ | Registrar a publicação no sistema. |
-
 | **READ** | ✅ | Consultar os dados necessários para validação e publicação. |
-
 | **UPDATE** | ✅ | Atualizar informações relacionadas ao processamento da publicação quando necessário. |
-
 | **DELETE** | ✅ | Cancelar ou remover registros quando necessário para o funcionamento do sistema. |
 
 
