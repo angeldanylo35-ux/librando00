@@ -9,7 +9,10 @@
 ## 1. METADADOS DO PROJETO E DA EQUIPE
 
 
+* **NOME_DO_PROJETO:** Librando
 
+* **DESCRICAO_BREVE:**
+Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à comunidade surda. Nesta etapa do projeto, foram desenvolvidas as telas de recuperação e redefinição de senha, permitindo que os usuários solicitem a recuperação de acesso e definam uma nova senha de forma segura. Foram utilizadas as tecnologias Laravel, Vue.js, Vite, Axios, PHP e MySQL.
 
 
 
