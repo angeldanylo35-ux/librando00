@@ -249,9 +249,13 @@ Descrever detalhadamente como o requisito de **criação e publicação de posta
 
 
 ✅ Usuário cadastrado na plataforma.
+
 ✅ Usuário autenticado no sistema.
+
 ✅ Usuário possui acesso à funcionalidade de criação de postagem.
+
 ✅ Sistema disponível para receber e processar a publicação.
+
 ✅ Serviço de armazenamento disponível para arquivos de mídia, quando necessário.
 
 
@@ -264,9 +268,13 @@ Descrever detalhadamente como o requisito de **criação e publicação de posta
 
 
 ✅ Publicação registrada no sistema.
+
 ✅ Conteúdo associado ao usuário responsável pela publicação.
+
 ✅ Publicação disponibilizada no feed.
+
 ✅ Arquivos de mídia armazenados corretamente, quando utilizados.
+
 ✅ Usuário recebe confirmação visual de que a publicação foi realizada.
 
 
@@ -279,8 +287,11 @@ Descrever detalhadamente como o requisito de **criação e publicação de posta
 
 
 ❌ Publicação não é registrada no sistema.
+
 ❌ Conteúdo incompleto não é disponibilizado no feed.
+
 ⚠️ Usuário recebe uma mensagem informando o erro ocorrido.
+
 🔄 Usuário pode corrigir os dados ou tentar realizar a publicação novamente.
 
 
@@ -293,6 +304,7 @@ Descrever detalhadamente como o requisito de **criação e publicação de posta
 
 
 👤 Usuário acessa a funcionalidade **"Criar Publicação"**.
+
 2. 🖥️ Sistema exibe a interface de criação de postagem.
 
 3. 📝 Usuário seleciona o tipo de conteúdo que deseja publicar.
