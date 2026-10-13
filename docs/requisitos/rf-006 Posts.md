@@ -62,33 +62,18 @@ CADA REQUISITO TEM UM DOCUMENTO ÚNICO
 
 Identificar claramente o requisito responsável pela criação e publicação de postagens na plataforma Librando, apresentando seu tipo, prioridade, complexidade e situação atual.
 
-
-
 ### 📋 Identificação do Requisito
 
-
-
-| 🏷️ Informação | 📄 Descrição |
-
-|---|---|
-
-| 🆔 **ID** | RF-006 |
-
-| 📝 **Título** | Criação e Publicação de Postagens |
-
-| ⚙️ **Tipo** | Requisito Funcional |
-
-| 🚨 **Prioridade** | ALTA |
-
-| 📊 **Complexidade** | MÉDIA/ALTA (estimado 8 Story Points) |
-
-| 🔄 **Status** | EM DESENVOLVIMENTO |
-
-| 📅 **Data de Criação** | 07/10/2026 |
-
-| 🔄 **Última Atualização** | 07/10/2026 |
-
-
+| 🔢 | 🏷️ Informação | 📄 Descrição |
+|---:|---|---|
+| 1️⃣ | 🆔 **ID** | RF-006 |
+| 2️⃣ | 📝 **Título** | Criação e Publicação de Postagens |
+| 3️⃣ | ⚙️ **Tipo** | Requisito Funcional |
+| 4️⃣ | 🚨 **Prioridade** | ALTA |
+| 5️⃣ | 📊 **Complexidade** | MÉDIA/ALTA (estimado 8 Story Points) |
+| 6️⃣ | 🔄 **Status** | EM DESENVOLVIMENTO |
+| 7️⃣ | 📅 **Data de Criação** | 07/10/2026 |
+| 8️⃣ | 🔄 **Última Atualização** | 07/10/2026 |
 
 ### 📌 Breve Descrição
 
