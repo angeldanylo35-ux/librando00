@@ -51,6 +51,191 @@ CADA REQUISITO TEM UM DOCUMENTO ÚNICO
 |  4  | [Henrique Alves]              | DBA / Banco de Dados    | —                | [[henrique51782196@edu.df.senac.br](mailto:henrique51782196@edu.df.senac.br)]                                                                       |
 |  5  | [Angel Pacheco]               | QA / SecDevOps          | —                | [[angel59381406@edu.df.senac.br](mailto:angel59381406@edu.df.senac.br)]                                                                             |
 |  6  | [Angel Pacheco]               | Fullstack (opcional)    | —                | [[angel59381406@edu.df.senac.br](mailto:angel59381406@edu.df.senac.br)]                                                                             |
+---
+
+# 2. ESTRUTURA DE DIRETÓRIOS DO PROJETO
+
+```text
+librando00-main/
+│
+├── README.md
+│
+├── docs/
+│   ├── api/
+│   │   └── swagger.json
+│   │
+│   └── requisitos/
+│       ├── rf-001-login.md
+│       ├── rf-002-cadastrar.md
+│       ├── rf-003-Esqueci-minha-senha.md
+│       ├── rf-004-Tela-Inicial-Uuário.md
+│       └── rf-006 Posts.md
+│
+├── backend/
+│   ├── app/
+│   │   ├── Http/
+│   │   │   └── Controllers/
+│   │   │       ├── Controller.php
+│   │   │       ├── api/
+│   │   │       │   ├── AuthController.php
+│   │   │       │   ├── PasswordResetController.php
+│   │   │       │   └── PostController.php
+│   │   │       └── auth/
+│   │   │           └── PasswordResetController.php
+│   │   │
+│   │   ├── Mail/
+│   │   │   ├── RecuperacaoSenha.php
+│   │   │   └── VerificacaoCadastro.php
+│   │   │
+│   │   ├── Models/
+│   │   │   ├── CadastroPendente.php
+│   │   │   ├── PasswordResetCode.php
+│   │   │   ├── Post.php
+│   │   │   ├── RecuperacaoSenha.php
+│   │   │   ├── User.php
+│   │   │   ├── Usuario.php
+│   │   │   ├── VerificacaoEmail.php
+│   │   │   └── enqueteopcao.php
+│   │   │
+│   │   ├── Notifications/
+│   │   │   ├── PasswordChangedNotification.php
+│   │   │   └── ResetCodeNotification.php
+│   │   │
+│   │   └── Providers/
+│   │       └── AppServiceProvider.php
+│   │
+│   ├── bootstrap/
+│   ├── config/
+│   ├── database/
+│   │   ├── factories/
+│   │   │   └── UserFactory.php
+│   │   │
+│   │   ├── migrations/
+│   │   │   ├── 0001_01_01_000000_create_users_table.php
+│   │   │   ├── 0001_01_01_000001_create_cache_table.php
+│   │   │   ├── 0001_01_01_000002_create_jobs_table.php
+│   │   │   ├── 2025_01_01_000000_create_password_reset_codes_table.php
+│   │   │   ├── 2026_09_06_021505_create_usuarios_table.php
+│   │   │   ├── 2026_09_06_024645_create_personal_access_tokens_table.php
+│   │   │   ├── 2026_09_13_145553_create_verificacoes_email_table.php
+│   │   │   ├── 2026_09_13_150557_create_cadastros_pendentes_table.php
+│   │   │   ├── 2026_09_13_205428_create_recuperacao_senhas_table.php
+│   │   │   ├── 2026_10_12_020211_create_posts_table.php
+│   │   │   ├── 2026_10_12_020212_create_enquete_opcoes_table.php
+│   │   │   └── migrations/
+│   │   │       └── (cópias de migrations)
+│   │   │
+│   │   └── seeders/
+│   │       ├── DatabaseSeeder.php
+│   │       └── UsuarioSeeder.php
+│   │
+│   ├── resources/
+│   │   ├── css/
+│   │   │   └── app.css
+│   │   ├── js/
+│   │   │   └── app.js
+│   │   └── views/
+│   │       ├── auth/
+│   │       │   ├── forgot-password.blade.php
+│   │       │   ├── reset-password.blade.php
+│   │       │   └── verify-code.blade.php
+│   │       ├── emails/
+│   │       │   ├── recuperacao-senha.blade.php
+│   │       │   └── verificacao-cadastro.blade.php
+│   │       └── welcome.blade.php
+│   │
+│   ├── routes/
+│   │   ├── api.php
+│   │   ├── console.php
+│   │   └── web.php
+│   │
+│   ├── tests/
+│   │   ├── Feature/
+│   │   │   └── ExampleTest.php
+│   │   ├── Unit/
+│   │   │   └── ExampleTest.php
+│   │   └── TestCase.php
+│   │
+│   ├── public/
+│   ├── storage/
+│   ├── artisan
+│   ├── composer.json
+│   ├── composer.lock
+│   ├── package.json
+│   ├── phpunit.xml
+│   └── vite.config.js
+│
+└── frontend/
+    ├── .vscode/
+    │   └── extensions.json
+    │
+    ├── public/
+    │   ├── favicon.svg
+    │   └── icons.svg
+    │
+    ├── src/
+    │   ├── assets/
+    │   │   ├── estetico.css
+    │   │   ├── hero.png
+    │   │   ├── vite.svg
+    │   │   └── vue.svg
+    │   │
+    │   ├── components/
+    │   │   └── HelloWorld.vue
+    │   │
+    │   ├── paginas/
+    │   │   ├── Feed.vue
+    │   │   ├── cadastro.vue
+    │   │   ├── esqueci-senha.vue
+    │   │   ├── login.vue
+    │   │   ├── redefinir-senha.vue
+    │   │   └── verificar-email.vue
+    │   │
+    │   ├── router/
+    │   │   └── index.js
+    │   │
+    │   ├── services/
+    │   │   └── api.js
+    │   │
+    │   ├── App.vue
+    │   ├── main.js
+    │   └── style.css
+    │
+    ├── index.html
+    ├── package.json
+    ├── package-lock.json
+    ├── postcss.config.js
+    ├── tailwind.config.js
+    ├── vite.config.js
+    └── README.md
+```
+
+## Localização dos Arquivos
+
+- **Documentação dos requisitos:** `docs/requisitos/`
+- **Documentação da API:** `docs/api/swagger.json`
+- **Login:** `frontend/src/paginas/login.vue`
+- **Cadastro:** `frontend/src/paginas/cadastro.vue`
+- **Verificação de e-mail:** `frontend/src/paginas/verificar-email.vue`
+- **Recuperação de senha:** `frontend/src/paginas/esqueci-senha.vue` e `frontend/src/paginas/redefinir-senha.vue`
+- **Feed de publicações:** `frontend/src/paginas/Feed.vue`
+- **Estilos da aplicação:** `frontend/src/assets/estetico.css` e `frontend/src/style.css`
+- **Rotas do front-end:** `frontend/src/router/index.js`
+- **Comunicação com a API:** `frontend/src/services/api.js`
+- **Controlador de autenticação:** `backend/app/Http/Controllers/api/AuthController.php`
+- **Controlador de publicações:** `backend/app/Http/Controllers/api/PostController.php`
+- **Controlador de recuperação de senha:** `backend/app/Http/Controllers/api/PasswordResetController.php`
+- **Modelos do banco de dados:** `backend/app/Models/`
+- **Migrações do banco de dados:** `backend/database/migrations/`
+- **Dados iniciais:** `backend/database/seeders/`
+- **Rotas da API:** `backend/routes/api.php`
+- **Testes:** `backend/tests/`
+- **Guia geral:** `README.md`
+
+**Aplicação funcional:** o front-end está em `frontend/` e o back-end em `backend/`. A publicação e a integração com o banco de dados dependem da configuração do ambiente de execução.
+
+
+
 
 ---
 
