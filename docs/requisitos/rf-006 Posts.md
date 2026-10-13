@@ -21,7 +21,7 @@
 | 5️⃣ | 📊 **Complexidade** | MÉDIA/ALTA (estimado 8 Story Points) |
 | 6️⃣ | 🔄 **Status** | EM DESENVOLVIMENTO |
 | 7️⃣ | 📅 **Data de Criação** | 07/10/2026 |
-| 8️⃣ | 🔄 **Última Atualização** | 07/10/2026 |
+| 8️⃣ | 🔄 **Última Atualização** | 13/10/2026 |
 
 
 ### 1.2 Localização dos Artefatos
