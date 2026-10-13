@@ -428,17 +428,10 @@ Descrever detalhadamente como o requisito de **criação e publicação de posta
 ## ⚙️ Requisitos Não-Funcionais (RNF)
 
 
-
 | 🆔 ID | 🏷️ Atributo | 📋 Requisito | 📏 Métrica | 💡 Justificativa |
-
 |---|---|---|---|---|
-
 | **RNF-01** | ⚡ Performance | A interface de criação de postagem deve apresentar as ações do usuário de forma rápida e responsiva. | Resposta das ações principais em até **2 segundos**, em condições normais de uso. | 🧑‍💻 Proporcionar uma experiência fluida durante a criação da publicação. |
-
 | **RNF-02** | ♿ Acessibilidade | A funcionalidade deve possuir uma interface acessível e adequada à proposta da Librando. | Elementos da interface devem possuir identificação visual clara e permitir a utilização dos recursos de criação. | 🤟 Facilitar a utilização da plataforma pela comunidade surda. |
-
 | **RNF-03** | 🔒 Segurança | O sistema deve permitir a criação de publicações somente por usuários autenticados. | **100%** das tentativas de publicação devem passar por validação de autenticação. | 🛡️ Impedir que usuários não autorizados publiquem conteúdos. |
-
 | **RNF-04** | 📱 Usabilidade | A interface de criação deve apresentar os tipos de publicação e ações disponíveis de forma clara. | Usuário deve conseguir identificar as principais ações sem necessidade de conhecimento técnico. | 👍 Facilitar o uso da funcionalidade. |
-
-| **RNF-05** | 🌐 Disponibilidade | A funcionalidade deve estar disponível enquanto o sistema estiver em funcionamento. | Disponibilidade mínima de **99%** em produção. | 🔄 Garantir que os usuários possam criar e publicar conteúdos de forma consistente. | 
+| **RNF-05** | 🌐 Disponibilidade | A funcionalidade deve estar disponível enquanto o sistema estiver em funcionamento. | Disponibilidade mínima de **99%** em produção. | 🔄 Garantir que os usuários possam criar e publicar conteúdos de forma consistente. |
