@@ -18,15 +18,17 @@ Sistema web desenvolvido para a plataforma Librando, uma rede social voltada à 
 
 ### 1.2 Localização dos Artefatos
 
-**LINK_REPOSITORIO_GITHUB:** https://github.com/seu-usuario/[seu-repo]
+**LINK_REPOSITORIO_GITHUB:** https://github.com/angeldanylo35-ux/librando00
 
-**BRANCH_PRINCIPAL:** main ou develop
+**BRANCH_PRINCIPAL:** main
 
-**LINK_APLICACAO_DEPLOY:** https://[seu-projeto].github.io (GitHub Pages) ou Vercel, Netlify, etc.
+**LINK_APLICACAO_DEPLOY:** Não disponível no momento.
 
-**LINK_BANCO_DADOS:** [Supabase, Firebase, MongoDB Atlas, etc.] (com acesso de leitura para professor)
+**LINK_BANCO_DADOS:** Banco de dados utilizado no projeto, com acesso a definir conforme a configuração do ambiente.
 
-**LINK_DEMONSTRAÇÃO:** [URL funcional da aplicação em produção] Comentário
+**LINK_DEMONSTRAÇÃO:** Não disponível no momento.
+
+**Comentário:** O projeto Librando está disponível no GitHub para consulta do código-fonte. Os links da aplicação em produção, do banco de dados e da demonstração serão informados quando estiverem configurados.
 
 ### 1.3 Escopo Fixo
 
