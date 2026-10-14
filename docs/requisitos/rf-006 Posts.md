@@ -774,7 +774,7 @@ CREATE INDEX idx_posts_created_at ON posts(created_at);
 ┌─────────────────────────────────────────────────────────────┐
 │ (AD) O que quer compartilhar em Libras ou texto?            │
 │ ─────────────────────────────────────────────────────────── │
-│ [📷 Vídeo / Imagem]    [📊 Enquete]                         │
+│ [📷 Vídeo / Imagem]                                         │
 │ ┌───────────┐                                               │
 │ │ Publicar  │                                               │
 │ └───────────┘                                               │
@@ -788,7 +788,7 @@ CREATE INDEX idx_posts_created_at ON posts(created_at);
 ┌─────────────────────────────────────────────────────────────┐
 │ (AD) Olá pessoal! Vejam este sinal em Libras!          ✅   │
 │ ─────────────────────────────────────────────────────────── │
-│ [📷 video_sinal.mp4    ✅]    [📊 Enquete]                  │
+│ [📷 video_sinal.mp4    ✅]                                 │
 │ ✓ Publicação realizada com sucesso!                         │
 └─────────────────────────────────────────────────────────────┘
 
