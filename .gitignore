@@ -1,0 +1,23 @@
+
+# Dependências do frontend
+node_modules/
+frontend/node_modules/
+
+# Configurações locais e credenciais
+.env
+.env.*
+!.env.example
+
+# Dependências PHP do Composer
+/vendor/
+
+# Arquivos gerados pelo Laravel
+/backend/storage/logs/*
+/backend/storage/framework/cache/*
+/backend/storage/framework/sessions/*
+/backend/storage/framework/views/*
+
+# Arquivos temporários do sistema
+.DS_Store
+Thumbs.db
+

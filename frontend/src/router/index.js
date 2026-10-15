@@ -5,6 +5,7 @@ import VerificarEmail from '../paginas/verificar-email.vue';
 import EsqueciSenha from '../paginas/esqueci-senha.vue';
 import RedefinirSenha from '../paginas/redefinir-senha.vue';
 import Feed from '../paginas/Feed.vue';
+import Perfil from '../paginas/Perfil.vue';
 
 const routes = [
   {
@@ -40,6 +41,11 @@ const routes = [
     path: '/feed',
     name: 'feed',
     component: Feed,
+  },
+  {
+    path: '/perfil',
+    name: 'perfil',
+    component: Perfil,
   },
   // adicione as próximas telas aqui, ex:
   // { path: '/home', name: 'home', component: Home },
