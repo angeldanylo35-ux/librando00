@@ -285,27 +285,19 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 
 ### ⚙️ 3.6 Requisitos Não Funcionais
 
-- **⚡ RNF-01 — Desempenho:** o carregamento das informações do perfil e o processamento de atualizações comuns deverão ocorrer em até 2 segundos em condições normais de operação, desconsiderando o tempo necessário para transferir arquivos de imagem grandes ou a ocorrência de problemas externos de rede.
-
-- **📱 RNF-02 — Responsividade:** a interface de perfil e o formulário de edição deverão adaptar-se a dispositivos móveis, tablets e computadores, mantendo os campos e controles acessíveis em diferentes resoluções.
-
-- **🌐 RNF-03 — Compatibilidade:** a funcionalidade deverá ser compatível com versões atuais dos principais navegadores, incluindo Google Chrome, Mozilla Firefox, Microsoft Edge e Safari.
-
-- **♿ RNF-04 — Acessibilidade:** os campos, botões, mensagens de erro e confirmações deverão possuir identificação clara, contraste adequado e navegação acessível por teclado, considerando as necessidades de acessibilidade do público do Librando.
-
-- **🔒 RNF-05 — Segurança:** as operações de consulta e atualização deverão verificar autenticação e autorização, proteger os dados transmitidos e validar os arquivos enviados para reduzir riscos de acesso indevido e envio de conteúdo malicioso.
-
-- **💾 RNF-06 — Integridade e confiabilidade:** o sistema deverá garantir a consistência das informações do perfil, evitando que falhas durante uma atualização produzam dados incompletos ou inconsistentes.
-
-- 🖼️ **RNF-07 — Processamento de imagens:** o sistema deverá processar as imagens de perfil e de capa dentro dos limites de tamanho e formatos estabelecidos, evitando o consumo excessivo de recursos.
-
-- **📝 RNF-08 — Consulta de publicações:** a seção de publicações próprias deverá apresentar os posts associados ao usuário correto, mantendo um tempo de resposta adequado em condições normais de operação.
-
-- **🔁 RNF-09 — Consulta de reposts:** a seção de publicações repostadas deverá distinguir os conteúdos repostados das publicações de autoria do usuário e preservar a identificação do autor original.
-
-- **🛡️ RNF-10 — Autorização de publicações:** as opções de edição e exclusão deverão respeitar a autoria e as permissões definidas no RF-006, com validação realizada no processamento da solicitação.
-
-- **💾 RNF-11 — Integridade dos reposts:** a remoção de um repost deverá preservar a publicação original e os dados associados a outros usuários.
+| ID | Requisito | Descrição |
+|---|---|---|
+| ⚡ **RNF-01** | **Desempenho** | O carregamento das informações do perfil e o processamento de atualizações comuns deverão ocorrer em até 2 segundos em condições normais de operação, desconsiderando o tempo necessário para transferir arquivos de imagem grandes ou a ocorrência de problemas externos de rede. |
+| 📱 **RNF-02** | **Responsividade** | A interface de perfil e o formulário de edição deverão adaptar-se a dispositivos móveis, tablets e computadores, mantendo os campos e controles acessíveis em diferentes resoluções. |
+| 🌐 **RNF-03** | **Compatibilidade** | A funcionalidade deverá ser compatível com versões atuais dos principais navegadores, incluindo Google Chrome, Mozilla Firefox, Microsoft Edge e Safari. |
+| ♿ **RNF-04** | **Acessibilidade** | Os campos, botões, mensagens de erro e confirmações deverão possuir identificação clara, contraste adequado e navegação acessível por teclado, considerando as necessidades de acessibilidade do público do Librando. |
+| 🔒 **RNF-05** | **Segurança** | As operações de consulta e atualização deverão verificar autenticação e autorização, proteger os dados transmitidos e validar os arquivos enviados para reduzir riscos de acesso indevido e envio de conteúdo malicioso. |
+| 💾 **RNF-06** | **Integridade e confiabilidade** | O sistema deverá garantir a consistência das informações do perfil, evitando que falhas durante uma atualização produzam dados incompletos ou inconsistentes. |
+| 🖼️ **RNF-07** | **Processamento de imagens** | O sistema deverá processar as imagens de perfil e de capa dentro dos limites de tamanho e formatos estabelecidos, evitando o consumo excessivo de recursos. |
+| 📝 **RNF-08** | **Consulta de publicações** | A seção de publicações próprias deverá apresentar os posts associados ao usuário correto, mantendo um tempo de resposta adequado em condições normais de operação. |
+| 🔁 **RNF-09** | **Consulta de reposts** | A seção de publicações repostadas deverá distinguir os conteúdos repostados das publicações de autoria do usuário e preservar a identificação do autor original. |
+| 🛡️ **RNF-10** | **Autorização de publicações** | As opções de edição e exclusão deverão respeitar a autoria e as permissões definidas no RF-006, com validação realizada no processamento da solicitação. |
+| 💾 **RNF-11** | **Integridade dos reposts** | A remoção de um repost deverá preservar a publicação original e os dados associados a outros usuários. |
 
 ---
 
