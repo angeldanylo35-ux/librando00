@@ -17,16 +17,16 @@
 - **Acesso:** [Público ou restrito]
 - **Funcionalidade:** Perfil de Usuário
 
-### b) Link do Banco de Dados Online 
+### b) Link do Banco de Dados Online
 
 - **BD:** [Informar o banco de dados utilizado]
 - **Link:** [Inserir link de acesso ao banco de dados online]
 - **Acesso:** [Informar as permissões de acesso disponibilizadas ao professor]
 - **Tabela principal:** [Informar o nome da tabela responsável pelos dados do perfil do usuário]
 
-### c) Link do GitHub (Repositório) 
+### c) Link do GitHub (Repositório)
 
-- **Repositório:** [https://github.com/henriqu3mart1ns/LIBRANDO](https://github.com/angeldanylo35-ux/librando00.git)
+- **Repositório:** [https://github.com/angeldanylo35-ux/librando00.git](https://github.com/angeldanylo35-ux/librando00.git)
 - **Branch principal:** [Informar a branch principal do projeto]
 - **Estrutura:** Conforme a organização de diretórios do projeto, incluindo documentação, código-fonte e arquivos do banco de dados.
 
@@ -38,7 +38,11 @@ O requisito funcional **RF-007 — Perfil de Usuário** tem como objetivo permit
 
 A funcionalidade de edição do perfil disponibiliza os campos **Nome**, **Nome de Usuário (@)** e **Bio**. O campo Nome é obrigatório e permite que o usuário informe seu nome de identificação. O campo Nome de Usuário (@) também é obrigatório e representa o identificador utilizado na plataforma, devendo ser único para evitar conflitos entre contas. Já o campo Bio é opcional e permite que o usuário apresente informações adicionais sobre si mesmo. O sistema deve validar os dados antes de salvar as alterações, impedindo o envio de informações obrigatórias vazias e a utilização de nomes de usuário já existentes.
 
-Após o envio das alterações, o sistema deverá verificar os dados informados, aplicar as regras de validação e persistir as informações válidas no banco de dados. ✅ Quando a operação for concluída com sucesso, o perfil deverá apresentar os dados atualizados. Caso alguma informação seja inválida ou ocorra uma falha durante o processamento, o sistema deverá informar o usuário de maneira clara, preservando os dados anteriormente armazenados e permitindo a correção dos campos necessários. ⚠️
+Além das informações do perfil, o usuário deverá poder visualizar suas próprias publicações em uma seção específica do perfil. Em cada publicação de sua autoria, deverão ser disponibilizadas as opções de edição e exclusão, quando aplicáveis. Essas opções deverão utilizar as funcionalidades e regras estabelecidas no **RF-006 — Criação e Publicação de Postagens**, sem duplicar a implementação dessas operações no RF-007.
+
+O perfil também deverá apresentar uma seção destinada à visualização das publicações repostadas pelo usuário. Essa seção permitirá consultar conteúdos originalmente publicados por outros usuários. A visualização ou o repost de uma publicação não concede permissão para editar ou excluir o conteúdo original de terceiros. Quando disponível, a opção de desfazer repost deverá remover somente o repost realizado pelo usuário, preservando a publicação original.
+
+Após o envio das alterações do perfil, o sistema deverá verificar os dados informados, aplicar as regras de validação e persistir as informações válidas no banco de dados. ✅ Quando a operação for concluída com sucesso, o perfil deverá apresentar os dados atualizados. Caso alguma informação seja inválida ou ocorra uma falha durante o processamento, o sistema deverá informar o usuário de maneira clara, preservando os dados anteriormente armazenados e permitindo a correção dos campos necessários. ⚠️ As seções de publicações próprias e repostadas também deverão refletir as alterações realizadas com sucesso nas respectivas funcionalidades.
 
 ### 🎯 2.2 Benefícios para o Negócio
 
@@ -48,40 +52,43 @@ Após o envio das alterações, o sistema deverá verificar os dados informados,
 - 🛡️ **Integridade das informações:** as validações evitam o armazenamento de dados obrigatórios incompletos ou identificadores duplicados.
 - ♿ **Fortalecimento da acessibilidade:** uma interface organizada, com campos claros e mensagens compreensíveis, contribui para uma experiência mais inclusiva.
 - 💾 **Confiabilidade dos dados:** a persistência correta das alterações garante que as informações atualizadas permaneçam disponíveis nas consultas posteriores.
+- 📝 **Organização das publicações:** permite que o usuário consulte as próprias publicações diretamente no perfil e acesse as opções de gerenciamento correspondentes.
+- 🔁 **Consulta de publicações repostadas:** facilita o acesso aos conteúdos de outros usuários que foram repostados.
+- 🔐 **Proteção das publicações:** garante que as opções de edição e exclusão sejam utilizadas conforme a autoria e as permissões estabelecidas no RF-006.
 
 ### 👥 2.3 Atores
 
 #### 👤 1. Usuário Cadastrado
 
-- **🎭 Papel:** visualizar e atualizar as informações do próprio perfil no Librando.
-- **🔐 Permissões:** consultar e editar os dados permitidos de sua própria conta.
-- **🖥️ Acesso:** página de perfil e formulário de edição.
-- **🚫 Restrições:** não poderá modificar perfis de outros usuários nem excluir a própria conta por meio deste requisito.
+- **🎭 Papel:** visualizar e atualizar as informações do próprio perfil, consultar suas publicações e visualizar os posts repostados.
+- **🔐 Permissões:** consultar e editar os dados permitidos de sua própria conta, além de acessar as opções de edição e exclusão de suas publicações conforme o RF-006.
+- **🖥️ Acesso:** página de perfil, formulário de edição, seção de publicações próprias e seção de publicações repostadas.
+- **🚫 Restrições:** não poderá modificar perfis de outros usuários, editar ou excluir publicações de terceiros, nem excluir a própria conta por meio deste requisito.
 
 ##### 📊 Permissões CRUD — Usuário Cadastrado
 
-| Operação | Permissão | Descrição |
-|---|:---:|---|
-| 🟢 **Create** | ❌ | Não se aplica. A criação da conta pertence ao RF-002 — Cadastro de Usuários. |
-| 🔵 **Read** | ✅ | Pode visualizar as informações do próprio perfil. |
-| 🟡 **Update** | ✅ | Pode editar o próprio Nome, Nome de Usuário (@), Bio, Foto de Perfil e Foto da Capa, Localização. |
-| 🔴 **Delete** | ❌ | A exclusão da conta não faz parte do escopo deste requisito. |
+| Operação      | Permissão | Descrição                                                                                                                                                                                                                   |
+| ------------- | :-------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🟢 **Create** |     ❌     | Não se aplica. A criação da conta pertence ao RF-002 — Cadastro de Usuários. A criação de publicações pertence ao RF-006.                                                                                                   |
+| 🔵 **Read**   |     ✅     | Pode visualizar as informações do próprio perfil, suas publicações e os posts repostados.                                                                                                                                   |
+| 🟡 **Update** |     ✅     | Pode editar o próprio Nome, Nome de Usuário (@), Bio, Foto de Perfil, Foto da Capa e Localização. Para editar publicações próprias, utiliza a opção correspondente prevista no RF-006.                                      |
+| 🔴 **Delete** |     ❌     | A exclusão da conta não faz parte do escopo deste requisito. A exclusão de publicações próprias é disponibilizada por meio das funcionalidades definidas no RF-006, não sendo implementada de forma independente no RF-007. |
 
 #### ⚙️ 2. Sistema Librando
 
-- **🎭 Papel:** processar as solicitações de consulta e atualização do perfil, validar as informações e garantir que as alterações sejam armazenadas corretamente.
-- **🛡️ Responsabilidade:** verificar a autenticação, aplicar as regras de negócio e impedir operações não autorizadas.
-- **💾 Acesso:** serviços internos da aplicação, mecanismos de validação e camada de persistência de dados.
-- **🚫 Restrições:** não deverá permitir alterações que violem as permissões definidas ou as regras de integridade.
+- **🎭 Papel:** processar as solicitações de consulta e atualização do perfil, validar as informações e garantir que as alterações sejam armazenadas corretamente. Também deverá disponibilizar as publicações próprias e repostadas para visualização.
+- **🛡️ Responsabilidade:** verificar a autenticação, aplicar as regras de negócio, identificar a autoria das publicações e impedir operações não autorizadas.
+- **💾 Acesso:** serviços internos da aplicação, mecanismos de validação, camada de persistência de dados e funcionalidades de publicações relacionadas ao RF-006.
+- **🚫 Restrições:** não deverá permitir alterações que violem as permissões definidas ou as regras de integridade, nem permitir que a visualização ou o repost de uma publicação conceda autorização para modificar o conteúdo original de terceiros.
 
 ##### 📊 Permissões CRUD — Sistema Librando
 
-| Operação | Permissão | Descrição |
-|---|:---:|---|
-| 🟢 **Create** | ❌ | Não se aplica à edição do perfil; a criação da conta é tratada pelo RF-002. |
-| 🔵 **Read** | ✅ | Recupera os dados necessários para exibir o perfil autorizado. |
-| 🟡 **Update** | ✅ | Processa e persiste as alterações válidas solicitadas pelo usuário autorizado. |
-| 🔴 **Delete** | ❌ | A exclusão do perfil não faz parte deste requisito. |
+| Operação      | Permissão | Descrição                                                                                                                                                                                                                                  |
+| ------------- | :-------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 🟢 **Create** |     ❌     | Não se aplica à edição do perfil; a criação da conta é tratada pelo RF-002 e a criação de publicações pelo RF-006.                                                                                                                         |
+| 🔵 **Read**   |     ✅     | Recupera os dados necessários para exibir o perfil autorizado, as publicações próprias e os posts repostados.                                                                                                                              |
+| 🟡 **Update** |     ✅     | Processa e persiste as alterações válidas solicitadas pelo usuário autorizado. As solicitações de edição de publicações seguem o mecanismo definido no RF-006.                                                                             |
+| 🔴 **Delete** |     ❌     | A exclusão do perfil não faz parte deste requisito. A exclusão de publicações é processada conforme o RF-006. A remoção de um repost, quando disponível, deverá remover somente a associação do repost, preservando a publicação original. |
 
 ### ✅ 2.4 Validações Necessárias
 
@@ -97,19 +104,24 @@ Após o envio das alterações, o sistema deverá verificar os dados informados,
 10. ⚠️ **Tratamento de erros:** em caso de dados inválidos, identificador duplicado ou falha na persistência, o sistema deverá apresentar uma mensagem clara e permitir uma nova tentativa.
 11. 🔒 **Proteção dos dados:** a atualização do perfil não deverá alterar indevidamente informações internas ou sensíveis da conta que não pertençam ao escopo deste requisito.
 12. ♿ **Acessibilidade da interface:** os campos, mensagens de erro e confirmações deverão ser apresentados de maneira clara e compreensível, considerando as necessidades dos usuários do Librando.
+13. 📝 **Consulta de publicações próprias:** o sistema deverá apresentar as publicações de autoria do usuário na seção correspondente do perfil.
+14. ✏️ **Opções de gerenciamento:** as opções de edição e exclusão deverão ser disponibilizadas nas publicações próprias conforme as regras e funcionalidades do RF-006.
+15. 🔁 **Consulta de reposts:** o sistema deverá apresentar as publicações repostadas pelo usuário em uma seção específica, distinguindo-as das publicações de sua própria autoria.
+16. 🚫 **Proteção de publicações de terceiros:** o sistema deverá impedir a edição ou exclusão de publicações de outros usuários por meio das opções disponibilizadas no perfil.
+17. ↩️ **Remoção de repost:** quando disponível, a operação deverá remover somente a associação do repost do usuário autenticado, sem excluir ou modificar a publicação original.
 
 ## 🔄 3. Casos de Uso e Requisitos Não Funcionais
 
 ### 📌 3.1 Identificação do Caso de Uso
 
-| Campo | Descrição |
-|---|---|
-| 🆔 **ID** | UC-007 |
-| 📋 **Requisito relacionado** | RF-007 — Perfil de Usuário |
-| 👤 **Ator principal** | Usuário Cadastrado |
-| ⚙️ **Ator secundário** | Sistema Librando |
-| 🎯 **Objetivo** | Permitir que o usuário visualize e atualize as informações do próprio perfil, incluindo nome, nome de usuário, biografia, localização, foto de perfil e foto de capa. |
-| 🔗 **Relacionamento** | Funcionalidade de visualização e edição do perfil da rede social Librando. |
+| Campo                        | Descrição                                                                                                                                                                                                                                |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🆔 **ID**                    | UC-007                                                                                                                                                                                                                                   |
+| 📋 **Requisito relacionado** | RF-007 — Perfil de Usuário                                                                                                                                                                                                               |
+| 👤 **Ator principal**        | Usuário Cadastrado                                                                                                                                                                                                                       |
+| ⚙️ **Ator secundário**       | Sistema Librando                                                                                                                                                                                                                         |
+| 🎯 **Objetivo**              | Permitir que o usuário visualize e atualize as informações do próprio perfil, incluindo nome, nome de usuário, biografia, localização, foto de perfil e foto de capa, além de consultar suas publicações próprias e os posts repostados. |
+| 🔗 **Relacionamento**        | Funcionalidade de visualização e edição do perfil da rede social Librando, integrada ao RF-006 — Criação e Publicação de Postagens para as opções de gerenciamento de publicações próprias.                                              |
 
 ### 🔐 3.2 Pré-condições
 
@@ -118,6 +130,8 @@ Após o envio das alterações, o sistema deverá verificar os dados informados,
 - O sistema deve estar disponível para receber solicitações.
 - O perfil do usuário deve existir no banco de dados.
 - O usuário deve possuir acesso à página de perfil e à funcionalidade de edição.
+- Para visualizar as publicações próprias e repostadas, deverão existir dados associados ao usuário ou o sistema deverá apresentar uma mensagem adequada quando não houver publicações.
+- As opções de edição e exclusão de publicações deverão respeitar as funcionalidades e regras estabelecidas no RF-006.
 
 ### 🚀 3.3 Fluxo Principal
 
@@ -135,6 +149,21 @@ Após o envio das alterações, o sistema deverá verificar os dados informados,
 12. 💾 O sistema persiste as alterações válidas no banco de dados e atualiza as referências das imagens, conforme a arquitetura utilizada.
 13. ✅ O sistema confirma que as alterações foram salvas com sucesso.
 14. 👁️ O sistema apresenta o perfil atualizado com as novas informações e imagens.
+15. 📝 O usuário acessa a seção de publicações próprias em seu perfil.
+16. 📄 O sistema recupera e exibe as publicações criadas pelo usuário, apresentando uma mensagem adequada caso não existam publicações.
+17. 🔘 O sistema disponibiliza, em cada publicação própria, as opções de edição e exclusão previstas no RF-006.
+18. ✏️ Caso deseje editar uma publicação, o usuário seleciona a opção de edição disponibilizada no próprio post.
+19. 🛡️ O sistema encaminha a solicitação para a funcionalidade correspondente do RF-006, que deverá validar a autoria e a autorização para editar a publicação.
+20. 💾 Após a conclusão da edição pelo mecanismo do RF-006, o sistema atualiza a publicação apresentada no perfil.
+21. 🗑️ Caso deseje excluir uma publicação própria, o usuário seleciona a opção de exclusão disponibilizada no próprio post.
+22. ⚠️ O sistema responsável pelo RF-006 solicita a confirmação e processa a exclusão conforme as regras estabelecidas para a funcionalidade.
+23. 🔄 Após a conclusão da exclusão, o sistema atualiza a seção de publicações próprias.
+24. 🔁 O usuário acessa a seção de publicações repostadas.
+25. 📄 O sistema recupera e apresenta os posts repostados pelo usuário, distinguindo-os das publicações de sua própria autoria.
+26. ↩️ Caso a funcionalidade esteja disponível, o usuário seleciona a opção de desfazer um repost.
+27. 🛡️ O sistema verifica se o repost está associado ao usuário autenticado.
+28. 💾 O sistema remove a associação do repost, preservando a publicação original de outro usuário.
+29. ✅ O sistema atualiza a seção de reposts e apresenta o resultado da operação.
 
 ### 🔀 3.4 Fluxos Alternativos
 
@@ -188,6 +217,54 @@ Após o envio das alterações, o sistema deverá verificar os dados informados,
 
 **Resultado:** nenhuma alteração não autorizada deverá ser realizada.
 
+#### 📝 FA-06 — Usuário Sem Publicações Próprias
+
+1. O usuário acessa a seção de publicações próprias.
+2. O sistema consulta as publicações associadas ao usuário.
+3. O sistema identifica que não existem publicações próprias para apresentar.
+4. O sistema exibe uma mensagem informando que o usuário ainda não possui publicações.
+
+**Resultado:** o perfil continua acessível e o sistema não apresenta erro apenas pela ausência de publicações.
+
+#### ✏️ FA-07 — Tentativa de Editar Publicação de Outro Usuário
+
+1. O usuário tenta acessar a edição de uma publicação que não criou.
+2. O sistema verifica a autoria da publicação.
+3. O sistema identifica que o post pertence a outra conta.
+4. O sistema bloqueia a operação e informa que a edição não está autorizada.
+
+**Resultado:** a publicação original permanece inalterada. A visualização ou o repost não concede permissão de edição.
+
+#### 🗑️ FA-08 — Exclusão de Publicação Própria
+
+1. O usuário seleciona a opção de excluir uma publicação própria.
+2. O sistema responsável pelo RF-006 solicita a confirmação da exclusão.
+3. O usuário confirma a operação.
+4. O sistema verifica a autoria e processa a solicitação conforme as regras do RF-006.
+5. O sistema atualiza a lista de publicações do perfil e apresenta uma confirmação.
+
+**Resultado:** a publicação é excluída conforme as regras implementadas no RF-006.
+
+**Alternativa:** caso o usuário cancele a confirmação, a publicação deverá permanecer disponível.
+
+#### 🔁 FA-09 — Usuário Sem Publicações Repostadas
+
+1. O usuário acessa a seção de publicações repostadas.
+2. O sistema consulta os reposts associados à conta.
+3. O sistema identifica que não existem publicações repostadas.
+4. O sistema exibe uma mensagem informando que não há reposts para apresentar.
+
+**Resultado:** a seção permanece acessível e apresenta corretamente o estado vazio.
+
+#### ↩️ FA-10 — Falha ao Desfazer Repost
+
+1. O usuário solicita a remoção de um repost.
+2. O sistema verifica se a associação do repost pertence ao usuário autenticado.
+3. Ocorre uma falha durante o processamento da solicitação.
+4. O sistema informa que não foi possível concluir a operação.
+
+**Resultado:** o sistema não deverá confirmar a remoção sem concluir a operação. A publicação original deverá permanecer preservada.
+
 ### 🏁 3.5 Pós-condições
 
 - ✅ As informações válidas do perfil são atualizadas e persistidas.
@@ -197,6 +274,12 @@ Após o envio das alterações, o sistema deverá verificar os dados informados,
 - 🔎 As informações atualizadas ficam disponíveis para consultas posteriores.
 - 🛡️ Nenhuma alteração não autorizada é realizada.
 - ⚠️ Em caso de falha, o sistema informa o problema e não apresenta a operação como concluída com sucesso.
+- 📝 As publicações próprias ficam disponíveis para consulta na seção correspondente do perfil.
+- ✏️ As opções de edição e exclusão são disponibilizadas nas publicações próprias conforme o RF-006.
+- 🔄 As publicações editadas ou excluídas refletem o resultado da operação após o processamento pelo RF-006.
+- 🔁 As publicações repostadas ficam disponíveis para consulta em uma seção específica do perfil.
+- ↩️ Ao desfazer um repost, somente a associação do repost é removida, preservando a publicação original de terceiros.
+- 🚫 O usuário não consegue editar ou excluir publicações de terceiros por meio das opções do perfil.
 
 ---
 
@@ -215,6 +298,14 @@ Após o envio das alterações, o sistema deverá verificar os dados informados,
 - **💾 RNF-06 — Integridade e confiabilidade:** o sistema deverá garantir a consistência das informações do perfil, evitando que falhas durante uma atualização produzam dados incompletos ou inconsistentes.
 
 - 🖼️ **RNF-07 — Processamento de imagens:** o sistema deverá processar as imagens de perfil e de capa dentro dos limites de tamanho e formatos estabelecidos, evitando o consumo excessivo de recursos.
+
+- **📝 RNF-08 — Consulta de publicações:** a seção de publicações próprias deverá apresentar os posts associados ao usuário correto, mantendo um tempo de resposta adequado em condições normais de operação.
+
+- **🔁 RNF-09 — Consulta de reposts:** a seção de publicações repostadas deverá distinguir os conteúdos repostados das publicações de autoria do usuário e preservar a identificação do autor original.
+
+- **🛡️ RNF-10 — Autorização de publicações:** as opções de edição e exclusão deverão respeitar a autoria e as permissões definidas no RF-006, com validação realizada no processamento da solicitação.
+
+- **💾 RNF-11 — Integridade dos reposts:** a remoção de um repost deverá preservar a publicação original e os dados associados a outros usuários.
 
 ---
 
@@ -247,3 +338,19 @@ Após o envio das alterações, o sistema deverá verificar os dados informados,
 - **🔄 RN-13 — Atualização independente:** a alteração de nome, nome de usuário, biografia, foto de perfil ou foto de capa não deverá exigir a modificação dos demais campos.
 
 - **♻️ RN-14 — Persistência das imagens:** após a confirmação do salvamento, as imagens atualizadas deverão permanecer disponíveis e associadas ao perfil, conforme a solução de armazenamento adotada pelo projeto.
+
+- **📝 RN-15 — Exibição de publicações próprias:** o perfil deverá apresentar as publicações criadas pelo usuário autenticado em uma seção própria.
+
+- **🔗 RN-16 — Integração com o RF-006:** as operações de criação, edição e exclusão de publicações deverão seguir as regras e os mecanismos definidos no RF-006, sem duplicação de sua implementação no RF-007.
+
+- **✏️ RN-17 — Edição por autoria:** o usuário poderá editar somente as publicações de sua autoria, respeitando as regras de autorização do RF-006.
+
+- **🗑️ RN-18 — Exclusão por autoria:** o usuário poderá solicitar a exclusão de suas próprias publicações por meio da opção disponibilizada no post, conforme as regras do RF-006. A exclusão da conta não pertence ao RF-007.
+
+- **🔁 RN-19 — Exibição de reposts:** o perfil deverá apresentar em seção específica os posts repostados pelo usuário, distinguindo-os das publicações próprias.
+
+- **↩️ RN-20 — Remoção de repost:** quando a funcionalidade estiver disponível, o usuário poderá desfazer um repost realizado por ele, removendo somente a associação do repost e preservando a publicação original.
+
+- **🚫 RN-21 — Proteção de publicações de terceiros:** visualizar ou repostar uma publicação não concede ao usuário permissão para editar ou excluir o conteúdo original de outro autor.
+
+- **🔄 RN-22 — Atualização das seções:** após a conclusão de uma operação de edição, exclusão ou remoção de repost, o sistema deverá atualizar a seção correspondente para refletir o estado atual dos dados.
