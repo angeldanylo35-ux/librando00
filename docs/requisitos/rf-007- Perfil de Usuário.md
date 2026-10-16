@@ -303,46 +303,27 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 
 ### 📏 3.7 Regras de Negócio
 
-- **📌 RN-01 — Autenticação:** somente usuários autenticados poderão acessar a funcionalidade de edição do perfil.
-
-- **👤 RN-02 — Propriedade do perfil:** cada usuário poderá editar apenas as informações associadas à própria conta, salvo se existir uma autorização administrativa específica definida em outro requisito.
-
-- **✍️ RN-03 — Nome obrigatório:** o campo Nome deverá ser preenchido e não poderá conter apenas espaços em branco.
-
-- **🏷️ RN-04 — Nome de Usuário obrigatório:** o campo Nome de Usuário (@) deverá ser preenchido antes do salvamento.
-
-- **🔎 RN-05 — Unicidade do identificador:** cada nome de usuário deverá ser único conforme as regras de comparação adotadas pelo sistema. Durante a edição, o usuário poderá manter o próprio identificador atual.
-
-- **💬 RN-06 — Biografia opcional:** o campo Bio poderá permanecer vazio, desde que respeite os limites de tamanho e as regras de conteúdo definidas pela plataforma.
-
-- **🖼️ RN-07 — Alteração de imagens:** o usuário poderá alterar a foto de perfil e a foto de capa de maneira independente, sem ser obrigado a modificar os demais campos.
-
-- **📂 RN-08 — Formatos permitidos:** as imagens deverão utilizar formatos autorizados pela plataforma, como JPEG, PNG ou WebP, desde que esses formatos sejam efetivamente suportados pela implementação.
-
-- **📏 RN-09 — Limite de tamanho:** os arquivos de imagem deverão respeitar o limite máximo definido para o envio e armazenamento.
-
-- **💾 RN-10 — Confirmação de salvamento:** o sistema somente deverá confirmar o sucesso da atualização depois que as alterações tiverem sido persistidas corretamente.
-
-- **⚠️ RN-11 — Tratamento de falhas:** se uma atualização falhar, o sistema deverá informar o usuário e evitar que imagens ou informações anteriores sejam substituídas por dados inválidos.
-
-- 🔐 **RN-12 — Proteção de dados:** o usuário não poderá alterar, por meio do formulário de perfil, identificadores internos, permissões, credenciais ou outras informações que não pertençam ao escopo do RF-007.
-
-- **🔄 RN-13 — Atualização independente:** a alteração de nome, nome de usuário, biografia, foto de perfil ou foto de capa não deverá exigir a modificação dos demais campos.
-
-- **♻️ RN-14 — Persistência das imagens:** após a confirmação do salvamento, as imagens atualizadas deverão permanecer disponíveis e associadas ao perfil, conforme a solução de armazenamento adotada pelo projeto.
-
-- **📝 RN-15 — Exibição de publicações próprias:** o perfil deverá apresentar as publicações criadas pelo usuário autenticado em uma seção própria.
-
-- **🔗 RN-16 — Integração com o RF-006:** as operações de criação, edição e exclusão de publicações deverão seguir as regras e os mecanismos definidos no RF-006, sem duplicação de sua implementação no RF-007.
-
-- **✏️ RN-17 — Edição por autoria:** o usuário poderá editar somente as publicações de sua autoria, respeitando as regras de autorização do RF-006.
-
-- **🗑️ RN-18 — Exclusão por autoria:** o usuário poderá solicitar a exclusão de suas próprias publicações por meio da opção disponibilizada no post, conforme as regras do RF-006. A exclusão da conta não pertence ao RF-007.
-
-- **🔁 RN-19 — Exibição de reposts:** o perfil deverá apresentar em seção específica os posts repostados pelo usuário, distinguindo-os das publicações próprias.
-
-- **↩️ RN-20 — Remoção de repost:** quando a funcionalidade estiver disponível, o usuário poderá desfazer um repost realizado por ele, removendo somente a associação do repost e preservando a publicação original.
-
-- **🚫 RN-21 — Proteção de publicações de terceiros:** visualizar ou repostar uma publicação não concede ao usuário permissão para editar ou excluir o conteúdo original de outro autor.
-
-- **🔄 RN-22 — Atualização das seções:** após a conclusão de uma operação de edição, exclusão ou remoção de repost, o sistema deverá atualizar a seção correspondente para refletir o estado atual dos dados.
+| ID | Regra de Negócio | Descrição |
+|---|---|---|
+| **RN-01** | Autenticação | Somente usuários autenticados poderão acessar a funcionalidade de edição do perfil. |
+| **RN-02** | Propriedade do perfil | Cada usuário poderá editar apenas as informações associadas à própria conta, salvo se existir uma autorização administrativa específica definida em outro requisito. |
+| **RN-03** | Nome obrigatório | O campo Nome deverá ser preenchido e não poderá conter apenas espaços em branco. |
+| **RN-04** | Nome de Usuário obrigatório | O campo Nome de Usuário (@) deverá ser preenchido antes do salvamento. |
+| **RN-05** | Unicidade do identificador | Cada nome de usuário deverá ser único conforme as regras de comparação adotadas pelo sistema. Durante a edição, o usuário poderá manter o próprio identificador atual. |
+| **RN-06** | Biografia opcional | O campo Bio poderá permanecer vazio, desde que respeite os limites de tamanho e as regras de conteúdo definidas pela plataforma. |
+| **RN-07** | Alteração de imagens | O usuário poderá alterar a foto de perfil e a foto de capa de maneira independente, sem ser obrigado a modificar os demais campos. |
+| **RN-08** | Formatos permitidos | As imagens deverão utilizar formatos autorizados pela plataforma, como JPEG, PNG ou WebP, desde que esses formatos sejam efetivamente suportados pela implementação. |
+| **RN-09** | Limite de tamanho | Os arquivos de imagem deverão respeitar o limite máximo definido para o envio e armazenamento. |
+| **RN-10** | Confirmação de salvamento | O sistema somente deverá confirmar o sucesso da atualização depois que as alterações tiverem sido persistidas corretamente. |
+| **RN-11** | Tratamento de falhas | Se uma atualização falhar, o sistema deverá informar o usuário e evitar que imagens ou informações anteriores sejam substituídas por dados inválidos. |
+| **RN-12** | Proteção de dados | O usuário não poderá alterar, por meio do formulário de perfil, identificadores internos, permissões, credenciais ou outras informações que não pertençam ao escopo do RF-007. |
+| **RN-13** | Atualização independente | A alteração de nome, nome de usuário, biografia, foto de perfil ou foto de capa não deverá exigir a modificação dos demais campos. |
+| **RN-14** | Persistência das imagens | Após a confirmação do salvamento, as imagens atualizadas deverão permanecer disponíveis e associadas ao perfil, conforme a solução de armazenamento adotada pelo projeto. |
+| **RN-15** | Exibição de publicações próprias | O perfil deverá apresentar as publicações criadas pelo usuário autenticado em uma seção própria. |
+| **RN-16** | Integração com o RF-006 | As operações de criação, edição e exclusão de publicações deverão seguir as regras e os mecanismos definidos no RF-006, sem duplicação de sua implementação no RF-007. |
+| **RN-17** | Edição por autoria | O usuário poderá editar somente as publicações de sua autoria, respeitando as regras de autorização do RF-006. |
+| **RN-18** | Exclusão por autoria | O usuário poderá solicitar a exclusão de suas próprias publicações por meio da opção disponibilizada no post, conforme as regras do RF-006. A exclusão da conta não pertence ao RF-007. |
+| **RN-19** | Exibição de reposts | O perfil deverá apresentar em seção específica os posts repostados pelo usuário, distinguindo-os das publicações próprias. |
+| **RN-20** | Remoção de repost | Quando a funcionalidade estiver disponível, o usuário poderá desfazer um repost realizado por ele, removendo somente a associação do repost e preservando a publicação original. |
+| **RN-21** | Proteção de publicações de terceiros | Visualizar ou repostar uma publicação não concede ao usuário permissão para editar ou excluir o conteúdo original de outro autor. |
+| **RN-22** | Atualização das seções | Após a conclusão de uma operação de edição, exclusão ou remoção de repost, o sistema deverá atualizar a seção correspondente para refletir o estado atual dos dados. |
