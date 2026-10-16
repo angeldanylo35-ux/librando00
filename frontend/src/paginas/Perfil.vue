@@ -14,7 +14,6 @@
 
           <!-- Menu de Navegação -->
           <nav class="space-y-1 text-left">
-            <!-- Página inicial -->
             <router-link to="/feed" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl font-medium text-gray-700 hover:bg-gray-100">
               <svg class="w-6 h-6 stroke-current fill-none" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -23,7 +22,6 @@
               <span>Página inicial</span>
             </router-link>
 
-            <!-- Explorar -->
             <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl font-medium text-gray-700 hover:bg-gray-100">
               <svg class="w-6 h-6 stroke-current fill-none" stroke-width="2" viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="10" />
@@ -32,7 +30,6 @@
               <span>Explorar</span>
             </a>
 
-            <!-- Vídeos -->
             <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl font-medium text-gray-700 hover:bg-gray-100">
               <svg class="w-6 h-6 stroke-current fill-none" stroke-width="2" viewBox="0 0 24 24">
                 <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18" />
@@ -47,7 +44,6 @@
               <span>Vídeos</span>
             </a>
 
-            <!-- Mensagens -->
             <a href="#" class="flex items-center justify-between px-3 py-2.5 rounded-xl font-medium text-gray-700 hover:bg-gray-100">
               <div class="flex items-center gap-3.5">
                 <svg class="w-6 h-6 stroke-current fill-none" stroke-width="2" viewBox="0 0 24 24">
@@ -59,7 +55,6 @@
               <span class="bg-[#635BFF] text-white text-xs font-bold px-2 py-0.5 rounded-full">3</span>
             </a>
 
-            <!-- Notificações -->
             <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl font-medium text-gray-700 hover:bg-gray-100">
               <svg class="w-6 h-6 stroke-current fill-none" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
@@ -67,7 +62,6 @@
               <span>Notificações</span>
             </a>
 
-            <!-- Salvos -->
             <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl font-medium text-gray-700 hover:bg-gray-100">
               <svg class="w-6 h-6 stroke-current fill-none" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
@@ -83,7 +77,6 @@
               <span>Meu perfil</span>
             </router-link>
 
-            <!-- Mais -->
             <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl font-medium text-gray-700 hover:bg-gray-100">
               <svg class="w-6 h-6 stroke-current fill-none" stroke-width="2" viewBox="0 0 24 24">
                 <line x1="3" y1="12" x2="21" y2="12" />
@@ -129,8 +122,18 @@
             <img :src="perfil.banner" class="w-full h-full object-cover" />
           </div>
           
-          <!-- Botão Editar Perfil -->
-          <div class="flex justify-end p-4">
+          <!-- Botões de Ação do Perfil (Editar Perfil + Seguir/Seguindo) -->
+          <div class="flex justify-end items-center gap-2 p-4">
+            <!-- Botão de Seguir / Seguindo -->
+            <button 
+              @click="alternarSeguir"
+              :class="seguindo ? 'border border-gray-300 text-gray-900 bg-white hover:bg-red-50 hover:text-red-600 hover:border-red-200' : 'bg-gray-900 text-white hover:bg-black'"
+              class="px-5 py-1.5 rounded-full font-bold text-sm transition-all"
+            >
+              {{ seguindo ? 'Seguindo' : 'Seguir' }}
+            </button>
+
+            <!-- Botão Editar Perfil -->
             <button 
               @click="abrirModalEdicao"
               class="px-4 py-1.5 border border-gray-800 text-gray-800 rounded-full font-bold text-sm hover:bg-gray-100 transition-colors"
@@ -161,9 +164,14 @@
             <span class="flex items-center gap-1">📍 {{ perfil.localizacao }}</span>
           </div>
 
+          <!-- Contadores Dinâmicos de Seguidores e Seguindo -->
           <div class="flex gap-4 text-sm mt-3">
-            <span class="text-gray-600"><strong class="title-dark font-bold">1,2 mil</strong> Seguindo</span>
-            <span class="text-gray-600"><strong class="title-dark font-bold">350</strong> Seguidores</span>
+            <span class="text-gray-600">
+              <strong class="title-dark font-bold">{{ totalSeguindo }}</strong> Seguindo
+            </span>
+            <span class="text-gray-600">
+              <strong class="title-dark font-bold">{{ totalSeguidores }}</strong> Seguidores
+            </span>
           </div>
         </div>
 
@@ -295,14 +303,16 @@
               🔄 {{ perfil.nome }} repostou
             </p>
             <div class="flex gap-3">
-              <img src="https://i.pravatar.cc/100?img=12" class="w-10 h-10 rounded-full object-cover shrink-0" />
+              <img :src="perfil.foto" class="w-10 h-10 rounded-full object-cover shrink-0" />
               <div class="flex-1">
                 <div class="flex items-center gap-1 text-sm">
-                  <span class="font-bold title-dark">Lucas Mãos</span>
-                  <span class="text-gray-500">@lucasmaos · 1d</span>
+                  <span class="font-bold title-dark">{{ perfil.nome }}</span>
+                  <span class="text-[#635BFF] text-xs">✔</span>
+                  <span class="text-gray-500">{{ perfil.usuario }} · 2h</span>
                 </div>
                 <p class="text-sm mt-1 text-gray-800 leading-snug">
-                  Dica importante para quem está começando na comunidade surda: paciência e escuta ativa (através dos olhos) fazem toda a diferença! 🤟
+                  A Libras não é apenas uma língua, é identidade, cultura e conexão. Hoje aprendi um sinal novo e quero compartilhar com vocês! 
+                  <a href="#" class="text-[#635BFF] font-medium hover:underline">#LibrasParaTodos</a>
                 </p>
               </div>
             </div>
@@ -331,18 +341,24 @@
 
         <!-- 4. Aba Curtidas -->
         <div v-else-if="abaAtiva === 'curtidas'" class="divide-y divide-gray-100">
-          <article class="p-4 hover:bg-gray-50/50 flex gap-3 text-left">
-            <img src="https://i.pravatar.cc/100?img=12" class="w-10 h-10 rounded-full object-cover shrink-0" />
+          <div v-if="curtiu" class="p-4 hover:bg-gray-50/50 flex gap-3 text-left">
+            <img :src="perfil.foto" class="w-10 h-10 rounded-full object-cover shrink-0" />
             <div class="flex-1">
               <div class="flex items-center gap-1 text-sm">
-                <span class="font-bold title-dark">Lucas Mãos</span>
-                <span class="text-gray-500">@lucasmaos · 1d</span>
+                <span class="font-bold title-dark">{{ perfil.nome }}</span>
+                <span class="text-[#635BFF] text-xs">✔</span>
+                <span class="text-gray-500">{{ perfil.usuario }} · 2h</span>
               </div>
               <p class="text-sm mt-1 text-gray-800 leading-snug">
-                Dica importante para quem está começando na comunidade surda: paciência e escuta ativa (através dos olhos) fazem toda a diferença! 🤟
+                A Libras não é apenas uma língua, é identidade, cultura e conexão. Hoje aprendi um sinal novo e quero compartilhar com vocês! 
+                <a href="#" class="text-[#635BFF] font-medium hover:underline">#LibrasParaTodos</a>
               </p>
             </div>
-          </article>
+          </div>
+          <div v-else class="p-8 text-center text-gray-500 text-sm">
+            <p class="font-bold text-gray-700 text-base mb-1">Nenhuma curtida ainda</p>
+            <p>Quando você curtir uma publicação, ela aparecerá nesta lista.</p>
+          </div>
         </div>
 
       </main>
@@ -476,12 +492,29 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 
 // 1. Controle das Abas Dinâmicas
 const abaAtiva = ref('publicacoes')
 
-// 2. Estados Interativos das Reações
+// 2. Dados Reativos do Perfil
+const perfilPadrao = {
+  nome: 'Ana Silva',
+  usuario: '@anasilva_libras',
+  titulo: 'Entusiasta de Libras',
+  bio: 'Aprendendo e compartilhando a cultura surda 🤟 | Conectando pessoas através de Libras.',
+  localizacao: 'Brasília, Brasil',
+  foto: 'https://i.pravatar.cc/150?img=47',
+  banner: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80'
+}
+
+const perfil = reactive({ ...perfilPadrao })
+
+// 3. Estados Interativos das Reações e Conexões (Seguidores / Seguindo)
+const seguindo = ref(false)
+const totalSeguindo = ref(1200)
+const totalSeguidores = ref(350)
+
 const curtiu = ref(false)
 const totalCurtidas = ref(178)
 
@@ -493,35 +526,72 @@ const totalComentarios = ref(24)
 
 const salvou = ref(false)
 
+// Carregar dados salvos do localStorage ao iniciar a página
+onMounted(() => {
+  const perfilSalvo = localStorage.getItem('librando_perfil')
+  if (perfilSalvo) {
+    Object.assign(perfil, JSON.parse(perfilSalvo))
+  }
+
+  const reacoesSalvas = localStorage.getItem('librando_reacoes')
+  if (reacoesSalvas) {
+    const data = JSON.parse(reacoesSalvas)
+    curtiu.value = data.curtiu
+    totalCurtidas.value = data.totalCurtidas
+    repostou.value = data.repostou
+    totalReposts.value = data.totalReposts
+    comentou.value = data.comentou
+    totalComentarios.value = data.totalComentarios
+    salvou.value = data.salvou
+    seguindo.value = data.seguindo ?? false
+    totalSeguidores.value = data.totalSeguidores ?? 350
+    totalSeguindo.value = data.totalSeguindo ?? 1200
+  }
+})
+
+function salvarEstadoReacoes() {
+  localStorage.setItem('librando_reacoes', JSON.stringify({
+    curtiu: curtiu.value,
+    totalCurtidas: totalCurtidas.value,
+    repostou: repostou.value,
+    totalReposts: totalReposts.value,
+    comentou: comentou.value,
+    totalComentarios: totalComentarios.value,
+    salvou: salvou.value,
+    seguindo: seguindo.value,
+    totalSeguidores: totalSeguidores.value,
+    totalSeguindo: totalSeguindo.value
+  }))
+}
+
+function alternarSeguir() {
+  seguindo.value = !seguindo.value
+  seguindo.value ? totalSeguidores.value++ : totalSeguidores.value--
+  salvarEstadoReacoes()
+}
+
 function alternarCurtida() {
   curtiu.value = !curtiu.value
   curtiu.value ? totalCurtidas.value++ : totalCurtidas.value--
+  salvarEstadoReacoes()
 }
 
 function alternarRepost() {
   repostou.value = !repostou.value
   repostou.value ? totalReposts.value++ : totalReposts.value--
+  salvarEstadoReacoes()
 }
 
 function alternarComentario() {
   comentou.value = !comentou.value
   comentou.value ? totalComentarios.value++ : totalComentarios.value--
+  salvarEstadoReacoes()
 }
 
 function alternarSalvar() {
   salvou.value = !salvou.value
+  salvarEstadoReacoes()
 }
-
-// 3. Dados Reativos do Perfil
-const perfil = reactive({
-  nome: 'Ana Silva',
-  usuario: '@anasilva_libras',
-  titulo: 'Entusiasta de Libras',
-  bio: 'Aprendendo e compartilhando a cultura surda 🤟 | Conectando pessoas através de Libras.',
-  localizacao: 'Brasília, Brasil',
-  foto: 'https://i.pravatar.cc/150?img=47',
-  banner: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80'
-})
 
 // 4. Modal de Edição
 const modalEdicaoAberta = ref(false)
@@ -538,6 +608,7 @@ function fecharModalEdicao() {
 
 function salvarPerfil() {
   Object.assign(perfil, formEdicao)
+  localStorage.setItem('librando_perfil', JSON.stringify(perfil))
   modalEdicaoAberta.value = false
 }
 </script>
