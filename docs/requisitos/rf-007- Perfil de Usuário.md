@@ -83,7 +83,7 @@ Após o envio das alterações, o sistema deverá verificar os dados informados,
 | 🟡 **Update** | ✅ | Processa e persiste as alterações válidas solicitadas pelo usuário autorizado. |
 | 🔴 **Delete** | ❌ | A exclusão do perfil não faz parte deste requisito. |
 
-### ✅ 2.5 Validações Necessárias
+### ✅ 2.4 Validações Necessárias
 
 1. 🔐 **Autenticação obrigatória:** somente usuários autenticados poderão acessar e editar seus próprios perfis.
 2. ✍️ **Nome obrigatório:** o campo não poderá estar vazio ou conter apenas espaços em branco.
