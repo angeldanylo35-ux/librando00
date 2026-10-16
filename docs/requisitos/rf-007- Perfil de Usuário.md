@@ -64,7 +64,7 @@ Após o envio das alterações, o sistema deverá verificar os dados informados,
 |---|:---:|---|
 | 🟢 **Create** | ❌ | Não se aplica. A criação da conta pertence ao RF-002 — Cadastro de Usuários. |
 | 🔵 **Read** | ✅ | Pode visualizar as informações do próprio perfil. |
-| 🟡 **Update** | ✅ | Pode editar o próprio Nome, Nome de Usuário (@), Bio, Foto de Perfil e Foto da Capa. |
+| 🟡 **Update** | ✅ | Pode editar o próprio Nome, Nome de Usuário (@), Bio, Foto de Perfil e Foto da Capa, Localização. |
 | 🔴 **Delete** | ❌ | A exclusão da conta não faz parte do escopo deste requisito. |
 
 #### ⚙️ 2. Sistema Librando
