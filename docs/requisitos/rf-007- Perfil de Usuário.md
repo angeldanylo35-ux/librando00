@@ -26,6 +26,6 @@
 
 ### c) Link do GitHub (Repositório) ⚠️ OBRIGATÓRIO
 
-- **Repositório:** https://github.com/henriqu3mart1ns/LIBRANDO
+- **Repositório:** [https://github.com/henriqu3mart1ns/LIBRANDO](https://github.com/angeldanylo35-ux/librando00.git)
 - **Branch principal:** [Informar a branch principal do projeto]
 - **Estrutura:** Conforme a organização de diretórios do projeto, incluindo documentação, código-fonte e arquivos do banco de dados.
