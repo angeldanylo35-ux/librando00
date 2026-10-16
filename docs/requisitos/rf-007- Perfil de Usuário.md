@@ -102,12 +102,14 @@ Após o envio das alterações, o sistema deverá verificar os dados informados,
 
 ### 📌 3.1 Identificação do Caso de Uso
 
-- **🆔 ID:** UC-007
-- **📋 Requisito relacionado:** RF-007 — Perfil de Usuário
-- **👤 Ator principal:** Usuário Cadastrado
-- **⚙️ Ator secundário:** Sistema Librando
-- **🎯 Objetivo:** permitir que o usuário visualize e atualize as informações do próprio perfil, incluindo nome, nome de usuário, biografia, foto de perfil e foto de capa.
-- **🔗 Relacionamento:** o caso de uso está associado à funcionalidade de edição do perfil da rede social Librando.
+| Campo | Descrição |
+|---|---|
+| 🆔 **ID** | UC-007 |
+| 📋 **Requisito relacionado** | RF-007 — Perfil de Usuário |
+| 👤 **Ator principal** | Usuário Cadastrado |
+| ⚙️ **Ator secundário** | Sistema Librando |
+| 🎯 **Objetivo** | Permitir que o usuário visualize e atualize as informações do próprio perfil, incluindo nome, nome de usuário, biografia, localização, foto de perfil e foto de capa. |
+| 🔗 **Relacionamento** | Funcionalidade de visualização e edição do perfil da rede social Librando. |
 
 ### 🔐 3.2 Pré-condições
 
