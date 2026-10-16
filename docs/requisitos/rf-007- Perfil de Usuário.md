@@ -97,3 +97,151 @@ Após o envio das alterações, o sistema deverá verificar os dados informados,
 10. ⚠️ **Tratamento de erros:** em caso de dados inválidos, identificador duplicado ou falha na persistência, o sistema deverá apresentar uma mensagem clara e permitir uma nova tentativa.
 11. 🔒 **Proteção dos dados:** a atualização do perfil não deverá alterar indevidamente informações internas ou sensíveis da conta que não pertençam ao escopo deste requisito.
 12. ♿ **Acessibilidade da interface:** os campos, mensagens de erro e confirmações deverão ser apresentados de maneira clara e compreensível, considerando as necessidades dos usuários do Librando.
+
+## 🔄 3. Casos de Uso e Requisitos Não Funcionais
+
+### 📌 3.1 Identificação do Caso de Uso
+
+- **🆔 ID:** UC-007
+- **📋 Requisito relacionado:** RF-007 — Perfil de Usuário
+- **👤 Ator principal:** Usuário Cadastrado
+- **⚙️ Ator secundário:** Sistema Librando
+- **🎯 Objetivo:** permitir que o usuário visualize e atualize as informações do próprio perfil, incluindo nome, nome de usuário, biografia, foto de perfil e foto de capa.
+- **🔗 Relacionamento:** o caso de uso está associado à funcionalidade de edição do perfil da rede social Librando.
+
+### 🔐 3.2 Pré-condições
+
+- O usuário deve possuir uma conta cadastrada no Librando.
+- O usuário deve estar autenticado na plataforma.
+- O sistema deve estar disponível para receber solicitações.
+- O perfil do usuário deve existir no banco de dados.
+- O usuário deve possuir acesso à página de perfil e à funcionalidade de edição.
+
+### 🚀 3.3 Fluxo Principal
+
+1. 👤 O usuário acessa sua conta no Librando.
+2. 🖥️ O sistema apresenta a interface principal da plataforma.
+3. 🔎 O usuário acessa a página do próprio perfil.
+4. 📄 O sistema recupera e exibe as informações atuais do perfil, incluindo nome, nome de usuário, biografia, foto de perfil e foto de capa, localização.
+5. ✏️ O usuário seleciona a opção de editar perfil.
+6. 📝 O sistema apresenta o formulário de edição preenchido com os dados atuais.
+7. ⌨️ O usuário altera os campos desejados, podendo modificar o nome, o nome de usuário, a biografia, localização e as imagens do perfil.
+8. 💾 O usuário solicita o salvamento das alterações.
+9. 🛡️ O sistema verifica a autenticação do usuário e valida os dados informados, incluindo a obrigatoriedade dos campos Nome e Nome de Usuário (@).
+10. 🔎 O sistema verifica se o nome de usuário informado está disponível, desconsiderando o próprio registro do usuário.
+11. 🖼️ Caso sejam enviadas novas imagens, o sistema valida os arquivos conforme os formatos e limites permitidos.
+12. 💾 O sistema persiste as alterações válidas no banco de dados e atualiza as referências das imagens, conforme a arquitetura utilizada.
+13. ✅ O sistema confirma que as alterações foram salvas com sucesso.
+14. 👁️ O sistema apresenta o perfil atualizado com as novas informações e imagens.
+
+### 🔀 3.4 Fluxos Alternativos
+
+#### ⚠️ FA-01 — Campos Obrigatórios Não Preenchidos
+
+1. O usuário tenta salvar o perfil sem preencher o campo Nome ou Nome de Usuário (@).
+2. O sistema identifica o campo obrigatório vazio ou preenchido apenas com espaços em branco.
+3. O sistema apresenta uma mensagem informando quais campos precisam ser corrigidos.
+4. O usuário preenche os campos obrigatórios.
+5. O fluxo retorna à etapa de validação do fluxo principal.
+
+**Resultado:** as alterações não são concluídas até que os campos obrigatórios sejam válidos.
+
+#### 🏷️ FA-02 — Nome de Usuário Já Existente
+
+1. O usuário informa um nome de usuário que já pertence a outra conta.
+2. O sistema verifica a existência de outro registro com o mesmo identificador.
+3. O sistema informa que o nome de usuário está indisponível.
+4. O usuário informa um identificador diferente.
+5. O sistema realiza novamente a validação de unicidade.
+
+**Resultado:** o perfil somente poderá ser atualizado quando o nome de usuário atender às regras definidas.
+
+#### 🖼️ FA-03 — Imagem Inválida ou Acima do Limite Permitido
+
+1. O usuário seleciona uma foto de perfil ou de capa.
+2. O sistema verifica o formato e o tamanho do arquivo.
+3. O sistema identifica que a imagem não atende aos critérios permitidos.
+4. O sistema informa o motivo da rejeição e solicita a seleção de outro arquivo.
+5. O usuário seleciona uma imagem válida.
+
+**Resultado:** a imagem inválida não deverá substituir a imagem atualmente associada ao perfil.
+
+#### 🌐 FA-04 — Falha ao Salvar as Alterações
+
+1. O usuário solicita o salvamento do perfil.
+2. O sistema inicia o processamento das alterações.
+3. Ocorre uma falha de comunicação, processamento ou persistência dos dados.
+4. O sistema informa que não foi possível concluir a operação.
+5. O usuário poderá tentar salvar novamente após a normalização do serviço.
+
+**Resultado:** o sistema não deverá informar sucesso sem confirmar a conclusão da operação. As informações anteriores deverão ser preservadas sempre que possível, evitando atualizações parciais inconsistentes.
+
+#### 🔒 FA-05 — Sessão Expirada ou Acesso Não Autorizado
+
+1. O usuário tenta acessar ou atualizar o perfil.
+2. O sistema verifica a validade da sessão e a autorização da solicitação.
+3. O sistema identifica que a sessão expirou ou que o usuário não possui autorização para modificar o perfil solicitado.
+4. O sistema bloqueia a operação e informa a necessidade de autenticação, quando aplicável.
+5. O usuário poderá autenticar-se novamente e acessar o próprio perfil.
+
+**Resultado:** nenhuma alteração não autorizada deverá ser realizada.
+
+### 🏁 3.5 Pós-condições
+
+- ✅ As informações válidas do perfil são atualizadas e persistidas.
+- 👤 O perfil permanece associado à conta correta.
+- 🏷️ O nome de usuário continua respeitando a regra de unicidade.
+- 🖼️ As novas fotos de perfil e de capa ficam associadas ao perfil após o processamento bem-sucedido.
+- 🔎 As informações atualizadas ficam disponíveis para consultas posteriores.
+- 🛡️ Nenhuma alteração não autorizada é realizada.
+- ⚠️ Em caso de falha, o sistema informa o problema e não apresenta a operação como concluída com sucesso.
+
+---
+
+### ⚙️ 3.6 Requisitos Não Funcionais
+
+- **⚡ RNF-01 — Desempenho:** o carregamento das informações do perfil e o processamento de atualizações comuns deverão ocorrer em até 2 segundos em condições normais de operação, desconsiderando o tempo necessário para transferir arquivos de imagem grandes ou a ocorrência de problemas externos de rede.
+
+- **📱 RNF-02 — Responsividade:** a interface de perfil e o formulário de edição deverão adaptar-se a dispositivos móveis, tablets e computadores, mantendo os campos e controles acessíveis em diferentes resoluções.
+
+- **🌐 RNF-03 — Compatibilidade:** a funcionalidade deverá ser compatível com versões atuais dos principais navegadores, incluindo Google Chrome, Mozilla Firefox, Microsoft Edge e Safari.
+
+- **♿ RNF-04 — Acessibilidade:** os campos, botões, mensagens de erro e confirmações deverão possuir identificação clara, contraste adequado e navegação acessível por teclado, considerando as necessidades de acessibilidade do público do Librando.
+
+- **🔒 RNF-05 — Segurança:** as operações de consulta e atualização deverão verificar autenticação e autorização, proteger os dados transmitidos e validar os arquivos enviados para reduzir riscos de acesso indevido e envio de conteúdo malicioso.
+
+- **💾 RNF-06 — Integridade e confiabilidade:** o sistema deverá garantir a consistência das informações do perfil, evitando que falhas durante uma atualização produzam dados incompletos ou inconsistentes.
+
+- 🖼️ **RNF-07 — Processamento de imagens:** o sistema deverá processar as imagens de perfil e de capa dentro dos limites de tamanho e formatos estabelecidos, evitando o consumo excessivo de recursos.
+
+---
+
+### 📏 3.7 Regras de Negócio
+
+- **📌 RN-01 — Autenticação:** somente usuários autenticados poderão acessar a funcionalidade de edição do perfil.
+
+- **👤 RN-02 — Propriedade do perfil:** cada usuário poderá editar apenas as informações associadas à própria conta, salvo se existir uma autorização administrativa específica definida em outro requisito.
+
+- **✍️ RN-03 — Nome obrigatório:** o campo Nome deverá ser preenchido e não poderá conter apenas espaços em branco.
+
+- **🏷️ RN-04 — Nome de Usuário obrigatório:** o campo Nome de Usuário (@) deverá ser preenchido antes do salvamento.
+
+- **🔎 RN-05 — Unicidade do identificador:** cada nome de usuário deverá ser único conforme as regras de comparação adotadas pelo sistema. Durante a edição, o usuário poderá manter o próprio identificador atual.
+
+- **💬 RN-06 — Biografia opcional:** o campo Bio poderá permanecer vazio, desde que respeite os limites de tamanho e as regras de conteúdo definidas pela plataforma.
+
+- **🖼️ RN-07 — Alteração de imagens:** o usuário poderá alterar a foto de perfil e a foto de capa de maneira independente, sem ser obrigado a modificar os demais campos.
+
+- **📂 RN-08 — Formatos permitidos:** as imagens deverão utilizar formatos autorizados pela plataforma, como JPEG, PNG ou WebP, desde que esses formatos sejam efetivamente suportados pela implementação.
+
+- **📏 RN-09 — Limite de tamanho:** os arquivos de imagem deverão respeitar o limite máximo definido para o envio e armazenamento.
+
+- **💾 RN-10 — Confirmação de salvamento:** o sistema somente deverá confirmar o sucesso da atualização depois que as alterações tiverem sido persistidas corretamente.
+
+- **⚠️ RN-11 — Tratamento de falhas:** se uma atualização falhar, o sistema deverá informar o usuário e evitar que imagens ou informações anteriores sejam substituídas por dados inválidos.
+
+- 🔐 **RN-12 — Proteção de dados:** o usuário não poderá alterar, por meio do formulário de perfil, identificadores internos, permissões, credenciais ou outras informações que não pertençam ao escopo do RF-007.
+
+- **🔄 RN-13 — Atualização independente:** a alteração de nome, nome de usuário, biografia, foto de perfil ou foto de capa não deverá exigir a modificação dos demais campos.
+
+- **♻️ RN-14 — Persistência das imagens:** após a confirmação do salvamento, as imagens atualizadas deverão permanecer disponíveis e associadas ao perfil, conforme a solução de armazenamento adotada pelo projeto.
