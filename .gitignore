@@ -21,3 +21,23 @@ frontend/node_modules/
 .DS_Store
 Thumbs.db
 
+# Arquivos locais do Laravel na raiz (não fazem parte de backend/)
+/bootstrap/cache/*
+/database/database.sqlite
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+
+# Arquivos Node locais na raiz (frontend tem configuração própria)
+/package.json
+/package-lock.json
+/node_modules/
+
+# Cache local do Laravel
+/bootstrap/cache/*
+/database/database.sqlite
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
