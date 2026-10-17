@@ -135,6 +135,92 @@ class PostController extends Controller
         ], 201);
     }
 
+    // Editar (apenas o conteúdo)
+    public function update(Request $request, Post $post)
+    {
+        if ($post->usuario_id !== $request->user()->id) {
+            return response()->json([
+                'sucesso' => false,
+                'mensagem' => 'Você não tem permissão para editar esta publicação.',
+            ], 403);
+        }
+
+        // Texto e enquete exigem conteúdo; nos demais tipos a legenda é opcional
+        $obrigatorio = in_array($post->tipo, ['texto', 'enquete']);
+        $max = $post->tipo === 'enquete' ? 200 : 2000;
+
+        $validator = Validator::make($request->all(), [
+            'conteudo' => [$obrigatorio ? 'required' : 'nullable', 'string', "max:$max"],
+        ], [
+            'conteudo.required' => 'O conteúdo da publicação é obrigatório.',
+            'conteudo.max' => 'O conteúdo excede o tamanho permitido.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'sucesso' => false,
+                'mensagem' => $validator->errors()->first(),
+                'campos' => array_keys($validator->errors()->toArray()),
+            ], 400);
+        }
+
+        try {
+            $post->update(['conteudo' => $request->input('conteudo')]);
+        } catch (\Throwable $e) {
+            Log::error('Falha ao editar postagem: ' . $e->getMessage());
+
+            return response()->json([
+                'sucesso' => false,
+                'mensagem' => 'Não foi possível salvar a edição. Tente novamente.',
+            ], 500);
+        }
+
+        $post->load(['usuario:id,nome,nome_usuario', 'opcoes:id,post_id,texto,votos']);
+
+        return response()->json([
+            'sucesso' => true,
+            'mensagem' => 'Publicação atualizada com sucesso!',
+            'post' => $this->formatar($post),
+        ]);
+    }
+
+    // Excluir
+    public function destroy(Request $request, Post $post)
+    {
+        if ($post->usuario_id !== $request->user()->id) {
+            return response()->json([
+                'sucesso' => false,
+                'mensagem' => 'Você não tem permissão para excluir esta publicação.',
+            ], 403);
+        }
+
+        $caminho = $post->midia_path;
+
+        try {
+            DB::transaction(function () use ($post) {
+                $post->opcoes()->delete();
+                $post->delete();
+            });
+        } catch (\Throwable $e) {
+            Log::error('Falha ao excluir postagem: ' . $e->getMessage());
+
+            return response()->json([
+                'sucesso' => false,
+                'mensagem' => 'Não foi possível excluir a publicação. Tente novamente.',
+            ], 500);
+        }
+
+        // Só apaga o arquivo depois que o banco confirmou a exclusão
+        if ($caminho) {
+            Storage::disk('public')->delete($caminho);
+        }
+
+        return response()->json([
+            'sucesso' => true,
+            'mensagem' => 'Publicação excluída com sucesso!',
+        ]);
+    }
+
     private function formatar(Post $post): array
     {
         return [
@@ -148,6 +234,7 @@ class PostController extends Controller
                 'votos' => $o->votos,
             ])->values(),
             'usuario' => [
+                'id' => $post->usuario->id, // novo: o Vue usa para mostrar Editar/Excluir só ao dono
                 'nome' => $post->usuario->nome,
                 'nome_usuario' => $post->usuario->nome_usuario,
             ],
