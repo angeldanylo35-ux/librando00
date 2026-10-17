@@ -38,13 +38,13 @@ const routes = [
     component: RedefinirSenha,
   },
   {
-    path: '/feed',
-    name: 'feed',
+    path: '/Feed',
+    name: 'Feed',
     component: Feed,
   },
   {
-    path: '/perfil',
-    name: 'perfil',
+    path: '/Perfil',
+    name: 'Perfil',
     component: Perfil,
   },
   // adicione as próximas telas aqui, ex:

@@ -8,7 +8,7 @@ const router = useRouter()
 const icons = {
   home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
   explore: '<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
-  video: '<rect x="3" y="7" width="18" height="14" rx="2"/><path d="m3 7 2.5-4h3L6 7m5 0 2.5-4h3L14 7m5 0 2-4"/>',
+  video: '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>',
   send: '<path d="M21 3 3 10.5l7 3 3 7z"/><path d="M21 3 10 13.5"/>',
   heart: '<path d="M12 20.5s-8-4.7-8-11A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.500c0 6.300-8 11-8 11z"/>',
   bookmark: '<path d="M6 3h12v18l-6-4-6 4z"/>',
@@ -24,8 +24,6 @@ const icons = {
   hand: '<path d="M8 12V5.500a1.500 1.500 0 0 1 3 0V11m0-6.500a1.500 1.500 0 0 1 3 0V11m0-4.500a1.500 1.500 0 0 1 3 0V13m0-3.500a1.500 1.500 0 0 1 3 0V15c0 4-3 6.500-6.500 6.500S8 19.500 6 16.500L4 13.500a1.500 1.500 0 0 1 2.500-1.500L8 14"/>',
   arrowUp: '<path d="M7 17 17 7M8 7h9v9"/>',
   film: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M7 5l2 4M12 5l2 4M17 5l2 4"/>',
-  caption: '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 11h4M7 15h2m4-4h4m-4 4h4"/>',
-  swap: '<path d="M7 7h12l-3-3M17 17H5l3 3"/>',
   poll: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
   repost: '<polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>'
 }
@@ -48,13 +46,13 @@ function iniciais(texto) {
 const meuInicial = iniciais(nome)
 
 const navItems = [
-  { label: 'Página inicial', icon: 'home', active: true },
+  { label: 'Página inicial', icon: 'home', route: '/feed', active: true },
   { label: 'Explorar', icon: 'explore' },
   { label: 'Vídeos', icon: 'video' },
   { label: 'Mensagens', icon: 'send', badge: 3 },
   { label: 'Notificações', icon: 'heart' },
   { label: 'Salvos', icon: 'bookmark' },
-  { label: 'Meu perfil', icon: 'user' },
+  { label: 'Meu perfil', icon: 'user', route: '/perfil' },
   { label: 'Mais', icon: 'menu' },
 ]
 
@@ -157,7 +155,6 @@ function alternarRepost(post) {
   post.repostou = !post.repostou
   post.repostou ? post.reposts++ : post.reposts--
 
-  // Sincroniza com o localStorage para refletir no perfil
   localStorage.setItem('librando_reacoes', JSON.stringify({
     repostou: post.repostou,
     totalReposts: post.reposts,
@@ -170,7 +167,7 @@ function alternarRepost(post) {
 }
 
 function enviarPost() {
-  alert('Link da publicação copiado para a área de transferência!')
+  // Mantido neutro
 }
 
 function alternarSalvar(post) {
@@ -255,6 +252,12 @@ async function excluirPost(post) {
       'Não foi possível excluir a publicação. Verifique se a API de exclusão já está disponível.'
   } finally {
     postSendoExcluido.value = null
+  }
+}
+
+function navegarPara(route) {
+  if (route) {
+    router.push(route)
   }
 }
 
@@ -398,7 +401,7 @@ async function publish() {
     <aside class="fixed inset-y-0 left-0 z-20 flex w-56 flex-col border-r border-gray-200 bg-white px-4 py-8">
       <div class="px-1">
         <h1 class="text-[32px] font-extrabold leading-none tracking-tight" style="color: #635BFF !important;">
-          librando.
+          Librando.
         </h1>
         <p class="mt-1.5 text-[11px] font-medium tracking-wide" style="color: #1A1A1A !important;">
           CONEXÕES EM LIBRAS
@@ -413,6 +416,7 @@ async function publish() {
           class="flex items-center gap-4 rounded-lg px-3 py-3 text-left text-[16px] transition-colors"
           :class="item.active ? 'bg-[#EEEDFF] font-medium text-[#635BFF]' : 'text-[#1A1A1A] hover:bg-gray-50'"
           :aria-current="item.active ? 'page' : undefined"
+          @click="navegarPara(item.route)"
         >
           <svg
             viewBox="0 0 24 24"
@@ -454,22 +458,8 @@ async function publish() {
       </nav>
 
       <div class="mt-auto">
-        <button type="button" class="flex w-full items-center gap-4 rounded-lg px-3 py-3 text-[16px] hover:bg-gray-50">
-          <svg
-            viewBox="0 0 24 24"
-            class="h-6 w-6"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.7"
-            stroke-linecap="round"
-            aria-hidden="true"
-            v-html="icons.menu"
-          />
-          Mais
-        </button>
-
         <div class="mt-3 border-t border-gray-200 pt-4">
-          <button type="button" class="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-gray-50">
+          <button type="button" class="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-gray-50" @click="router.push('/perfil')">
             <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-[13px] font-semibold text-white">
               {{ meuInicial }}
             </span>
