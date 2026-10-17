@@ -3,12 +3,12 @@
     <!-- Container Principal Responsivo -->
     <div class="w-full max-w-[1280px] flex">
       
-      <!-- 1. ESQUERDA: Sidebar Nav -->
+      <!-- 1. ESQUERDA: Sidebar Nav Corrigida -->
       <aside class="w-[240px] shrink-0 border-r border-gray-200 p-4 flex flex-col justify-between sticky top-0 h-screen bg-white z-20">
         <div>
-          <!-- Logo -->
+          <!-- Logo com L Maiúsculo -->
           <div class="px-2 mb-6 text-left">
-            <h1 class="brand-logo text-3xl font-extrabold leading-none">librando.</h1>
+            <h1 class="brand-logo text-3xl font-extrabold leading-none">Librando.</h1>
             <p class="text-[10px] text-gray-500 font-bold tracking-wider mt-1">CONEXÕES EM LIBRAS</p>
           </div>
 
@@ -30,15 +30,11 @@
               <span>Explorar</span>
             </a>
 
+            <!-- Ícone de Vídeos Corrigido (Câmera / Play) -->
             <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl font-medium text-gray-700 hover:bg-gray-100">
               <svg class="w-6 h-6 stroke-current fill-none" stroke-width="2" viewBox="0 0 24 24">
-                <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18" />
-                <line x1="7" y1="2" x2="7" y2="22" />
-                <line x1="17" y1="2" x2="17" y2="22" />
-                <line x1="2" y1="12" x2="22" y2="12" />
-                <line x1="2" y1="7" x2="7" y2="17" />
-                <line x1="17" y1="17" x2="22" y2="17" />
-                <line x1="17" y1="7" x2="22" y2="7" />
+                <polygon points="23 7 16 12 23 17 23 7" />
+                <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
               </svg>
               <span>Vídeos</span>
             </a>
@@ -85,16 +81,6 @@
               <span>Mais</span>
             </a>
           </nav>
-
-          <!-- Botão Criar Vídeo -->
-          <button class="w-full mt-6 border-2 border-gray-200 text-gray-800 py-2.5 rounded-2xl font-bold hover:bg-gray-50 flex items-center justify-center gap-2 transition-all">
-            <svg class="w-5 h-5 stroke-current fill-none" stroke-width="2" viewBox="0 0 24 24">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-              <line x1="12" y1="8" x2="12" y2="16" />
-              <line x1="8" y1="12" x2="16" y2="12" />
-            </svg>
-            <span>Criar vídeo</span>
-          </button>
         </div>
       </aside>
 
@@ -121,7 +107,6 @@
             <img :src="perfil.banner" class="w-full h-full object-cover" />
           </div>
           
-          <!-- Botões de Ação do Perfil -->
           <div class="flex justify-end items-center gap-2 p-4">
             <button 
               @click="alternarSeguir"
@@ -139,7 +124,6 @@
             </button>
           </div>
 
-          <!-- Avatar Sobreposto -->
           <div class="absolute -bottom-10 left-4">
             <img :src="perfil.foto" class="w-28 h-28 rounded-full border-4 border-white object-cover shadow-md" />
           </div>
@@ -161,7 +145,6 @@
             <span class="flex items-center gap-1">📍 {{ perfil.localizacao }}</span>
           </div>
 
-          <!-- Contadores Dinâmicos -->
           <div class="flex gap-4 text-sm mt-3">
             <span class="text-gray-600">
               <strong class="title-dark font-bold">{{ totalSeguindo }}</strong> Seguindo
@@ -172,37 +155,16 @@
           </div>
         </div>
 
-        <!-- Abas/Tabs de Navegação (Agora com 3 Abas) -->
+        <!-- Abas -->
         <div class="flex border-b border-gray-200 mt-4 text-sm font-semibold text-gray-500">
-          <button 
-            @click="abaAtiva = 'publicacoes'" 
-            :class="abaAtiva === 'publicacoes' ? 'text-gray-900 border-b-2 border-[#635BFF]' : 'hover:bg-gray-50'"
-            class="flex-1 py-3 text-center transition-colors"
-          >
-            Publicações
-          </button>
-          <button 
-            @click="abaAtiva = 'reposts'" 
-            :class="abaAtiva === 'reposts' ? 'text-gray-900 border-b-2 border-[#635BFF]' : 'hover:bg-gray-50'"
-            class="flex-1 py-3 text-center transition-colors"
-          >
-            Repost
-          </button>
-          <button 
-            @click="abaAtiva = 'curtidas'" 
-            :class="abaAtiva === 'curtidas' ? 'text-gray-900 border-b-2 border-[#635BFF]' : 'hover:bg-gray-50'"
-            class="flex-1 py-3 text-center transition-colors"
-          >
-            Curtidas
-          </button>
+          <button @click="abaAtiva = 'publicacoes'" :class="abaAtiva === 'publicacoes' ? 'text-gray-900 border-b-2 border-[#635BFF]' : 'hover:bg-gray-50'" class="flex-1 py-3 text-center transition-colors">Publicações</button>
+          <button @click="abaAtiva = 'reposts'" :class="abaAtiva === 'reposts' ? 'text-gray-900 border-b-2 border-[#635BFF]' : 'hover:bg-gray-50'" class="flex-1 py-3 text-center transition-colors">Repost</button>
+          <button @click="abaAtiva = 'curtidas'" :class="abaAtiva === 'curtidas' ? 'text-gray-900 border-b-2 border-[#635BFF]' : 'hover:bg-gray-50'" class="flex-1 py-3 text-center transition-colors">Curtidas</button>
         </div>
 
         <!-- CONTEÚDO DAS ABAS -->
-
-        <!-- 1. ABA PUBLICAÇÕES -->
         <div v-if="abaAtiva === 'publicacoes'" class="divide-y divide-gray-100">
-          
-          <!-- BOX DE CRIAR NOVA PUBLICAÇÃO -->
+          <!-- Criar Post -->
           <div class="p-4 border-b border-gray-100 bg-gray-50/50">
             <div class="flex gap-3">
               <img :src="perfil.foto" class="w-10 h-10 rounded-full object-cover shrink-0" />
@@ -211,20 +173,16 @@
                   v-model="novoPostTexto" 
                   rows="2" 
                   placeholder="O que você deseja compartilhar em Libras hoje?"
-                  class="w-full bg-white border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:border-[#635BFF] focus:ring-1 focus:ring-[#635BFF]"
+                  class="w-full bg-white border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:border-[#635BFF]"
                 ></textarea>
-                
                 <div class="flex items-center justify-between gap-2">
                   <input 
                     v-model="novoPostMidia" 
                     type="text" 
-                    placeholder="URL da imagem (opcional)"
+                    placeholder="URL da imagem (.jpg, .png, .webp)"
                     class="flex-1 bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-[#635BFF]"
                   />
-                  <button 
-                    @click="criarPost" 
-                    class="bg-[#635BFF] text-white px-5 py-1.5 rounded-full font-bold text-xs hover:bg-[#5249e0] transition-colors shrink-0"
-                  >
+                  <button @click="criarPost" class="bg-[#635BFF] text-white px-5 py-1.5 rounded-full font-bold text-xs hover:bg-[#5249e0] transition-colors shrink-0">
                     Publicar
                   </button>
                 </div>
@@ -232,12 +190,7 @@
             </div>
           </div>
 
-          <!-- LISTA DE POSTS -->
-          <div v-if="posts.length === 0" class="p-8 text-center text-gray-500 text-sm">
-            <p class="font-bold text-gray-700 text-base mb-1">Nenhuma publicação ainda</p>
-            <p>Use o campo acima para criar sua primeira publicação!</p>
-          </div>
-
+          <!-- Lista de Posts -->
           <article v-for="post in posts" :key="post.id" class="p-4 hover:bg-gray-50/50 flex gap-3 text-left relative group">
             <img :src="perfil.foto" class="w-10 h-10 rounded-full object-cover shrink-0" />
             <div class="flex-1">
@@ -248,94 +201,97 @@
                   <span class="text-gray-500">{{ perfil.usuario }} · {{ post.tempo }}</span>
                 </div>
 
-                <!-- Menu Dropdown de Opções (Editar / Excluir) -->
                 <div class="relative">
-                  <button 
-                    @click="alternarMenuPost(post.id)" 
-                    class="text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 font-bold leading-none text-xs"
-                  >
-                    •••
-                  </button>
-
-                  <div 
-                    v-if="menuPostAbertoId === post.id" 
-                    class="absolute right-0 mt-1 w-44 bg-white rounded-xl shadow-lg border border-gray-100 py-1.5 z-30 text-xs"
-                  >
-                    <button 
-                      @click="abrirModalEditarPost(post)" 
-                      class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2 text-gray-700 font-medium"
-                    >
-                      ✏️ Editar publicação
-                    </button>
-                    <button 
-                      @click="excluirPost(post.id)" 
-                      class="w-full text-left px-4 py-2 hover:bg-red-50 flex items-center gap-2 text-red-600 font-semibold"
-                    >
-                      🗑️ Excluir publicação
-                    </button>
+                  <button @click="alternarMenuPost(post.id)" class="text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 font-bold leading-none text-xs">•••</button>
+                  <div v-if="menuPostAbertoId === post.id" class="absolute right-0 mt-1 w-44 bg-white rounded-xl shadow-lg border border-gray-100 py-1.5 z-30 text-xs">
+                    <button @click="abrirModalEditarPost(post)" class="w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-700 font-medium">✏️ Editar publicação</button>
+                    <button @click="excluirPost(post.id)" class="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 font-semibold">🗑️ Excluir publicação</button>
                   </div>
                 </div>
               </div>
 
-              <p class="text-sm mt-1 text-gray-800 leading-snug">
-                {{ post.texto }}
-              </p>
+              <p class="text-sm mt-1 text-gray-800 leading-snug">{{ post.texto }}</p>
               
-              <!-- Mídia na Publicação -->
               <div v-if="post.midia" class="mt-3 relative rounded-2xl overflow-hidden border border-gray-200 bg-gray-100">
-                <img 
-                  :src="post.midia" 
-                  @error="post.midia = null"
-                  class="w-full h-64 object-cover" 
-                />
+                <img :src="post.midia" @error="post.midia = null" class="w-full h-64 object-cover" />
               </div>
 
-              <!-- Reações Interativas -->
-              <div class="flex justify-between text-xs mt-3 max-w-md items-center">
-                <button @click="alternarComentario" :class="comentou ? 'text-[#635BFF]' : 'text-gray-500 hover:text-[#635BFF]'" class="flex items-center gap-1.5 group transition-colors">
-                  <div class="p-2 rounded-full group-hover:bg-purple-50 flex items-center justify-center transition-colors">
-                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.489c4.42 0 8.005 3.58 8.005 8 0 3.28-1.981 6.12-4.814 7.36l.243 3.09c.045.57-.481 1.01-1.025.86l-4.103-1.12c-.9.23-1.85.35-2.805.35-4.421 0-8.005-3.58-8.005-8zM9.756 4c-3.313 0-6.005 2.69-6.005 6 0 3.31 2.692 6 6.005 6 .82 0 1.63-.12 2.41-.36l.48-.15 2.37.65-.13-1.68.17-.22c2.14-2.73 1.83-6.68-.78-9.04C13.256 4.39 11.536 4 9.756 4z"/></svg>
-                  </div>
-                  <span class="font-medium">{{ totalComentarios }}</span>
-                </button>
+              <!-- BARRA DE INTERAÇÕES COM ÍCONES VETORIAIS -->
+              <div class="flex items-center justify-between text-xs mt-3 text-gray-500 border-t border-gray-100 pt-3">
+                <div class="flex items-center gap-6">
+                  <!-- 1. Curtida -->
+                  <button 
+                    @click="alternarCurtida" 
+                    :class="curtiu ? 'text-pink-600' : 'hover:text-pink-600'" 
+                    class="flex items-center gap-1.5 transition-colors group"
+                  >
+                    <svg class="w-5 h-5 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" :fill="curtiu ? 'currentColor' : 'none'" />
+                    </svg>
+                    <span class="font-semibold">{{ totalCurtidas }}</span>
+                  </button>
 
-                <button @click="alternarRepost" :class="repostou ? 'text-green-600' : 'text-gray-500 hover:text-green-600'" class="flex items-center gap-1.5 group transition-colors">
-                  <div class="p-2 rounded-full group-hover:bg-green-50 flex items-center justify-center transition-colors">
-                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M4.5 3.88l4.42 4.42-1.42 1.42-2-2V16c0 1.1.9 2 2 2h8v2h-8c-2.21 0-4-1.79-4-4V7.71l-2 2L.08 8.3 4.5 3.88zM19.5 20.12l-4.42-4.42 1.42-1.42 2 2V8c0-1.1-.9-2-2-2h-8V4h8c2.21 0 4 1.79 4 4v8.29l2-2 1.42 1.42-4.42 4.41z"/></svg>
-                  </div>
-                  <span class="font-medium">{{ totalReposts }}</span>
-                </button>
+                  <!-- 2. Comentário -->
+                  <button 
+                    @click="alternarComentario" 
+                    :class="comentou ? 'text-[#635BFF]' : 'hover:text-[#635BFF]'" 
+                    class="flex items-center gap-1.5 transition-colors group"
+                  >
+                    <svg class="w-5 h-5 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24">
+                      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                    </svg>
+                    <span class="font-semibold">{{ totalComentarios }}</span>
+                  </button>
 
-                <button @click="alternarCurtida" :class="curtiu ? 'text-pink-600' : 'text-gray-500 hover:text-pink-600'" class="flex items-center gap-1.5 group transition-colors">
-                  <div class="p-2 rounded-full group-hover:bg-pink-50 flex items-center justify-center transition-colors">
-                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 21.638h-.014C9.403 21.59 1.95 14.851 1.95 8.478 1.95 5.172 4.63 2.5 7.91 2.5c1.91 0 3.66.92 4.75 2.36 1.09-1.44 2.84-2.36 4.75-2.36 3.28 0 5.96 2.672 5.96 5.978 0 6.373-7.453 13.112-10.036 13.16H12zM7.91 4.5c-2.18 0-3.96 1.782-3.96 3.978 0 4.887 5.76 10.873 8.05 11.15 2.29-.277 8.05-6.263 8.05-11.15 0-2.196-1.78-3.978-3.96-3.978-1.52 0-2.91.874-3.57 2.22l-.52 1.07-.52-1.07c-.66-1.346-2.05-2.22-3.57-2.22z"/></svg>
-                  </div>
-                  <span class="font-medium">{{ totalCurtidas }}</span>
-                </button>
+                  <!-- 3. Repost -->
+                  <button 
+                    @click="alternarRepost" 
+                    :class="repostou ? 'text-green-600' : 'hover:text-green-600'" 
+                    class="flex items-center gap-1.5 transition-colors group"
+                  >
+                    <svg class="w-5 h-5 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24">
+                      <polyline points="17 1 21 5 17 9" />
+                      <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                      <polyline points="7 23 3 19 7 15" />
+                      <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+                    </svg>
+                    <span class="font-semibold">{{ totalReposts }}</span>
+                  </button>
 
-                <button class="flex items-center gap-1.5 text-gray-500 hover:text-[#635BFF] group transition-colors cursor-default">
-                  <div class="p-2 rounded-full group-hover:bg-purple-50 flex items-center justify-center transition-colors">
-                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21v-6h2v6H4zM13.25 21V11h2v10h-2z"/></svg>
-                  </div>
-                  <span class="font-medium">5,4 mil</span>
-                </button>
+                  <!-- 4. Enviar -->
+                  <button 
+                    class="hover:text-[#635BFF] transition-colors flex items-center gap-1.5"
+                  >
+                    <svg class="w-5 h-5 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24">
+                      <line x1="22" y1="2" x2="11" y2="13" />
+                      <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                    </svg>
+                  </button>
+                </div>
 
-                <button @click="alternarSalvar" :class="salvou ? 'text-[#635BFF]' : 'text-gray-500 hover:text-[#635BFF]'" class="flex items-center group transition-colors">
-                  <div class="p-2 rounded-full group-hover:bg-purple-50 flex items-center justify-center transition-colors">
-                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.59l5.7 5.7-1.41 1.41L13 6.41V16h-2V6.41L7.71 9.7 6.3 8.29 12 2.59zM21 15v5c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2v-5h2v5h14v-5h2z"/></svg>
-                  </div>
+                <!-- 5. Salvar -->
+                <button 
+                  @click="alternarSalvar" 
+                  :class="salvou ? 'text-[#635BFF]' : 'hover:text-[#635BFF]'" 
+                  class="transition-colors p-1"
+                >
+                  <svg class="w-5 h-5 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" :fill="salvou ? 'currentColor' : 'none'" />
+                  </svg>
                 </button>
               </div>
+
             </div>
           </article>
         </div>
 
-        <!-- 2. ABA REPOST -->
+        <!-- ABA REPOSTS -->
         <div v-else-if="abaAtiva === 'reposts'" class="divide-y divide-gray-100">
           <div v-if="repostou && posts.length > 0" class="p-4 hover:bg-gray-50/50 text-left">
-            <p class="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1">
-              🔄 {{ perfil.nome }} repostou
-            </p>
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-xs font-semibold text-gray-500 flex items-center gap-1">🔄 {{ perfil.nome }} repostou</p>
+              <button @click="desfazerRepost" class="text-xs text-red-600 font-semibold hover:underline">Desfazer repost</button>
+            </div>
             <div class="flex gap-3">
               <img :src="perfil.foto" class="w-10 h-10 rounded-full object-cover shrink-0" />
               <div class="flex-1">
@@ -344,23 +300,20 @@
                   <span class="text-[#635BFF] text-xs">✔</span>
                   <span class="text-gray-500">{{ perfil.usuario }} · 2h</span>
                 </div>
-                <p class="text-sm mt-1 text-gray-800 leading-snug">
-                  {{ posts[0].texto }}
-                </p>
-
+                <p class="text-sm mt-1 text-gray-800 leading-snug">{{ posts[0].texto }}</p>
                 <div v-if="posts[0].midia" class="mt-3 relative rounded-2xl overflow-hidden border border-gray-200 bg-gray-100">
-                  <img :src="posts[0].midia" @error="posts[0].midia = null" class="w-full h-64 object-cover" />
+                  <img :src="posts[0].midia" class="w-full h-64 object-cover" />
                 </div>
               </div>
             </div>
           </div>
           <div v-else class="p-8 text-center text-gray-500 text-sm">
             <p class="font-bold text-gray-700 text-base mb-1">Nenhum repost ainda</p>
-            <p>Quando você clicar no botão de repostar em uma publicação, ela aparecerá aqui.</p>
+            <p>Quando você republicar um post, ele aparecerá aqui com a opção de desfazer.</p>
           </div>
         </div>
 
-        <!-- 3. ABA CURTIDAS -->
+        <!-- ABA CURTIDAS -->
         <div v-else-if="abaAtiva === 'curtidas'" class="divide-y divide-gray-100">
           <div v-if="curtiu && posts.length > 0" class="p-4 hover:bg-gray-50/50 flex gap-3 text-left">
             <img :src="perfil.foto" class="w-10 h-10 rounded-full object-cover shrink-0" />
@@ -370,9 +323,8 @@
                 <span class="text-[#635BFF] text-xs">✔</span>
                 <span class="text-gray-500">{{ perfil.usuario }} · 2h</span>
               </div>
-              <p class="text-sm mt-1 text-gray-800 leading-snug">
-                {{ posts[0].texto }}
-              </p>
+              <p class="text-sm mt-1 text-gray-800 leading-snug">{{ posts[0].texto }}</p>
+              
               <div v-if="posts[0].midia" class="mt-3 relative rounded-2xl overflow-hidden border border-gray-200 bg-gray-100">
                 <img :src="posts[0].midia" @error="posts[0].midia = null" class="w-full h-64 object-cover" />
               </div>
@@ -386,173 +338,79 @@
 
       </main>
 
-      <!-- 3. DIREITA: Widgets -->
+      <!-- Widgets Direita -->
       <aside class="w-[320px] shrink-0 p-4 space-y-4 text-left hidden lg:block">
         <div class="relative">
-          <input type="text" placeholder="Buscar no Librando" class="w-full bg-gray-100 rounded-full py-2 px-4 pl-10 text-sm text-gray-900 focus:outline-none focus:bg-white focus:ring-1 focus:ring-[#635BFF] border border-transparent focus:border-[#635BFF]" />
+          <input type="text" placeholder="Buscar no Librando" class="w-full bg-gray-100 rounded-full py-2 px-4 pl-10 text-sm text-gray-900 focus:outline-none" />
           <span class="absolute left-3.5 top-2.5 text-gray-400 text-sm">🔍</span>
-        </div>
-
-        <div class="bg-white border border-gray-200 rounded-2xl p-4">
-          <h3 class="font-bold text-base title-dark mb-3">O que está acontecendo</h3>
-          <div class="space-y-3 text-xs">
-            <div>
-              <p class="text-gray-400">Educação · Assunto do momento</p>
-              <p class="font-bold text-sm title-dark">#LibrasNaEscola</p>
-              <p class="text-gray-400">4.821 publicações</p>
-            </div>
-            <div>
-              <p class="text-gray-400">Brasil · Assunto do momento</p>
-              <p class="font-bold text-sm title-dark">#DiaDoSurdo</p>
-              <p class="text-gray-400">12,8 mil publicações</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white border border-gray-200 rounded-2xl p-4">
-          <h3 class="font-bold text-base title-dark mb-3">Quem seguir</h3>
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2 overflow-hidden">
-                <img src="https://i.pravatar.cc/100?img=12" class="w-9 h-9 rounded-full object-cover shrink-0" />
-                <div class="text-xs overflow-hidden">
-                  <p class="font-bold title-dark truncate">Lucas Mãos</p>
-                  <p class="text-gray-500 truncate">@lucasmaos</p>
-                </div>
-              </div>
-              <button class="bg-gray-900 text-white text-xs px-4 py-1.5 rounded-full font-bold hover:bg-black transition-colors shrink-0">
-                Seguir
-              </button>
-            </div>
-          </div>
         </div>
       </aside>
 
     </div>
 
     <!-- MODAL EDITAR PERFIL -->
-    <div 
-      v-if="modalEdicaoAberta" 
-      class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-    >
+    <div v-if="modalEdicaoAberta" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
       <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl text-left">
         <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
           <div class="flex items-center gap-4">
-            <button @click="fecharModalEdicao" class="text-gray-600 hover:text-black font-bold text-lg p-1 rounded-full hover:bg-gray-100">
-              ✕
-            </button>
+            <button @click="fecharModalEdicao" class="text-gray-600 font-bold text-lg p-1">✕</button>
             <h3 class="font-bold text-lg text-gray-900">Editar perfil</h3>
           </div>
-          <button 
-            @click="salvarPerfil" 
-            class="bg-gray-900 text-white px-5 py-1.5 rounded-full font-bold text-sm hover:bg-black transition-colors"
-          >
-            Salvar
-          </button>
+          <button @click="salvarPerfil" class="bg-gray-900 text-white px-5 py-1.5 rounded-full font-bold text-sm hover:bg-black">Salvar</button>
         </div>
 
         <div v-if="mensagemErro" class="bg-red-50 text-red-600 px-4 py-2.5 text-xs font-semibold border-b border-red-100 flex items-center gap-1.5">
-          <span>⚠️</span>
-          <span>{{ mensagemErro }}</span>
+          <span>⚠️</span> <span>{{ mensagemErro }}</span>
         </div>
 
         <div class="p-4 space-y-4 max-h-[80vh] overflow-y-auto">
           <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1">Nome *</label>
-            <input 
-              v-model="formEdicao.nome" 
-              type="text" 
-              class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-[#635BFF] focus:ring-1 focus:ring-[#635BFF]" 
-            />
+            <input v-model="formEdicao.nome" type="text" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-[#635BFF]" />
           </div>
 
           <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1">Nome de utilizador (@) *</label>
-            <input 
-              v-model="formEdicao.usuario" 
-              type="text" 
-              class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-[#635BFF] focus:ring-1 focus:ring-[#635BFF]" 
-            />
+            <input v-model="formEdicao.usuario" type="text" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-[#635BFF]" />
           </div>
 
           <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1">Bio</label>
-            <textarea 
-              v-model="formEdicao.bio" 
-              rows="3" 
-              class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-[#635BFF] focus:ring-1 focus:ring-[#635BFF]"
-            ></textarea>
+            <textarea v-model="formEdicao.bio" rows="3" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-[#635BFF]"></textarea>
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">Localização</label>
-            <input 
-              v-model="formEdicao.localizacao" 
-              type="text" 
-              class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-[#635BFF] focus:ring-1 focus:ring-[#635BFF]" 
-            />
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">URL da Foto de Perfil</label>
-            <input 
-              v-model="formEdicao.foto" 
-              type="text" 
-              class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-[#635BFF] focus:ring-1 focus:ring-[#635BFF]" 
-            />
+            <label class="block text-xs font-semibold text-gray-600 mb-1">URL da Foto de Perfil (Formatos: .jpg, .png, .webp)</label>
+            <input v-model="formEdicao.foto" type="text" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-[#635BFF]" />
           </div>
 
           <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1">URL da Capa / Banner</label>
-            <input 
-              v-model="formEdicao.banner" 
-              type="text" 
-              class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-[#635BFF] focus:ring-1 focus:ring-[#635BFF]" 
-            />
+            <input v-model="formEdicao.banner" type="text" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-[#635BFF]" />
           </div>
         </div>
       </div>
     </div>
 
     <!-- MODAL EDITAR PUBLICAÇÃO -->
-    <div 
-      v-if="modalEditarPostAberta" 
-      class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-    >
+    <div v-if="modalEditarPostAberta" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
       <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl text-left">
         <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
           <div class="flex items-center gap-4">
-            <button @click="modalEditarPostAberta = false" class="text-gray-600 hover:text-black font-bold text-lg p-1 rounded-full hover:bg-gray-100">
-              ✕
-            </button>
+            <button @click="modalEditarPostAberta = false" class="text-gray-600 font-bold text-lg p-1">✕</button>
             <h3 class="font-bold text-lg text-gray-900">Editar publicação</h3>
           </div>
-          <button 
-            @click="salvarEdicaoPost" 
-            class="bg-[#635BFF] text-white px-5 py-1.5 rounded-full font-bold text-sm hover:bg-[#5249e0] transition-colors"
-          >
-            Salvar
-          </button>
+          <button @click="salvarEdicaoPost" class="bg-[#635BFF] text-white px-5 py-1.5 rounded-full font-bold text-sm">Salvar</button>
         </div>
 
         <div class="p-4 space-y-4">
           <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1">Texto da publicação</label>
-            <textarea 
-              v-model="textoPostEditando" 
-              rows="3" 
-              class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-[#635BFF] focus:ring-1 focus:ring-[#635BFF]"
-            ></textarea>
+            <textarea v-model="textoPostEditando" rows="3" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-[#635BFF]"></textarea>
           </div>
-
           <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1">URL da Imagem</label>
-            <input 
-              v-model="midiaPostEditando" 
-              type="text" 
-              placeholder="Cole a URL da imagem (ou deixe em branco para remover)"
-              class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-[#635BFF] focus:ring-1 focus:ring-[#635BFF]" 
-            />
+            <input v-model="midiaPostEditando" type="text" placeholder="https://exemplo.com/imagem.jpg" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-[#635BFF]" />
           </div>
         </div>
       </div>
@@ -567,12 +425,11 @@ import { ref, reactive, onMounted } from 'vue'
 const abaAtiva = ref('publicacoes')
 const mensagemErro = ref('')
 
-// Perfil do usuário
 const perfilPadrao = {
   nome: 'Ana Silva',
   usuario: '@anasilva_libras',
   titulo: 'Entusiasta de Libras',
-  bio: 'Aprendendo e compartilhando a cultura surda 🤟 | Conectando pessoas através de Libras.',
+  bio: 'Aprendendo e compartilhando a cultura surda 🤟',
   localizacao: 'Brasília, Brasil',
   foto: 'https://i.pravatar.cc/150?img=47',
   banner: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80'
@@ -580,22 +437,31 @@ const perfilPadrao = {
 
 const perfil = reactive({ ...perfilPadrao })
 
-// Form de Criar Novo Post
 const novoPostTexto = ref('')
 const novoPostMidia = ref('')
 
-// Lista Reativa de Posts
 const posts = ref([
   {
     id: 1,
-    texto: 'A Libras não é apenas uma língua, é identidade, cultura e conexão. Hoje aprendi um sinal novo e quero compartilhar com vocês! #LibrasParaTodos',
+    texto: 'A Libras não é apenas uma língua, é identidade e conexão!',
     tempo: '2h',
     midia: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop'
   }
 ])
 
+function validarUrlImagem(url) {
+  if (!url) return true
+  const extensoesValidas = ['.jpg', '.jpeg', '.png', '.webp', 'pravatar.cc', 'unsplash.com', 'picsum.photos', 'hexag.online']
+  return extensoesValidas.some(ext => url.toLowerCase().includes(ext))
+}
+
 function criarPost() {
   if (!novoPostTexto.value || novoPostTexto.value.trim() === '') return
+
+  if (novoPostMidia.value && !validarUrlImagem(novoPostMidia.value)) {
+    alert('Formato de imagem inválido. Utilize links terminados em .jpg, .png ou .webp.')
+    return
+  }
 
   const novo = {
     id: Date.now(),
@@ -614,26 +480,19 @@ function criarPost() {
 const seguindo = ref(false)
 const totalSeguindo = ref(1200)
 const totalSeguidores = ref(350)
-
 const curtiu = ref(false)
 const totalCurtidas = ref(178)
-
 const repostou = ref(false)
 const totalReposts = ref(42)
-
 const comentou = ref(false)
 const totalComentarios = ref(24)
-
 const salvou = ref(false)
 
-// Controle do Menu de Opções de cada Post (•••)
 const menuPostAbertoId = ref(null)
-
 function alternarMenuPost(id) {
   menuPostAbertoId.value = menuPostAbertoId.value === id ? null : id
 }
 
-// Modal Editar Post
 const modalEditarPostAberta = ref(false)
 const postSendoEditado = ref(null)
 const textoPostEditando = ref('')
@@ -649,6 +508,10 @@ function abrirModalEditarPost(post) {
 
 function salvarEdicaoPost() {
   if (postSendoEditado.value) {
+    if (midiaPostEditando.value && !validarUrlImagem(midiaPostEditando.value)) {
+      alert('Formato de imagem inválido. Utilize .jpg, .png ou .webp')
+      return
+    }
     postSendoEditado.value.texto = textoPostEditando.value
     postSendoEditado.value.midia = midiaPostEditando.value.trim() || null
     localStorage.setItem('librando_posts', JSON.stringify(posts.value))
@@ -656,23 +519,24 @@ function salvarEdicaoPost() {
   modalEditarPostAberta.value = false
 }
 
-// Excluir Post
 function excluirPost(id) {
   posts.value = posts.value.filter(p => p.id !== id)
   localStorage.setItem('librando_posts', JSON.stringify(posts.value))
   menuPostAbertoId.value = null
 }
 
+function desfazerRepost() {
+  repostou.value = false
+  totalReposts.value = Math.max(0, totalReposts.value - 1)
+  salvarEstadoReacoes()
+}
+
 onMounted(() => {
   const perfilSalvo = localStorage.getItem('librando_perfil')
-  if (perfilSalvo) {
-    Object.assign(perfil, JSON.parse(perfilSalvo))
-  }
+  if (perfilSalvo) Object.assign(perfil, JSON.parse(perfilSalvo))
 
   const postsSalvos = localStorage.getItem('librando_posts')
-  if (postsSalvos) {
-    posts.value = JSON.parse(postsSalvos)
-  }
+  if (postsSalvos) posts.value = JSON.parse(postsSalvos)
 
   const reacoesSalvas = localStorage.getItem('librando_reacoes')
   if (reacoesSalvas) {
@@ -684,9 +548,6 @@ onMounted(() => {
     comentou.value = data.comentou
     totalComentarios.value = data.totalComentarios
     salvou.value = data.salvou
-    seguindo.value = data.seguindo ?? false
-    totalSeguidores.value = data.totalSeguidores ?? 350
-    totalSeguindo.value = data.totalSeguindo ?? 1200
   }
 })
 
@@ -698,17 +559,13 @@ function salvarEstadoReacoes() {
     totalReposts: totalReposts.value,
     comentou: comentou.value,
     totalComentarios: totalComentarios.value,
-    salvou: salvou.value,
-    seguindo: seguindo.value,
-    totalSeguidores: totalSeguidores.value,
-    totalSeguindo: totalSeguindo.value
+    salvou: salvou.value
   }))
 }
 
 function alternarSeguir() {
   seguindo.value = !seguindo.value
   seguindo.value ? totalSeguidores.value++ : totalSeguidores.value--
-  salvarEstadoReacoes()
 }
 
 function alternarCurtida() {
@@ -734,7 +591,6 @@ function alternarSalvar() {
   salvarEstadoReacoes()
 }
 
-// Modal de Edição do Perfil
 const modalEdicaoAberta = ref(false)
 const formEdicao = reactive({ ...perfil })
 
@@ -749,26 +605,30 @@ function fecharModalEdicao() {
 }
 
 function salvarPerfil() {
-  const nomeVazio = !formEdicao.nome || formEdicao.nome.trim() === ''
-  const usuarioVazio = !formEdicao.usuario || formEdicao.usuario.trim() === ''
-
-  if (nomeVazio && usuarioVazio) {
-    mensagemErro.value = 'Os campos Nome e Nome de utilizador (@) são obrigatórios.'
-    return
-  }
-
-  if (nomeVazio) {
+  if (!formEdicao.nome || formEdicao.nome.trim() === '') {
     mensagemErro.value = 'O campo Nome é obrigatório.'
     return
   }
 
-  if (usuarioVazio) {
+  if (!formEdicao.usuario || formEdicao.usuario.trim() === '') {
     mensagemErro.value = 'O campo Nome de utilizador (@) é obrigatório.'
     return
   }
 
   if (!formEdicao.usuario.startsWith('@')) {
     formEdicao.usuario = '@' + formEdicao.usuario.trim()
+  }
+
+  // Validação da Regra de Negócio: Nome de Utilizador Já Existente
+  const usuariosExistentesFicticios = ['@admin', '@lucasmaos', '@bia.sinais']
+  if (usuariosExistentesFicticios.includes(formEdicao.usuario) && formEdicao.usuario !== perfil.usuario) {
+    mensagemErro.value = 'Esse Nome de utilizador ja existe.'
+    return
+  }
+
+  if (formEdicao.foto && !validarUrlImagem(formEdicao.foto)) {
+    mensagemErro.value = 'A URL da Foto de Perfil deve ser uma imagem válida (.jpg, .png, .webp).'
+    return
   }
 
   mensagemErro.value = ''
@@ -779,17 +639,7 @@ function salvarPerfil() {
 </script>
 
 <style scoped>
-.brand-logo {
-  color: #635BFF !important;
-}
-
-.title-dark {
-  color: #1A1A1A !important;
-}
-
-.perfil-page h1,
-.perfil-page h2,
-.perfil-page h3 {
-  opacity: 1 !important;
-}
+.brand-logo { color: #635BFF !important; }
+.title-dark { color: #1A1A1A !important; }
+.perfil-page h1, .perfil-page h2, .perfil-page h3 { opacity: 1 !important; }
 </style>

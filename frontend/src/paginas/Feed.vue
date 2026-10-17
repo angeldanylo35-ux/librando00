@@ -1,4 +1,3 @@
-
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -28,6 +27,7 @@ const icons = {
   caption: '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 11h4M7 15h2m4-4h4m-4 4h4"/>',
   swap: '<path d="M7 7h12l-3-3M17 17H5l3 3"/>',
   poll: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  repost: '<polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>'
 }
 
 const nome = localStorage.getItem('nome') || 'Usuário'
@@ -108,8 +108,13 @@ function mapearPost(p) {
     caption: p.conteudo || '',
     midiaUrl: p.midia_url,
     opcoes: p.opcoes || [],
-    likes: '0',
-    comments: 0,
+    likes: 178,
+    comments: 24,
+    reposts: 42,
+    curtiu: false,
+    comentou: false,
+    repostou: false,
+    salvou: false,
     own: p.usuario.nome_usuario === nomeUsuario,
   }
 }
@@ -136,6 +141,40 @@ async function carregarFeed() {
   } finally {
     carregandoFeed.value = false
   }
+}
+
+function alternarCurtida(post) {
+  post.curtiu = !post.curtiu
+  post.curtiu ? post.likes++ : post.likes--
+}
+
+function alternarComentario(post) {
+  post.comentou = !post.comentou
+  post.comentou ? post.comments++ : post.comments--
+}
+
+function alternarRepost(post) {
+  post.repostou = !post.repostou
+  post.repostou ? post.reposts++ : post.reposts--
+
+  // Sincroniza com o localStorage para refletir no perfil
+  localStorage.setItem('librando_reacoes', JSON.stringify({
+    repostou: post.repostou,
+    totalReposts: post.reposts,
+    curtiu: post.curtiu,
+    totalCurtidas: post.likes,
+    comentou: post.comentou,
+    totalComentarios: post.comments,
+    salvou: post.salvou
+  }))
+}
+
+function enviarPost() {
+  alert('Link da publicação copiado para a área de transferência!')
+}
+
+function alternarSalvar(post) {
+  post.salvou = !post.salvou
 }
 
 function iniciarEdicao(post) {
@@ -802,63 +841,104 @@ async function publish() {
             {{ post.caption }}
           </div>
 
-          <!-- AÇÕES DO POST -->
-          <div class="flex items-center gap-5 px-5 pt-4">
-            <button type="button" class="flex items-center gap-2 text-[14px] font-semibold">
-              <svg
-                viewBox="0 0 24 24"
-                class="h-6 w-6 text-[#635BFF]"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-                v-html="icons.heart"
-              />
-              {{ post.likes }}
-            </button>
+          <!-- AÇÕES DO POST (BARRA DE INTERAÇÕES PADRONIZADA COM 5 ÍCONES) -->
+          <div class="flex items-center justify-between px-5 pt-4 text-gray-500">
+            <div class="flex items-center gap-6">
+              <!-- 1. Curtida -->
+              <button
+                type="button"
+                @click="alternarCurtida(post)"
+                :class="post.curtiu ? 'text-pink-600' : 'hover:text-pink-600'"
+                class="flex items-center gap-1.5 text-[14px] font-semibold transition-colors group"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  class="h-6 w-6 fill-none stroke-current"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  v-html="icons.heart"
+                  :style="post.curtiu ? 'fill: currentColor;' : ''"
+                />
+                {{ post.likes }}
+              </button>
 
-            <button type="button" class="flex items-center gap-2 text-[14px]">
-              <svg
-                viewBox="0 0 24 24"
-                class="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-                v-html="icons.comment"
-              />
-              {{ post.comments }}
-            </button>
+              <!-- 2. Comentário -->
+              <button
+                type="button"
+                @click="alternarComentario(post)"
+                :class="post.comentou ? 'text-[#635BFF]' : 'hover:text-[#635BFF]'"
+                class="flex items-center gap-1.5 text-[14px] transition-colors group"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  class="h-6 w-6 fill-none stroke-current"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  v-html="icons.comment"
+                />
+                {{ post.comments }}
+              </button>
 
-            <button type="button" aria-label="Compartilhar">
-              <svg
-                viewBox="0 0 24 24"
-                class="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-                v-html="icons.send"
-              />
-            </button>
+              <!-- 3. Repost -->
+              <button
+                type="button"
+                @click="alternarRepost(post)"
+                :class="post.repostou ? 'text-green-600' : 'hover:text-green-600'"
+                class="flex items-center gap-1.5 text-[14px] transition-colors group"
+                aria-label="Repostar"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  class="h-6 w-6 fill-none stroke-current"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  v-html="icons.repost"
+                />
+                {{ post.reposts }}
+              </button>
 
-            <button type="button" class="ml-auto" aria-label="Salvar">
+              <!-- 4. Enviar -->
+              <button
+                type="button"
+                @click="enviarPost"
+                class="hover:text-[#635BFF] transition-colors flex items-center gap-1.5"
+                aria-label="Compartilhar"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  class="h-6 w-6 fill-none stroke-current"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  v-html="icons.send"
+                />
+              </button>
+            </div>
+
+            <!-- 5. Salvar -->
+            <button
+              type="button"
+              @click="alternarSalvar(post)"
+              :class="post.salvou ? 'text-[#635BFF]' : 'hover:text-[#635BFF]'"
+              class="transition-colors p-1"
+              aria-label="Salvar"
+            >
               <svg
                 viewBox="0 0 24 24"
-                class="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
+                class="h-6 w-6 fill-none stroke-current"
                 stroke-width="1.8"
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 aria-hidden="true"
                 v-html="icons.bookmark"
+                :style="post.salvou ? 'fill: currentColor;' : ''"
               />
             </button>
           </div>
