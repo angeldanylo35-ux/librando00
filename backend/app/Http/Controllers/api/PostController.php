@@ -18,7 +18,7 @@ class PostController extends Controller
     // Feed: lista as publicações mais recentes
     public function index()
     {
-        $posts = Post::with(['usuario:id,nome,nome_usuario', 'opcoes:id,post_id,texto,votos'])
+        $posts = Post::with(['usuario:id,nome,nome_usuario,foto_perfil_url', 'opcoes:id,post_id,texto,votos'])
             ->latest()
             ->paginate(10);
 
@@ -222,23 +222,24 @@ class PostController extends Controller
     }
 
     private function formatar(Post $post): array
-    {
-        return [
-            'id' => $post->id,
-            'tipo' => $post->tipo,
-            'conteudo' => $post->conteudo,
-            'midia_url' => $post->midia_path ? '/storage/' . $post->midia_path : null,
-            'opcoes' => $post->opcoes->map(fn ($o) => [
-                'id' => $o->id,
-                'texto' => $o->texto,
-                'votos' => $o->votos,
-            ])->values(),
-            'usuario' => [
-                'id' => $post->usuario->id, // novo: o Vue usa para mostrar Editar/Excluir só ao dono
-                'nome' => $post->usuario->nome,
-                'nome_usuario' => $post->usuario->nome_usuario,
-            ],
-            'criado_em' => $post->created_at->toIso8601String(),
-        ];
-    }
+{
+    return [
+        'id' => $post->id,
+        'tipo' => $post->tipo,
+        'conteudo' => $post->conteudo,
+        'midia_url' => $post->midia_path ? '/storage/' . $post->midia_path : null,
+        'opcoes' => $post->opcoes->map(fn ($o) => [
+            'id' => $o->id,
+            'texto' => $o->texto,
+            'votos' => $o->votos,
+        ])->values(),
+        'usuario' => [
+            'id' => $post->usuario->id,
+            'nome' => $post->usuario->nome,
+            'nome_usuario' => $post->usuario->nome_usuario,
+            'foto_perfil_url' => $post->usuario->foto_perfil_url, // <--- ADICIONE ESTA LINHA AQUI
+        ],
+        'criado_em' => $post->created_at->toIso8601String(),
+    ];
+}
 }
