@@ -28,8 +28,17 @@ const icons = {
   repost: '<polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>'
 }
 
-const nome = localStorage.getItem('nome') || 'Usuário'
-const nomeUsuario = localStorage.getItem('nome_usuario') || 'usuario'
+/* Perfil do usuário logado (vem do banco: GET /perfil) */
+const perfil = ref({
+  id: null,
+  nome: localStorage.getItem('nome') || '',
+  nome_usuario: localStorage.getItem('nome_usuario') || '',
+  foto_perfil_url: '',
+})
+
+// Mesmos nomes de antes, então o template que usa {{ nome }} e {{ nomeUsuario }} não muda
+const nome = computed(() => perfil.value.nome || 'Usuário')
+const nomeUsuario = computed(() => perfil.value.nome_usuario || 'usuario')
 
 function iniciais(texto) {
   return (
@@ -43,7 +52,18 @@ function iniciais(texto) {
   )
 }
 
-const meuInicial = iniciais(nome)
+const meuInicial = computed(() => iniciais(nome.value))
+
+async function carregarPerfil() {
+  try {
+    const { data } = await api.get('/perfil')
+    perfil.value = data.perfil
+    localStorage.setItem('nome', data.perfil.nome)
+    localStorage.setItem('nome_usuario', data.perfil.nome_usuario)
+  } catch (e) {
+    // sem conexão: mantém o nome e o @ que já estavam salvos no navegador
+  }
+}
 
 const navItems = [
   { label: 'Página inicial', icon: 'home', route: '/feed', active: true },
@@ -101,6 +121,7 @@ function mapearPost(p) {
     tipo: p.tipo,
     user: p.usuario.nome_usuario,
     initials: iniciais(p.usuario.nome),
+    foto: p.usuario.foto_perfil_url || '',
     role: p.usuario.nome,
     time: tempo(p.criado_em),
     caption: p.conteudo || '',
@@ -113,7 +134,7 @@ function mapearPost(p) {
     comentou: false,
     repostou: false,
     salvou: false,
-    own: p.usuario.nome_usuario === nomeUsuario,
+    own: p.usuario.nome_usuario === nomeUsuario.value,
   }
 }
 
@@ -261,7 +282,11 @@ function navegarPara(route) {
   }
 }
 
-onMounted(carregarFeed)
+onMounted(async () => {
+  // Carrega o perfil antes dos posts para marcar corretamente quais são seus
+  await carregarPerfil()
+  carregarFeed()
+})
 
 /* Caixa de criação de post */
 const MAX_CHARS = 280
@@ -460,7 +485,16 @@ async function publish() {
       <div class="mt-auto">
         <div class="mt-3 border-t border-gray-200 pt-4">
           <button type="button" class="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-gray-50" @click="router.push('/perfil')">
-            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-[13px] font-semibold text-white">
+            <img
+              v-if="perfil.foto_perfil_url"
+              :src="perfil.foto_perfil_url"
+              class="h-9 w-9 shrink-0 rounded-full object-cover"
+              alt=""
+            />
+            <span
+              v-else
+              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-[13px] font-semibold text-white"
+            >
               {{ meuInicial }}
             </span>
             <span class="min-w-0 flex-1">
@@ -518,7 +552,16 @@ async function publish() {
           aria-label="Criar publicação"
         >
           <div class="flex gap-3">
-            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-[13px] font-semibold text-white">
+            <img
+              v-if="perfil.foto_perfil_url"
+              :src="perfil.foto_perfil_url"
+              class="h-10 w-10 shrink-0 rounded-full object-cover"
+              alt=""
+            />
+            <span
+              v-else
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-[13px] font-semibold text-white"
+            >
               {{ meuInicial }}
             </span>
 
@@ -694,7 +737,16 @@ async function publish() {
         >
           <!-- CABEÇALHO DO POST -->
           <div class="flex items-center gap-3 px-5 py-4">
-            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-[13px] font-semibold text-white">
+            <img
+              v-if="post.foto"
+              :src="post.foto"
+              class="h-10 w-10 shrink-0 rounded-full object-cover"
+              alt=""
+            />
+            <span
+              v-else
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-[13px] font-semibold text-white"
+            >
               {{ post.initials }}
             </span>
 
@@ -831,7 +883,7 @@ async function publish() {
             {{ post.caption }}
           </div>
 
-          <!-- AÇÕES DO POST (BARRA DE INTERAÇÕES PADRONIZADA COM 5 ÍCONES) -->
+          <!-- AÇÕES DO POST -->
           <div class="flex items-center justify-between px-5 pt-4 text-gray-500">
             <div class="flex items-center gap-6">
               <!-- 1. Curtida -->
@@ -1001,7 +1053,16 @@ async function publish() {
 
         <!-- PERFIL ATUAL -->
         <div class="mt-6 flex items-center gap-3">
-          <span class="flex h-12 w-12 items-center justify-center rounded-full bg-[#1A1A1A] text-[14px] font-semibold text-white">
+          <img
+            v-if="perfil.foto_perfil_url"
+            :src="perfil.foto_perfil_url"
+            class="h-12 w-12 rounded-full object-cover"
+            alt=""
+          />
+          <span
+            v-else
+            class="flex h-12 w-12 items-center justify-center rounded-full bg-[#1A1A1A] text-[14px] font-semibold text-white"
+          >
             {{ meuInicial }}
           </span>
           <div class="min-w-0 flex-1 leading-tight">
