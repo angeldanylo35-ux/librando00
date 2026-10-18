@@ -346,16 +346,16 @@ Interface com CRUD completo em: [URL da aplicação]
 ### 4.1 Pré-requisitos dos itens a, b, c e d
 
 **a) Aplicação online e pública**
-- **URL:** ⚠️ [URL do frontend], a mesma informada no Tópico 1 (item a).
-- **Plataforma:** ⚠️ [plataforma]
-- **Credenciais de teste:** ⚠️ [e-mail] / [senha] (a aplicação exige login).
+- **URL:** [URL do frontend], a mesma informada no Tópico 1 (item a).
+- **Plataforma:** [plataforma]
+- **Credenciais de teste:**  [e-mail] / [senha] (a aplicação exige login).
 
 **b) Banco de dados online e persistindo dados**
-- **BD:** ⚠️ [serviço e tipo] — **Link:** ⚠️ [link] — **Acesso de leitura ao professor:** ⚠️ [e-mail do professor]
+- **BD:** [serviço e tipo] — **Link:**  [link] — **Acesso de leitura ao professor:** [e-mail do professor]
 - **Tabela principal:** `usuarios`. Os dados permanecem após recarregar a página.
 
 **c) Código-fonte completo no GitHub**
-- **Repositório:** ⚠️ [link] (público). O `.env` não é versionado (`.gitignore`); credenciais ficam em variáveis de ambiente.
+- **Repositório:**  [link] (público). O `.env` não é versionado (`.gitignore`); credenciais ficam em variáveis de ambiente.
 
 **d) Documentação da API**
 - `docs/api/swagger.json` (OpenAPI 3.0), com `BearerAuth` e os endpoints do perfil.
