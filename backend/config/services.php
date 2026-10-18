@@ -17,6 +17,13 @@ return [
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],
+    'brevo' => [
+    'key' => env('BREVO_API_KEY'),
+    ],
+
+    'frontend' => [
+    'url' => env('FRONTEND_URL', 'http://localhost:5173'),
+    ],
 
     'resend' => [
         'key' => env('RESEND_API_KEY'),
