@@ -507,137 +507,133 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 | **RN-21** | Proteção de publicações de terceiros | Visualizar ou repostar uma publicação não concede ao usuário permissão para editar ou excluir o conteúdo original de outro autor. |
 | **RN-22** | Atualização das seções | Após a conclusão de uma operação de edição, exclusão ou remoção de repost, o sistema deverá atualizar a seção correspondente para refletir o estado atual dos dados. |
 
+<!--
+ANTES DE ENTREGAR (comentário invisível, apague depois):
+1. Trocar «E-MAIL DA CONTA DE TESTE» e «SENHA DA CONTA DE TESTE» (item 4.1 a) por uma conta criada só para o professor.
+2. Commitar docs/api/swagger.json e database/rf-007-editar-perfil-ddl.sql no repositório.
+3. Enviar a senha do usuário professor_leitura por e-mail ao professor (nunca neste arquivo).
+4. Se implementar validação verde/vermelha, mensagem de sucesso, <label for> ou responsividade, acrescentar a linha correspondente no item 4.5.
+-->
+
 ## 4. Protótipo
 
-Interface com CRUD completo em: [URL da aplicação]
+Interface funcionando online em: https://librando-frontend.onrender.com/ (menu **Meu perfil** → botão **Editar perfil**).
 
 | Operação | Método | Endpoint | Status esperado |
 |---|---|---|---|
-| Create | — | — | Não se aplica (a conta é criada no RF-002) |
-| Read | GET | /api/perfil | 200 |
-| Update | POST (ou PUT/PATCH) | /api/perfil | 200 |
-| Delete | — | — | Não se aplica (exclusão de conta fora do escopo do RF-007) |
+| Create | — | — | Não se aplica (a conta é criada no RF-002: `POST /api/cadastro`) |
+| Read | GET | /api/perfil | 200 / 401 |
+| Update | POST (ou PUT/PATCH) | /api/perfil | 200 / 400 / 401 / 500 |
+| Delete | — | — | Não se aplica (a exclusão de conta está fora do escopo do RF-007) |
 
-⛔ Documentação da API (obrigatória): docs/api/swagger.json — [link opcional da UI publicada]
+⛔ Documentação da API (obrigatória): `docs/api/swagger.json`
 
 ---
 
 ### 4.1 Pré-requisitos dos itens a, b, c e d
 
 **a) Aplicação online e pública**
-- **URL:** [URL do frontend], a mesma informada no Tópico 1 (item a).
-- **Plataforma:** [plataforma]
-- **Credenciais de teste:**  [e-mail] / [senha] (a aplicação exige login).
+- **URL:** https://librando-frontend.onrender.com/ (a mesma informada no Tópico 1, item a).
+- **Plataforma:** Render (deploy automático a partir do GitHub).
+- **Credenciais de teste** (a aplicação exige login): «E-MAIL DA CONTA DE TESTE» / «SENHA DA CONTA DE TESTE».
 
 **b) Banco de dados online e persistindo dados**
-- **BD:** [serviço e tipo] — **Link:**  [link] — **Acesso de leitura ao professor:** [e-mail do professor]
+- **BD:** MySQL hospedado no Aiven. **Interface de acesso:** phpMyAdmin — https://librando-phpmyadmin.onrender.com
+- **Acesso de leitura ao professor:** usuário `professor_leitura` (somente consulta). A senha foi enviada por e-mail para prof.edilberto.silva@gmail.com.
 - **Tabela principal:** `usuarios`. Os dados permanecem após recarregar a página.
 
 **c) Código-fonte completo no GitHub**
-- **Repositório:**  [link] (público). O `.env` não é versionado (`.gitignore`); credenciais ficam em variáveis de ambiente.
+- **Repositório:** https://github.com/angeldanylo35-ux/librando00 (público), branch `main`.
+- Contém código-fonte (`backend/` e `frontend/`), documentação (`docs/`) e DDL (`database/`). O `.env` não é versionado (`.gitignore`); as credenciais ficam em variáveis de ambiente.
 
 **d) Documentação da API**
-- `docs/api/swagger.json` (OpenAPI 3.0), com `BearerAuth` e os endpoints do perfil.
+- `docs/api/swagger.json` (OpenAPI 3.0, JSON válido), com `BearerAuth` declarado e as rotas do perfil marcadas com `security`.
+
+---
 
 ### 4.2 CRUD: as operações do RF-007
 
-O RF-007 é o perfil do **próprio** usuário autenticado. Não há `{id}` nas rotas: a conta é sempre a do token (RN-02).
+O RF-007 trata do perfil do **próprio** usuário autenticado. Não há `{id}` nas rotas: a conta editada é sempre a dona do token (RN-02). A conta é criada no RF-002 (`POST /api/cadastro`) e a exclusão de conta não faz parte deste requisito.
 
 | Operação | Ação na interface | Método HTTP | Endpoint | Resposta esperada | Verificação |
 |---|---|---|---|---|---|
 | **C**reate | Não se aplica: a conta é criada no RF-002 | — | — | — | — |
-| **R**ead | Abrir "Meu perfil" | `GET` | `/api/perfil` | `200 OK` / `401` | Dados conferem com a tabela `usuarios` |
-| **U**pdate | Editar perfil → alterar campos e fotos → Salvar | `POST` (ou `PUT`/`PATCH`) | `/api/perfil` | `200 OK` / `400` / `401` / `500` | Alteração aparece no perfil e no BD |
-| **D**elete | Não se aplica: a exclusão de conta está fora do escopo | — | — | — | — |
+| **R**ead | Abrir "Meu perfil" | `GET` | `/api/perfil` | `200 OK` / `401` | Dados conferem com a linha do usuário na tabela `usuarios` |
+| **U**pdate | Editar perfil → alterar campos e fotos → Salvar | `POST` (ou `PUT`/`PATCH`) | `/api/perfil` | `200 OK` / `400` / `401` / `500` | Alteração aparece no perfil após recarregar e no banco |
+| **D**elete | Não se aplica: exclusão de conta fora do escopo | — | — | — | — |
 
-⚠️ Confirmar com o professor como o CRUD é pontuado neste requisito, já que Create e Delete estão declarados como "não se aplica".
+O envio de fotos usa `POST` com `multipart/form-data`, porque o PHP não processa arquivos em requisições `PUT`. Por isso a interface usa `POST /api/perfil`. Como a rota não tem `{id}`, não há resposta `404` documentada para o perfil.
 
-O envio de fotos usa `POST` com `multipart/form-data`, porque o PHP não processa arquivos em requisições `PUT`. Por isso a interface usa o `POST /api/perfil`.
+---
 
 ### 4.3 Documentação da API
 
-Arquivo `docs/api/swagger.json` (OpenAPI 3.0, JSON válido), com `BearerAuth` declarado e as rotas do perfil marcadas com `security`:
+Arquivo `docs/api/swagger.json` (OpenAPI 3.0, JSON válido), com `BearerAuth` (HTTP, `bearer`) e `security` nas rotas do perfil.
 
 | Método | Endpoint | O que documenta | Respostas |
 |---|---|---|---|
 | GET | `/api/perfil` | Perfil do usuário autenticado | `200`, `401` |
-| POST | `/api/perfil` | `multipart/form-data`: nome, nome_usuario, localizacao, bio, foto_perfil, foto_capa | `200`, `400`, `401`, `500` |
-| PUT / PATCH | `/api/perfil` | JSON com os campos de texto | `200`, `400`, `401`, `500` |
+| POST | `/api/perfil` | `multipart/form-data` (ou JSON): `nome`, `nome_usuario`, `localizacao`, `bio`, `foto_perfil`, `foto_capa` | `200`, `400`, `401`, `500` |
+| PUT | `/api/perfil` | JSON com os campos de texto | `200`, `400`, `401`, `500` |
+| PATCH | `/api/perfil` | JSON com os campos de texto (parcial) | `200`, `400`, `401`, `500` |
 
-Os campos do `requestBody` são os mesmos do formulário de edição, e os códigos documentados são os que a API retorna. O arquivo não contém senhas, tokens ou chaves reais. O arquivo também documenta as rotas de autenticação (login, cadastro, verificar e-mail, esqueci e redefinir senha) que fornecem o token.
+- Cada método traz exemplo de resposta e, nos métodos com corpo (POST, PUT e PATCH), exemplo de requisição.
+- Os campos do `requestBody` são os mesmos do formulário de edição da interface.
+- Os códigos documentados são os que a API retorna (`200` sucesso, `400` dados inválidos, `401` sem token, `500` falha ao salvar).
+- O arquivo também documenta `login`, `cadastro`, `verificar-email`, `esqueci-senha` e `redefinir-senha`; o login devolve o token Bearer usado no perfil.
+- O arquivo não contém senhas, tokens ou chaves reais (os exemplos usam valores fictícios).
+
+---
 
 ### 4.4 Script DDL do banco de dados
 
-Arquivo `database/rf-007-perfil-usuario-ddl.sql` (MySQL), equivalente às migrations do Laravel:
+Arquivo `database/rf-007-editar-perfil-ddl.sql` (MySQL 8), equivalente às migrations do Laravel. Contém as tabelas `usuarios` e `personal_access_tokens`.
 
-```sql
-CREATE TABLE IF NOT EXISTS usuarios (
-    id               BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    nome             VARCHAR(255) NOT NULL,
-    email            VARCHAR(255) NOT NULL,
-    data_nascimento  DATE NULL,
-    nome_usuario     VARCHAR(255) NOT NULL,
-    senha            VARCHAR(255) NOT NULL,      -- hash bcrypt
-    bio              VARCHAR(300) NULL,
-    localizacao      VARCHAR(100) NULL,
-    foto_perfil_url  VARCHAR(500) NULL,
-    foto_capa_url    VARCHAR(500) NULL,
-    created_at       TIMESTAMP NULL,
-    updated_at       TIMESTAMP NULL,
-    CONSTRAINT uq_usuarios_email         UNIQUE (email),
-    CONSTRAINT uq_usuarios_nome_usuario  UNIQUE (nome_usuario),
-    CONSTRAINT chk_usuarios_nome         CHECK (CHAR_LENGTH(TRIM(nome)) > 0),
-    CONSTRAINT chk_usuarios_nome_usuario CHECK (CHAR_LENGTH(TRIM(nome_usuario)) > 0)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-```
+- `usuarios`: chave primária `id`; `NOT NULL` em nome, e-mail, data de nascimento, nome de usuário e senha; `UNIQUE` em `email` e `nome_usuario` (que também servem como índices de busca); `CHECK` impedindo nome e @ vazios; limites de tamanho iguais aos da validação da API (nome 100, @ 50, bio 300, localização 100). A senha é guardada somente como hash (bcrypt).
+- `personal_access_tokens`: tokens Bearer do Sanctum guardados apenas como hash; `UNIQUE` no token e índices por dono do token e por expiração.
 
-O script também cria `personal_access_tokens` (tokens Bearer do Sanctum, guardados como hash) com chave primária, índice único no token e índices de busca.
+---
 
 ### 4.5 Interface e integração
-
-**Obrigatórios para a pontuação máxima**
 
 | Item | Situação |
 |---|---|
 | HTML com CSS e JavaScript (Vue 3 + Tailwind CSS), página `Perfil.vue` | ✅ |
-| Formulário com validação visual (borda verde para válido, vermelha para inválido) | ⏳ pendente |
-| Mensagens de erro claras, em português | ✅ (a API devolve `mensagem` e `campos`) |
-| Tratamento de erros (`try/catch`) nas chamadas à API | ✅ (inclui 401 → login) |
-
-**Qualidade**
-
-| Item | Situação |
-|---|---|
-| HTML semântico (`<form>`, `<input>`, `<label>`, `<button>`) | ⚠️ ligar cada `<label>` ao seu campo (`for`/`id`) |
-| Layout responsivo (320 px, 768 px e 1024 px ou mais) | ⏳ pendente |
+| Mensagens de erro claras, em português (a API devolve `mensagem` e `campos`; o formulário exibe a mensagem) | ✅ |
+| Tratamento de erros (`try/catch`) nas chamadas à API, com retorno ao login em caso de `401` | ✅ |
 | Estado **preenchido**: perfil com nome, @, bio, localização e fotos | ✅ |
-| Estado **vazio**: perfil sem foto, bio ou localização (iniciais; campos omitidos) | ✅ |
-| Estado **carregando**: "Salvando..." durante o envio | ✅ / ⏳ ao abrir a página |
-| Estado **erro**: mensagem do servidor no formulário | ✅ / ⏳ "Tentar novamente" ao abrir a página |
-| Estado **sucesso**: perfil atualizado após salvar | ✅ / ⏳ mensagem de confirmação na tela |
+| Estado **vazio**: sem foto (iniciais), sem bio ou localização (campos omitidos) | ✅ |
+| Estado **carregando**: botão "Salvando..." durante o envio | ✅ |
+| Estado **erro**: mensagem do servidor exibida no formulário | ✅ |
 
-**Regras de validação (backend):** nome obrigatório (até 100); @ obrigatório, único, até 50, apenas letras, números, ponto e underline; localização até 100; bio até 300; fotos JPG/PNG/WebP (perfil até 4 MB, capa até 6 MB). Somente esses campos são aceitos, a gravação é atômica e, em caso de falha, nada é alterado.
+**Regras de validação (backend):** nome obrigatório (até 100); @ obrigatório, único, até 50, apenas letras, números, ponto e underline; localização até 100; bio até 300; fotos JPG, PNG ou WebP (perfil até 4 MB, capa até 6 MB). Somente esses campos são aceitos e a gravação é feita em um único `UPDATE`: em caso de falha, nada é alterado.
+
+---
 
 ### 4.6 Autoavaliação (Tópico 4)
 
 | Parte | Situação |
 |---|---|
-| **CREATE** | Não se aplica ao perfil (RF-002) — ⚠️ confirmar com o professor |
+| **CREATE** | Não se aplica ao perfil (conta criada no RF-002) |
 | **READ** (`GET /api/perfil`) | ✅ funcionando; documentado |
 | **UPDATE** (`POST /api/perfil`) | ✅ funcionando; documentado |
-| **DELETE** | Não se aplica ao perfil — ⚠️ confirmar com o professor |
-| **Qualidade da interface** | ⚠️ falta validação visual, responsividade e ajustes de estados |
-| **Pré-requisitos (a, b, c, d)** | ⚠️ falta URL pública, banco online e link do repositório |
+| **DELETE** | Não se aplica ao perfil (exclusão de conta fora do escopo) |
+| **Qualidade da interface e integração** | Estados preenchido, vazio, carregando e erro; mensagens claras e tratamento de erros (item 4.5) |
+| **Pré-requisitos (a, b, c, d)** | ✅ aplicação, banco e repositório online; `swagger.json` no repositório |
+
+---
 
 ### 4.7 Roteiro de teste
 
-1. Abrir a URL em janela anônima e entrar com as credenciais de teste.
-2. Abrir **Meu perfil** → conferir os dados e a linha correspondente em `usuarios` (**Read**).
-3. **Editar perfil**: alterar nome, bio e localização → salvar → recarregar a página → conferir a alteração na tela e no BD (**Update**).
-4. Trocar a foto de perfil e a capa → salvar → recarregar → conferir.
-5. Tentar salvar com nome vazio, com @ de outra conta e com imagem inválida ou acima do limite → conferir as mensagens.
-6. Conferir o repositório: estrutura, DDL, `.gitignore` e ausência de segredos.
-7. Conferir `docs/api/swagger.json` no editor.swagger.io, de acordo com os testes realizados.
+1. Abrir a URL do item a) em uma janela anônima e entrar com as credenciais de teste.
+2. Abrir **Meu perfil** → conferir os dados na tela e a linha correspondente em `usuarios` no phpMyAdmin (**Read**).
+3. Clicar em **Editar perfil** → alterar nome, bio e localização → **Salvar** → recarregar a página → conferir a alteração na tela e no banco (**Update**).
+4. Trocar a foto de perfil e a capa → **Salvar** → recarregar → conferir que as imagens permanecem.
+5. Tentar salvar com nome vazio, com @ de outra conta, com @ contendo espaço e com imagem inválida ou acima do limite → conferir as mensagens de erro.
+6. Conferir o repositório: estrutura de pastas, DDL, `.gitignore` e ausência de segredos.
+7. Abrir `docs/api/swagger.json` em https://editor.swagger.io → conferir que não há erro e que `GET`, `POST`, `PUT` e `PATCH` de `/perfil` correspondem aos testes realizados.
+
+---
 
 ## 5. Arquitetura e Decisões
 
@@ -667,7 +663,7 @@ O script também cria `personal_access_tokens` (tokens Bearer do Sanctum, guarda
 
 | Camada | Tecnologia | Responsabilidade no RF-007 |
 |---|---|---|
-| Frontend | Vue 3, Vite, Tailwind, Vue Router | Tela de perfil e formulário de edição, validação visual, envio do token |
+| Frontend | Vue 3, Vite, Tailwind, Vue Router | Tela de perfil e formulário de edição, exibição de erros, envio do token |
 | Cliente HTTP | `services/api.js` | Centraliza as chamadas à API e anexa o token Bearer |
 | Backend | Laravel (API REST) | Autenticar, validar, gravar e devolver o perfil |
 | Autenticação | Laravel Sanctum | Emite e valida o token pessoal de cada usuário |
@@ -682,9 +678,9 @@ O script também cria `personal_access_tokens` (tokens Bearer do Sanctum, guarda
 3. O formulário é preenchido com esses dados; o usuário altera os campos e/ou escolhe novas imagens.
 4. O Vue envia `POST /api/perfil` (multipart/form-data) com o token.
 5. O Laravel valida os campos (tamanho, formato do @, unicidade, tipo e tamanho das imagens).
-6. Se houver erro, responde `400` com a mensagem e os campos inválidos; o Vue destaca os campos em vermelho.
+6. Se houver erro, responde `400` com a mensagem e a lista de campos inválidos; o Vue exibe a mensagem de erro no formulário, sem fechá-lo.
 7. Se estiver válido, o backend grava as imagens no disco, atualiza a linha do usuário no MySQL em um único `UPDATE` e só depois apaga as imagens antigas.
-8. A API responde `200` com o perfil atualizado; o Vue mostra "Perfil atualizado com sucesso!" e atualiza a tela.
+8. A API responde `200` com o perfil atualizado; o Vue fecha o formulário e exibe os dados atualizados na tela.
 
 ### 5.3 Padrão de Design
 
@@ -769,6 +765,3 @@ O script também cria `personal_access_tokens` (tokens Bearer do Sanctum, guarda
 **Implementação (Como você protege?):** Todos os dados digitados pelo usuário (nome, @usuário, bio, localização e texto das publicações) são exibidos na tela com a interpolação padrão do Vue, que trata o conteúdo sempre como texto puro e escapa os caracteres especiais. A tela de perfil não usa `v-html`, o recurso que interpretaria HTML. Como reforço, o backend limita o @ a letras, números, ponto e underline, e as imagens aceitas são apenas jpg, png e webp (SVG, que pode carregar script, não é aceito). As URLs das imagens são geradas pelo próprio backend.
 
 **Teste (Como provou que funciona?):** Digitei `<script>alert('XSS')</script>` na bio e `<img src=x onerror=alert(1)>` no nome e na localização, e salvei o perfil. Nenhum alerta apareceu. O texto foi exibido literalmente na tela, e continuou assim depois de recarregar a página, provando que o conteúdo não foi interpretado como código.
-
-> ⚠️ Antes de enviar: preencher os campos ⚠️, implementar os itens ⏳ e remover as marcações de pendência. Não declarar como entregue o que ainda não está implementado.
-
