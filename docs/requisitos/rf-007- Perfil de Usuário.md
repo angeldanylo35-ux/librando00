@@ -27,8 +27,6 @@
 - **Senha:** `123456`
 - **Permissões:** consulta dos dados e visualização da estrutura das tabelas, sem permissão para modificá-los.
 
-**Credenciais de acesso:** fornecidas ao professor por canal privado.
-
 
 
 ### c) Link do GitHub (Repositório)
