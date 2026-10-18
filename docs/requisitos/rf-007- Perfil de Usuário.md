@@ -12,9 +12,9 @@
 
 ### a) URL da Aplicação (Deploy Online)
 
-- **Deploy:** [Inserir URL da aplicação online]
-- **Plataforma:** [Informar a plataforma utilizada]
-- **Acesso:** [Público ou restrito]
+- **Deploy:** [https://librando-frontend.onrender.com/]
+- **Plataforma:** [(https://librando-frontend.onrender.com/)]
+- **Acesso:** [Público]
 - **Funcionalidade:** Perfil de Usuário
 
 ### b) Link do Banco de Dados Online
