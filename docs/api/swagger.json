@@ -41,7 +41,7 @@
                 "$ref": "#/components/schemas/LoginRequest"
               },
               "example": {
-                "email": "angeldanylo35@email.com",
+                "email": "usuario@email.com",
                 "senha": "123456"
               }
             }
