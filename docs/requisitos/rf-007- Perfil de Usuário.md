@@ -462,3 +462,134 @@ O script também cria `personal_access_tokens` (tokens Bearer do Sanctum, guarda
 
 > ⚠️ Antes de enviar: preencher os campos ⚠️, implementar os itens ⏳ e remover as marcações de pendência. Não declarar como entregue o que ainda não está implementado.
 
+## 5. Arquitetura e Decisões
+
+### 5.1 Diagrama de Arquitetura
+
+```
+┌──────────────────────────┐      HTTPS / JSON (multipart p/ imagens)      ┌─────────────────────────────┐
+│  NAVEGADOR DO USUÁRIO    │ ───────────────────────────────────────────▶  │  BACKEND (Render)           │
+│                          │      Authorization: Bearer <token>            │  Laravel (API REST)         │
+│  FRONTEND (Render)       │                                               │                             │
+│  Vue 3 + Vite + Tailwind │ ◀───────────────────────────────────────────  │  routes/api.php             │
+│  Vue Router (SPA)        │      JSON { sucesso, mensagem, perfil }       │    └─ auth:sanctum          │
+│  Perfil.vue              │                                               │  PerfilController           │
+│  services/api.js (HTTP)  │                                               │    └─ Validator             │
+└──────────────────────────┘                                               │  Model Usuario (Eloquent)   │
+                                                                           └───────┬─────────────┬───────┘
+                                                                                   │ SQL         │ arquivos
+                                                                                   ▼ (PDO)       ▼
+                                                                           ┌──────────────┐  ┌──────────────────┐
+                                                                           │ MySQL        │  │ Disco "public"   │
+                                                                           │ tb: usuarios │  │ perfis/ e capas/ │
+                                                                           │ + tokens     │  │ (fotos)          │
+                                                                           └──────────────┘  └──────────────────┘
+```
+
+**Componentes**
+
+| Camada | Tecnologia | Responsabilidade no RF-007 |
+|---|---|---|
+| Frontend | Vue 3, Vite, Tailwind, Vue Router | Tela de perfil e formulário de edição, validação visual, envio do token |
+| Cliente HTTP | `services/api.js` | Centraliza as chamadas à API e anexa o token Bearer |
+| Backend | Laravel (API REST) | Autenticar, validar, gravar e devolver o perfil |
+| Autenticação | Laravel Sanctum | Emite e valida o token pessoal de cada usuário |
+| Banco de dados | MySQL | Persistir dados do perfil na tabela `usuarios` |
+| Arquivos | Disco `public` do Laravel | Guardar foto de perfil e foto de capa |
+| Hospedagem | Render (deploy a partir do GitHub) | Publicar frontend e backend |
+
+### 5.2 Fluxo de Dados (Editar Perfil)
+
+1. O usuário abre a tela de perfil; o Vue chama `GET /api/perfil` com o token.
+2. O Sanctum valida o token e identifica o usuário; o `PerfilController` devolve nome, @usuário, localização, bio e URLs das fotos.
+3. O formulário é preenchido com esses dados; o usuário altera os campos e/ou escolhe novas imagens.
+4. O Vue envia `POST /api/perfil` (multipart/form-data) com o token.
+5. O Laravel valida os campos (tamanho, formato do @, unicidade, tipo e tamanho das imagens).
+6. Se houver erro, responde `400` com a mensagem e os campos inválidos; o Vue destaca os campos em vermelho.
+7. Se estiver válido, o backend grava as imagens no disco, atualiza a linha do usuário no MySQL em um único `UPDATE` e só depois apaga as imagens antigas.
+8. A API responde `200` com o perfil atualizado; o Vue mostra "Perfil atualizado com sucesso!" e atualiza a tela.
+
+### 5.3 Padrão de Design
+
+**API REST em camadas (MVC sem camada de visão no servidor).** O fluxo é: Rota → Middleware de autenticação → Controller → Model (Eloquent) → Banco. A "View" do MVC é a SPA em Vue, que consome apenas JSON.
+
+*Justificativa:* separa responsabilidades (a tela não conhece o banco, e o banco não conhece a tela), permite evoluir frontend e backend de forma independente e segue o padrão do framework, o que reduz código e erros.
+
+### 5.4 Decisões Arquiteturais (ADRs)
+
+**ADR-001: Frontend e backend separados (SPA + API REST)**
+- *Decisão:* Vue 3 como SPA e Laravel apenas como API JSON.
+- *Razão:* permite publicar cada parte de forma independente, reaproveitar a mesma API em outros clientes no futuro e manter o código organizado, sem PHP misturado com HTML.
+- *Consequência:* exige configurar CORS e enviar o token em toda requisição protegida.
+
+**ADR-002: Autenticação com Laravel Sanctum (token Bearer)**
+- *Decisão:* o login devolve um token pessoal; o frontend o envia no cabeçalho `Authorization` e as rotas protegidas usam `auth:sanctum`.
+- *Razão:* é a solução oficial do Laravel para SPAs/APIs, é stateless (sem sessão no servidor) e dispensa cookies, o que simplifica o CORS (sem `credentials`) e elimina a necessidade de token CSRF.
+- *Consequência:* o token precisa ser guardado com cuidado no cliente e é invalidado no logout ou na expiração.
+
+**ADR-003: Rota `/perfil` sem `{id}` e uso de `POST` com multipart**
+- *Decisão:* o perfil editado é sempre o do usuário autenticado (a rota não recebe id), e a edição com imagens usa `POST /perfil`; `PUT`/`PATCH /perfil` ficam disponíveis para envio só de texto.
+- *Razão:* sem `{id}` na URL, um usuário não consegue editar o perfil de outro por troca de identificador. O PHP não interpreta arquivos enviados via `PUT` multipart, por isso o `POST` carrega as imagens.
+- *Consequência:* a documentação Swagger precisa listar os três métodos da rota.
+
+**ADR-004: MySQL com Eloquent ORM**
+- *Decisão:* dados do perfil na tabela `usuarios` do MySQL ([informar o serviço onde o MySQL online está hospedado]), acessados via Eloquent.
+- *Razão:* banco relacional é adequado a dados estruturados com restrições de unicidade (`nome_usuario`, `email`); o Eloquent usa consultas parametrizadas, o que previne SQL Injection, e o índice `UNIQUE` do banco serve de segunda barreira contra @ duplicado em requisições simultâneas.
+- *Consequência:* o banco precisa estar acessível pela internet para o backend publicado.
+
+**ADR-005: Imagens no disco `public` do Laravel, com URL salva no banco**
+- *Decisão:* as fotos são gravadas em `perfis/` e `capas/` com nome aleatório gerado pelo Laravel; no banco guarda-se apenas a URL (`foto_perfil_url`, `foto_capa_url`).
+- *Razão:* simples, sem serviço externo, e mantém o banco leve. O arquivo antigo só é removido depois que o banco confirma a gravação, e um arquivo novo é descartado se o `UPDATE` falhar, evitando arquivos órfãos.
+- *Consequência:* em hospedagens com disco temporário (como o plano gratuito do Render), as imagens precisam de disco persistente ou de um serviço de armazenamento externo para sobreviver a novos deploys.
+
+**ADR-006: Deploy no Render a partir do GitHub**
+- *Decisão:* frontend e backend publicados no Render, com deploy automático a cada push na branch principal; o backend roda em contêiner Docker.
+- *Razão:* gratuito para o escopo da disciplina, URL pública sem configuração de servidor e integração contínua direta com o repositório.
+- *Consequência:* segredos ficam nas variáveis de ambiente do Render, nunca no repositório.
+
+---
+
+## 6. Segurança OWASP
+
+> ⚠️ **Antes de entregar:** execute cada teste abaixo na aplicação publicada, confirme que o resultado é o descrito (ajuste o texto se for diferente) e apague este aviso. Em testes por Postman/curl, envie o cabeçalho `Accept: application/json`.
+
+### Controle 1: Controle de acesso e autenticação nas rotas do perfil
+
+**Vulnerabilidade OWASP (Risco):** A01 – Broken Access Control. Um usuário não autenticado, ou um usuário comum tentando mudar o `id` na requisição, poderia ler ou alterar o perfil de outra pessoa (IDOR).
+
+**Implementação (Como você protege?):** As rotas de perfil ficam dentro do grupo protegido pelo Sanctum, então exigem token válido. A rota não recebe identificador: o sistema sempre edita a conta dona do token, e qualquer `id` enviado no corpo da requisição é ignorado.
+
+**Teste (Como provou que funciona?):** Chamei `GET` e `POST /api/perfil` sem token e a API respondeu `401` (não autenticado). Depois, com o token do usuário A, enviei no corpo um `id` do usuário B junto com um novo nome: a alteração foi aplicada apenas ao usuário A e o perfil de B permaneceu intacto no banco.
+
+### Controle 2: Lista de campos permitidos (proteção contra Mass Assignment)
+
+**Vulnerabilidade OWASP (Risco):** A01 – Broken Access Control / A04 – Insecure Design. Se a API gravasse tudo o que chega na requisição, um usuário poderia alterar campos que não deveria (e-mail, senha, id) apenas incluindo-os no envio.
+
+**Implementação (Como você protege?):** A edição aceita somente uma lista fechada de campos: nome, nome de usuário, localização, bio e as duas imagens. Todo o resto é descartado antes de gravar. E-mail e senha não passam por esta rota. Campo não enviado mantém o valor atual.
+
+**Teste (Como provou que funciona?):** Enviei `POST /api/perfil` com um novo nome e, junto, `email`, `senha` e `id` diferentes. A API respondeu `200` e somente o nome mudou: o e-mail continuou o mesmo no banco e o login com a senha antiga seguiu funcionando.
+
+### Controle 3: Validação de entrada e upload seguro de imagens
+
+**Vulnerabilidade OWASP (Risco):** A04 – Insecure Design (e A05 – Security Misconfiguration). Upload sem restrição permite enviar arquivos executáveis (ex.: `.php` renomeado para `.jpg`) ou arquivos gigantes que esgotam o disco; campos sem validação aceitam dados malformados.
+
+**Implementação (Como você protege?):** O servidor valida tudo no backend, independentemente do que o navegador faz: tamanho máximo dos textos, formato do nome de usuário (apenas letras, números, ponto e underline), unicidade do nome de usuário e, nas imagens, tipo real do arquivo (jpg, png ou webp, verificado pelo conteúdo e não só pela extensão) e tamanho máximo (4 MB para perfil, 6 MB para capa). O Laravel salva o arquivo com nome aleatório, então o nome enviado pelo usuário nunca define onde ou como o arquivo é gravado. Formatos como SVG e PHP não são aceitos.
+
+**Teste (Como provou que funciona?):** Tentei enviar um arquivo `.php` renomeado para `.jpg`, um PDF e uma imagem acima de 4 MB: em todos os casos a API respondeu `400` com mensagem clara e nenhum arquivo foi gravado. Também digitei `ab cd!` no nome de usuário e a API recusou com a mensagem de caracteres inválidos. Um JPG válido foi aceito e salvo com nome aleatório.
+
+### Controle 4: Proteção contra SQL Injection
+
+**Vulnerabilidade OWASP (Risco):** A03 – Injection. Entrada maliciosa nos campos poderia alterar a consulta SQL e permitir ler, alterar ou apagar dados do banco.
+
+**Implementação (Como você protege?):** Todo acesso ao banco passa pelo Eloquent e pelas regras de validação do Laravel, que usam consultas parametrizadas (os valores são enviados separados do comando SQL). Nenhuma consulta é montada concatenando texto do usuário. Além disso, o nome de usuário só aceita um conjunto restrito de caracteres.
+
+**Teste (Como provou que funciona?):** Digitei `x'); DROP TABLE usuarios; --` no campo de nome de usuário e a API recusou com `400` (caracteres inválidos). No campo bio, que aceita texto livre, enviei `'); DROP TABLE usuarios; --`: o texto foi salvo literalmente, como texto comum, sem executar nada. A tabela `usuarios` permaneceu intacta.
+
+### Controle 5: Proteção contra XSS (Cross-Site Scripting)
+
+**Vulnerabilidade OWASP (Risco):** A03 – Injection (XSS). Um usuário mal-intencionado poderia cadastrar, no nome, na bio ou na localização, um trecho de JavaScript que seria executado no navegador de quem visualizar o perfil, podendo roubar o token de login.
+
+**Implementação (Como você protege?):** Todos os dados digitados pelo usuário (nome, @usuário, bio, localização e texto das publicações) são exibidos na tela com a interpolação padrão do Vue, que trata o conteúdo sempre como texto puro e escapa os caracteres especiais. A tela de perfil não usa `v-html`, o recurso que interpretaria HTML. Como reforço, o backend limita o @ a letras, números, ponto e underline, e as imagens aceitas são apenas jpg, png e webp (SVG, que pode carregar script, não é aceito). As URLs das imagens são geradas pelo próprio backend.
+
+**Teste (Como provou que funciona?):** Digitei `<script>alert('XSS')</script>` na bio e `<img src=x onerror=alert(1)>` no nome e na localização, e salvei o perfil. Nenhum alerta apareceu. O texto foi exibido literalmente na tela, e continuou assim depois de recarregar a página, provando que o conteúdo não foi interpretado como código.
+
