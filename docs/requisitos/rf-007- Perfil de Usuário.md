@@ -33,7 +33,180 @@
 
 - **Repositório:** [https://github.com/angeldanylo35-ux/librando00](https://github.com/angeldanylo35-ux/librando00.git)
 - **Branch principal:** [main]
-- **Estrutura:** Conforme a organização de diretórios do projeto, incluindo documentação, código-fonte e arquivos do banco de dados.
+- **Estrutura:**
+librando00-main/
+├── README.md
+├── .gitignore
+├── docs/
+│   ├── api/
+│   │   └── swagger.json
+│   └── requisitos/
+│       ├── rf-001-login.md
+│       ├── rf-002-cadastrar.md
+│       ├── rf-003-Esqueci-minha-senha.md
+│       ├── rf-004-Tela-Inicial-Usuário.md
+│       ├── rf-006-Posts.md
+│       └── rf-007-Perfil de Usuário.md
+├── backend/
+│   ├── .editorconfig
+│   ├── .env.example
+│   ├── .gitattributes
+│   ├── .gitignore
+│   ├── .npmrc
+│   ├── AGENTS.md
+│   ├── CLAUDE.md
+│   ├── README.md
+│   ├── artisan
+│   ├── composer.json
+│   ├── composer.lock
+│   ├── phpunit.xml
+│   ├── vite.config.js
+│   ├── app/
+│   │   ├── Http/
+│   │   │   ├── Controllers/
+│   │   │   │   ├── Controller.php
+│   │   │   │   ├── api/
+│   │   │   │   │   ├── AuthController.php
+│   │   │   │   │   ├── PasswordResetController.php
+│   │   │   │   │   ├── PerfilController.php
+│   │   │   │   │   └── PostController.php
+│   │   │   │   └── auth/
+│   │   │   │       └── PasswordResetController.php
+│   │   └── Mail/
+│   │       ├── RecuperacaoSenha.php
+│   │       └── VerificacaoCadastro.php
+│   │   └── Models/
+│   │       ├── CadastroPendente.php
+│   │       ├── PasswordResetCode.php
+│   │       ├── Post.php
+│   │       ├── RecuperacaoSenha.php
+│   │       ├── User.php
+│   │       ├── Usuario.php
+│   │       ├── VerificacaoEmail.php
+│   │       └── enqueteopcao.php
+│   │   └── Notifications/
+│   │       ├── PasswordChangedNotification.php
+│   │       └── ResetCodeNotification.php
+│   │   └── Providers/
+│   │       └── AppServiceProvider.php
+│   ├── bootstrap/
+│   │   ├── app.php
+│   │   ├── providers.php
+│   │   └── cache/
+│   │       └── .gitignore
+│   ├── config/
+│   │   ├── app.php
+│   │   ├── auth.php
+│   │   ├── cache.php
+│   │   ├── cors.php
+│   │   ├── database.php
+│   │   ├── filesystems.php
+│   │   ├── logging.php
+│   │   ├── mail.php
+│   │   ├── queue.php
+│   │   ├── sanctum.php
+│   │   ├── services.php
+│   │   └── session.php
+│   ├── database/
+│   │   ├── .gitignore
+│   │   ├── factories/
+│   │   │   └── UserFactory.php
+│   │   ├── migrations/
+│   │   │   ├── 0001_01_01_000000_create_users_table.php
+│   │   │   ├── 0001_01_01_000001_create_cache_table.php
+│   │   │   ├── 0001_01_01_000002_create_jobs_table.php
+│   │   │   ├── 2025_01_01_000000_create_password_reset_codes_table.php
+│   │   │   ├── 2026_09_06_021505_create_usuarios_table.php
+│   │   │   ├── 2026_09_06_024645_create_personal_access_tokens_table.php
+│   │   │   ├── 2026_09_13_145553_create_verificacoes_email_table.php
+│   │   │   ├── 2026_09_13_150557_create_cadastros_pendentes_table.php
+│   │   │   ├── 2026_09_13_205428_create_recuperacao_senhas_table.php
+│   │   │   ├── 2026_10_12_020211_create_posts_table.php
+│   │   │   ├── 2026_10_12_020212_create_enquete_opcoes_table.php
+│   │   │   ├── 2026_10_17_185642_add_perfil_to_usuarios_table.php
+│   │   │   ├── 2026_10_17_193725_ajusta_colunas_perfil_em_usuarios.php
+│   │   │   └── migrations/
+│   │       └── seeders/
+│   │           ├── DatabaseSeeder.php
+│   │           └── UsuarioSeeder.php
+│   ├── public/
+│   │   ├── .htaccess
+│   │   ├── favicon.ico
+│   │   ├── index.php
+│   │   └── robots.txt
+│   ├── resources/
+│   │   ├── css/
+│   │   │   └── app.css
+│   │   ├── js/
+│   │   │   └── app.js
+│   │   ├── views/
+│   │   │   ├── welcome.blade.php
+│   │   │   ├── auth/
+│   │   │   │   ├── forgot-password.blade.php
+│   │   │   │   ├── reset-password.blade.php
+│   │   │   │   └── verify-code.blade.php
+│   │   │   └── emails/
+│   │   │       ├── recuperacao-senha.blade.php
+│   │   │       └── verificacao-cadastro.blade.php
+│   ├── routes/
+│   │   ├── api.php
+│   │   ├── console.php
+│   │   └── web.php
+│   ├── storage/
+│   │   ├── app/
+│   │   │   ├── .gitignore
+│   │   │   └── private/
+│   │   │       └── .gitignore
+│   │   ├── framework/
+│   │   │   ├── cache/
+│   │   │   ├── sessions/
+│   │   │   ├── testing/
+│   │   │   └── views/
+│   │   └── logs/
+│   │       └── .gitignore
+│   └── tests/
+│       ├── TestCase.php
+│       ├── Feature/
+│       │   └── ExampleTest.php
+│       └── Unit/
+│           └── ExampleTest.php
+└── frontend/
+    ├── .gitignore
+    ├── README.md
+    ├── index.html
+    ├── package-lock.json
+    ├── package.json
+    ├── postcss.config.js
+    ├── tailwind.config.js
+    ├── vite.config.js
+    ├── .vscode/
+    │   └── extensions.json
+    ├── public/
+    │   ├── favicon.svg
+    │   └── icons.svg
+    └── src/
+        ├── App.vue
+        ├── main.js
+        ├── style.css
+        ├── assets/
+        │   ├── estetico.css
+        │   ├── hero.png
+        │   ├── vite.svg
+        │   └── vue.svg
+        ├── components/
+        │   └── HelloWorld.vue
+        ├── paginas/
+        │   ├── Feed.vue
+        │   ├── Perfil.vue
+        │   ├── cadastro.vue
+        │   ├── esqueci-senha.vue
+        │   ├── login.vue
+        │   ├── redefinir-senha.vue
+        │   └── verificar-email.vue
+        ├── router/
+        │   └── index.js
+        └── services/
+            └── api.js
 
 ## 📋 2. Atores e Descrição
 
