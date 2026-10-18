@@ -31,8 +31,8 @@
 
 ### c) Link do GitHub (Repositório)
 
-- **Repositório:** [https://github.com/angeldanylo35-ux/librando00.git](https://github.com/angeldanylo35-ux/librando00.git)
-- **Branch principal:** [Informar a branch principal do projeto]
+- **Repositório:** [https://github.com/angeldanylo35-ux/librando00](https://github.com/angeldanylo35-ux/librando00.git)
+- **Branch principal:** [main]
 - **Estrutura:** Conforme a organização de diretórios do projeto, incluindo documentação, código-fonte e arquivos do banco de dados.
 
 ## 📋 2. Atores e Descrição
