@@ -96,7 +96,8 @@ class AuthController extends Controller
             'expira_em' => now()->addMinutes(5),
         ]);
 
-        $link = 'http://localhost:5173/verificar-email?token=' . $token;
+        $link = rtrim(env('FRONTEND_URL', 'http://localhost:5173'), '/')
+    . '/verificar-email?token=' . $token;
 
         Mail::to($request->email)->send(
             new VerificacaoCadastro($link)
@@ -145,7 +146,8 @@ class AuthController extends Controller
         ]);
 
         // Link que será aberto pelo Vue
-        $link = 'http://localhost:5173/redefinir-senha?token=' . $token;
+        $link = rtrim(env('FRONTEND_URL', 'http://localhost:5173'), '/')
+    . '/redefinir-senha?token=' . $token;
 
         Mail::to($request->email)->send(
             new RecuperacaoSenha($link)
