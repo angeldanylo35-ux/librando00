@@ -34,6 +34,7 @@
 - **Repositório:** [https://github.com/angeldanylo35-ux/librando00](https://github.com/angeldanylo35-ux/librando00.git)
 - **Branch principal:** [main]
 - **Estrutura:**
+```
 librando00-main/
 ├── README.md
 ├── .gitignore
@@ -207,7 +208,7 @@ librando00-main/
         │   └── index.js
         └── services/
             └── api.js
-
+```
 ## 📋 2. Atores e Descrição
 
 ### 📝 2.1 Descrição do Requisito
