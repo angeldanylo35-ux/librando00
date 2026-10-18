@@ -465,8 +465,6 @@ O script também cria `personal_access_tokens` (tokens Bearer do Sanctum, guarda
 6. Conferir o repositório: estrutura, DDL, `.gitignore` e ausência de segredos.
 7. Conferir `docs/api/swagger.json` no editor.swagger.io, de acordo com os testes realizados.
 
-> ⚠️ Antes de enviar: preencher os campos ⚠️, implementar os itens ⏳ e remover as marcações de pendência. Não declarar como entregue o que ainda não está implementado.
-
 ## 5. Arquitetura e Decisões
 
 ### 5.1 Diagrama de Arquitetura
@@ -499,7 +497,7 @@ O script também cria `personal_access_tokens` (tokens Bearer do Sanctum, guarda
 | Cliente HTTP | `services/api.js` | Centraliza as chamadas à API e anexa o token Bearer |
 | Backend | Laravel (API REST) | Autenticar, validar, gravar e devolver o perfil |
 | Autenticação | Laravel Sanctum | Emite e valida o token pessoal de cada usuário |
-| Banco de dados | MySQL | Persistir dados do perfil na tabela `usuarios` |
+| Banco de dados | MySQL (Aiven) | Persistir dados do perfil na tabela `usuarios` |
 | Arquivos | Disco `public` do Laravel | Guardar foto de perfil e foto de capa |
 | Hospedagem | Render (deploy a partir do GitHub) | Publicar frontend e backend |
 
@@ -538,7 +536,7 @@ O script também cria `personal_access_tokens` (tokens Bearer do Sanctum, guarda
 - *Consequência:* a documentação Swagger precisa listar os três métodos da rota.
 
 **ADR-004: MySQL com Eloquent ORM**
-- *Decisão:* dados do perfil na tabela `usuarios` do MySQL ([informar o serviço onde o MySQL online está hospedado]), acessados via Eloquent.
+- *Decisão:* dados do perfil na tabela `usuarios` do MySQL (hospedado online no Aiven), acessados via Eloquent.
 - *Razão:* banco relacional é adequado a dados estruturados com restrições de unicidade (`nome_usuario`, `email`); o Eloquent usa consultas parametrizadas, o que previne SQL Injection, e o índice `UNIQUE` do banco serve de segunda barreira contra @ duplicado em requisições simultâneas.
 - *Consequência:* o banco precisa estar acessível pela internet para o backend publicado.
 
@@ -597,4 +595,6 @@ O script também cria `personal_access_tokens` (tokens Bearer do Sanctum, guarda
 **Implementação (Como você protege?):** Todos os dados digitados pelo usuário (nome, @usuário, bio, localização e texto das publicações) são exibidos na tela com a interpolação padrão do Vue, que trata o conteúdo sempre como texto puro e escapa os caracteres especiais. A tela de perfil não usa `v-html`, o recurso que interpretaria HTML. Como reforço, o backend limita o @ a letras, números, ponto e underline, e as imagens aceitas são apenas jpg, png e webp (SVG, que pode carregar script, não é aceito). As URLs das imagens são geradas pelo próprio backend.
 
 **Teste (Como provou que funciona?):** Digitei `<script>alert('XSS')</script>` na bio e `<img src=x onerror=alert(1)>` no nome e na localização, e salvei o perfil. Nenhum alerta apareceu. O texto foi exibido literalmente na tela, e continuou assim depois de recarregar a página, provando que o conteúdo não foi interpretado como código.
+
+> ⚠️ Antes de enviar: preencher os campos ⚠️, implementar os itens ⏳ e remover as marcações de pendência. Não declarar como entregue o que ainda não está implementado.
 
