@@ -8,7 +8,8 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        'http://localhost:5173', // porta padrão do Vite em dev
+    'http://localhost:5173',
+    'https://librando-frontend.onrender.com',
     ],
 
     'allowed_origins_patterns' => [],
