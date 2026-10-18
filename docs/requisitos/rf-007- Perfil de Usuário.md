@@ -12,7 +12,7 @@
 
 ### a) URL da Aplicação (Deploy Online)
 
-- **Deploy:** (https://librando-frontend.onrender.com/)
+- **Deploy:** https://librando-frontend.onrender.com/
 - **Plataforma:** [Render](https://render.com)
 - **Acesso:** [Público]
 - **Funcionalidade:** Perfil de Usuário
