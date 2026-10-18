@@ -7,8 +7,8 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8000/api",
-      "description": "Servidor de Desenvolvimento Local"
+      "url": "https://o-teu-projeto-backend.onrender.com/api",
+      "description": "Servidor de Produção (Render)"
     }
   ],
   "paths": {
