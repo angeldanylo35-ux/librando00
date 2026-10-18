@@ -1,9 +1,8 @@
+
 <?php
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Mail\RecuperacaoSenha;
 use App\Mail\VerificacaoCadastro;
@@ -12,7 +11,7 @@ use App\Models\RecuperacaoSenha as RecuperacaoSenhaModel;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -44,7 +43,6 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Token que o front envia nas rotas protegidas (ex.: /api/posts)
         $token = $usuario->createToken('librando')->plainTextToken;
 
         return response()->json([
@@ -83,7 +81,6 @@ class AuthController extends Controller
 
         CadastroPendente::where('email', $request->email)->delete();
 
-        // Token aleatório para confirmar o e-mail
         $token = Str::random(64);
 
         CadastroPendente::create([
@@ -92,17 +89,19 @@ class AuthController extends Controller
             'data_nascimento' => $request->data_nascimento,
             'nome_usuario' => $request->nome_usuario,
             'senha' => Hash::make($request->senha),
-            // Guardamos o hash do token, não o token original
             'token' => hash('sha256', $token),
-            // O token expira em 5 minutos
             'expira_em' => now()->addMinutes(5),
         ]);
 
-        $link = rtrim(env('FRONTEND_URL', 'http://localhost:5173'), '/')
-    . '/verificar-email?token=' . $token;
+        $link = rtrim(config('services.frontend.url'), '/')
+            . '/verificar-email?token=' . $token;
 
-        Mail::to($request->email)->send(
-            new VerificacaoCadastro($link)
+        $email = new VerificacaoCadastro($link);
+
+        $this->enviarEmailBrevo(
+            $request->email,
+            'Verificação de cadastro - Librando',
+            $email->render()
         );
 
         return response()->json([
@@ -136,7 +135,6 @@ class AuthController extends Controller
             ], 404);
         }
 
-        // Remove tokens antigos desse e-mail
         RecuperacaoSenhaModel::where('email', $request->email)->delete();
 
         $token = Str::random(64);
@@ -147,12 +145,15 @@ class AuthController extends Controller
             'expira_em' => now()->addMinutes(5),
         ]);
 
-        // Link que será aberto pelo Vue
-        $link = rtrim(env('FRONTEND_URL', 'http://localhost:5173'), '/')
-    . '/redefinir-senha?token=' . $token;
+        $link = rtrim(config('services.frontend.url'), '/')
+            . '/redefinir-senha?token=' . $token;
 
-        Mail::to($request->email)->send(
-            new RecuperacaoSenha($link)
+        $email = new RecuperacaoSenha($link);
+
+        $this->enviarEmailBrevo(
+            $request->email,
+            'Recuperação de senha - Librando',
+            $email->render()
         );
 
         return response()->json([
@@ -180,7 +181,10 @@ class AuthController extends Controller
             ], 400);
         }
 
-        $recuperacao = RecuperacaoSenhaModel::where('token', hash('sha256', $request->token))
+        $recuperacao = RecuperacaoSenhaModel::where(
+            'token',
+            hash('sha256', $request->token)
+        )
             ->where('expira_em', '>', now())
             ->first();
 
@@ -204,7 +208,6 @@ class AuthController extends Controller
             'senha' => Hash::make($request->senha),
         ]);
 
-        // Invalida o token depois de usado
         $recuperacao->delete();
 
         return response()->json([
@@ -222,7 +225,10 @@ class AuthController extends Controller
             ], 400);
         }
 
-        $cadastro = CadastroPendente::where('token', hash('sha256', $request->token))
+        $cadastro = CadastroPendente::where(
+            'token',
+            hash('sha256', $request->token)
+        )
             ->where('expira_em', '>', now())
             ->first();
 
@@ -233,7 +239,6 @@ class AuthController extends Controller
             ], 400);
         }
 
-        // Cria o usuário somente depois da confirmação do e-mail
         $usuario = Usuario::create([
             'nome' => $cadastro->nome,
             'email' => $cadastro->email,
@@ -249,5 +254,28 @@ class AuthController extends Controller
             'mensagem' => 'E-mail confirmado! Cadastro realizado com sucesso.',
             'nome' => $usuario->nome,
         ], 200);
+    }
+
+    private function enviarEmailBrevo(
+        string $destinatario,
+        string $assunto,
+        string $html
+    ): void {
+        $resposta = Http::withHeaders([
+            'api-key' => config('services.brevo.key'),
+            'accept' => 'application/json',
+        ])->post('https://api.brevo.com/v3/smtp/email', [
+            'sender' => [
+                'name' => config('mail.from.name'),
+                'email' => config('mail.from.address'),
+            ],
+            'to' => [
+                ['email' => $destinatario],
+            ],
+            'subject' => $assunto,
+            'htmlContent' => $html,
+        ]);
+
+        $resposta->throw();
     }
 }
