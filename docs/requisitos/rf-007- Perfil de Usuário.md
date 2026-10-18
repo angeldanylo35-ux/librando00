@@ -19,10 +19,17 @@
 
 ### b) Link do Banco de Dados Online
 
-- **BD:** [Informar o banco de dados utilizado]
-- **Link:** [Inserir link de acesso ao banco de dados online]
-- **Acesso:** [Informar as permissões de acesso disponibilizadas ao professor]
-- **Tabela principal:** [Informar o nome da tabela responsável pelos dados do perfil do usuário]
+- **SGBD:** MySQL (Aiven)
+- **Interface de acesso:** phpMyAdmin
+- **Link:** https://librando-phpmyadmin.onrender.com
+- **Banco de dados:** `defaultdb`
+- **Usuário de leitura:** `professor_leitura`
+- **Senha:** `123456`
+- **Permissões:** consulta dos dados e visualização da estrutura das tabelas, sem permissão para modificá-los.
+
+**Credenciais de acesso:** fornecidas ao professor por canal privado.
+
+
 
 ### c) Link do GitHub (Repositório)
 
