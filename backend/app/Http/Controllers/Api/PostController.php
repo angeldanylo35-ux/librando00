@@ -230,7 +230,11 @@ class PostController extends Controller
         'id' => $post->id,
         'tipo' => $post->tipo,
         'conteudo' => $post->conteudo,
-        'midia_url' => $post->midia_path ? '/storage/' . $post->midia_path : null,
+        'midia_url' => $post->midia_path
+            ? (str_starts_with($post->midia_path, 'http')
+                ? $post->midia_path
+                : url('storage/' . ltrim($post->midia_path, '/')))
+            : null,
         'opcoes' => $post->opcoes->map(fn ($o) => [
             'id' => $o->id,
             'texto' => $o->texto,
