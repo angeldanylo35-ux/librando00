@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Services\ImageService;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -66,7 +66,7 @@ class PostController extends Controller
             'conteudo.required' => 'O conteúdo da publicação é obrigatório.',
             'conteudo.max' => 'O conteúdo excede o tamanho permitido.',
             'midia.required' => 'Selecione um arquivo para publicar.',
-            'midia.uploaded' => 'O arquivo é maior que o limite aceito pelo servidor.',
+            'midia.uploaded' => 'O arquivo é maior que o limite aceito.',
             'midia.mimes' => 'Arquivo inválido para este tipo de publicação.',
             'midia.mimetypes' => 'Arquivo inválido para este tipo de publicação.',
             'midia.max' => 'O arquivo excede o tamanho máximo permitido.',
@@ -82,25 +82,33 @@ class PostController extends Controller
             return response()->json([
                 'sucesso' => false,
                 'mensagem' => $validator->errors()->first(),
-                'campos' => array_keys($validator->errors()->toArray()), // para destacar os campos no front (A1)
+                'campos' => array_keys($validator->errors()->toArray()),
             ], 400);
         }
 
-        $caminho = null;
-
         try {
-            $post = DB::transaction(function () use ($request, $tipo, &$caminho) {
+            // Faz o upload da mídia para o ImgBB antes de abrir a transação do banco (evita requisição externa travando a transação)
+            $urlMidia = null;
+            $mimeMidia = null;
+
+            if ($request->hasFile('midia')) {
+                $arquivo = $request->file('midia');
+                $urlMidia = ImageService::uploadParaImgBB($arquivo);
+                $mimeMidia = $arquivo->getMimeType();
+            }
+
+            $post = DB::transaction(function () use ($request, $tipo, $urlMidia, $mimeMidia) {
                 $dados = [
                     'usuario_id' => $request->user()->id,
                     'tipo' => $tipo,
                     'conteudo' => $request->input('conteudo'),
                 ];
 
-                if ($request->hasFile('midia')) {
-                    $arquivo = $request->file('midia');
-                    $caminho = $arquivo->store('posts', 'public');
-                    $dados['midia_path'] = $caminho;
-                    $dados['midia_mime'] = $arquivo->getMimeType();
+                if ($urlMidia) {
+                    // Nota: Se na tua base de dados a coluna chama-se 'midia_path' ou 'midia_url', 
+                    // certifica-te de usar o nome correto da coluna (aqui guardamos o link direto da nuvem).
+                    $dados['midia_path'] = $urlMidia; 
+                    $dados['midia_mime'] = $mimeMidia;
                 }
 
                 $post = Post::create($dados);
@@ -114,19 +122,15 @@ class PostController extends Controller
                 return $post;
             });
         } catch (\Throwable $e) {
-            // RN-08: não deixa publicação incompleta nem arquivo órfão
-            if ($caminho) {
-                Storage::disk('public')->delete($caminho);
-            }
-            Log::error('Falha ao publicar postagem: ' . $e->getMessage());
+            Log::error('Falha ao publicar postagem com ImgBB: ' . $e->getMessage());
 
             return response()->json([
                 'sucesso' => false,
-                'mensagem' => 'Não foi possível realizar a publicação. Tente novamente.',
+                'mensagem' => 'Não foi possível enviar a mídia para a nuvem ou realizar a publicação. Tente novamente.',
             ], 500);
         }
 
-        $post->load(['usuario:id,nome,nome_usuario', 'opcoes:id,post_id,texto,votos']);
+        $post->load(['usuario:id,nome,nome_usuario,foto_perfil_url', 'opcoes:id,post_id,texto,votos']);
 
         return response()->json([
             'sucesso' => true,
@@ -145,7 +149,6 @@ class PostController extends Controller
             ], 403);
         }
 
-        // Texto e enquete exigem conteúdo; nos demais tipos a legenda é opcional
         $obrigatorio = in_array($post->tipo, ['texto', 'enquete']);
         $max = $post->tipo === 'enquete' ? 200 : 2000;
 
@@ -175,7 +178,7 @@ class PostController extends Controller
             ], 500);
         }
 
-        $post->load(['usuario:id,nome,nome_usuario', 'opcoes:id,post_id,texto,votos']);
+        $post->load(['usuario:id,nome,nome_usuario,foto_perfil_url', 'opcoes:id,post_id,texto,votos']);
 
         return response()->json([
             'sucesso' => true,
@@ -194,8 +197,6 @@ class PostController extends Controller
             ], 403);
         }
 
-        $caminho = $post->midia_path;
-
         try {
             DB::transaction(function () use ($post) {
                 $post->opcoes()->delete();
@@ -210,10 +211,7 @@ class PostController extends Controller
             ], 500);
         }
 
-        // Só apaga o arquivo depois que o banco confirmou a exclusão
-        if ($caminho) {
-            Storage::disk('public')->delete($caminho);
-        }
+        // Como a imagem agora está no ImgBB (nuvem externa), não precisamos de apagar do disco local do Render.
 
         return response()->json([
             'sucesso' => true,
@@ -222,24 +220,25 @@ class PostController extends Controller
     }
 
     private function formatar(Post $post): array
-{
-    return [
-        'id' => $post->id,
-        'tipo' => $post->tipo,
-        'conteudo' => $post->conteudo,
-        'midia_url' => $post->midia_path ? '/storage/' . $post->midia_path : null,
-        'opcoes' => $post->opcoes->map(fn ($o) => [
-            'id' => $o->id,
-            'texto' => $o->texto,
-            'votos' => $o->votos,
-        ])->values(),
-        'usuario' => [
-            'id' => $post->usuario->id,
-            'nome' => $post->usuario->nome,
-            'nome_usuario' => $post->usuario->nome_usuario,
-            'foto_perfil_url' => $post->usuario->foto_perfil_url, // <--- ADICIONE ESTA LINHA AQUI
-        ],
-        'criado_em' => $post->created_at->toIso8601String(),
-    ];
-}
+    {
+        return [
+            'id' => $post->id,
+            'tipo' => $post->tipo,
+            'conteudo' => $post->conteudo,
+            // Como midia_path já guarda o link completo da nuvem (ex: https://i.ibb.co/...), devolvemos direto
+            'midia_url' => $post->midia_path, 
+            'opcoes' => $post->opcoes->map(fn ($o) => [
+                'id' => $o->id,
+                'texto' => $o->texto,
+                'votos' => $o->votos,
+            ])->values(),
+            'usuario' => [
+                'id' => $post->usuario->id,
+                'nome' => $post->usuario->nome,
+                'nome_usuario' => $post->usuario->nome_usuario,
+                'foto_perfil_url' => $post->usuario->foto_perfil_url,
+            ],
+            'criado_em' => $post->created_at->toIso8601String(),
+        ];
+    }
 }
