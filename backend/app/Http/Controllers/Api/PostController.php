@@ -222,12 +222,22 @@ class PostController extends Controller
     private function formatar(Post $post): array
     {
         $urlMidia = $post->midia_path;
-
-        // Se existir um caminho de mídia, verificamos se já é um link completo da nuvem (ImgBB)
         if ($urlMidia) {
-            // Se não começar com http (ou https), significa que é um caminho antigo do storage local do Render
             if (!str_starts_with($urlMidia, 'http')) {
                 $urlMidia = url('storage/' . ltrim($urlMidia, '/'));
+            } else {
+                // Se por acaso foi gravado com http://, força https://
+                $urlMidia = str_replace('http://', 'https://', $urlMidia);
+            }
+        }
+
+        $fotoPerfil = $post->usuario->foto_perfil_url ?? null;
+        if ($fotoPerfil) {
+            if (!str_starts_with($fotoPerfil, 'http')) {
+                $fotoPerfil = url('storage/' . ltrim($fotoPerfil, '/'));
+            } else {
+                // Força https:// se veio com http:// do banco
+                $fotoPerfil = str_replace('http://', 'https://', $fotoPerfil);
             }
         }
 
@@ -245,7 +255,7 @@ class PostController extends Controller
                 'id' => $post->usuario->id,
                 'nome' => $post->usuario->nome,
                 'nome_usuario' => $post->usuario->nome_usuario,
-                'foto_perfil_url' => $post->usuario->foto_perfil_url,
+                'foto_perfil_url' => $fotoPerfil,
             ],
             'criado_em' => $post->created_at->toIso8601String(),
         ];
