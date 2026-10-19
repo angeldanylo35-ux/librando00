@@ -213,8 +213,8 @@ class PostController extends Controller
             ], 500);
         }
 
-        // Só apaga o arquivo depois que o banco confirmou a exclusão
-        if ($caminho) {
+        
+        if ($caminho && !str_starts_with($caminho, 'http')) {
             Storage::disk('public')->delete($caminho);
         }
 
