@@ -154,8 +154,24 @@ class PerfilController extends Controller
             'nome_usuario' => $u->nome_usuario,
             'localizacao' => $u->localizacao,
             'bio' => $u->bio,
-            'foto_perfil_url' => $u->foto_perfil_url,
-            'foto_capa_url' => $u->foto_capa_url,
+            'foto_perfil_url' => $this->corrigirUrlImagem($u->foto_perfil_url),
+            'foto_capa_url' => $this->corrigirUrlImagem($u->foto_capa_url),
         ];
+    }
+    private function corrigirUrlImagem(?string $url): ?string
+    {
+    if (!$url) {
+        return null;
+    }
+
+    if (str_starts_with($url, 'http://librando-backend-8eqs.onrender.com/')) {
+        return str_replace(
+            'http://librando-backend-8eqs.onrender.com/',
+            'https://librando-backend-8eqs.onrender.com/',
+            $url
+        );
+    }
+
+    return $url;
     }
 }
