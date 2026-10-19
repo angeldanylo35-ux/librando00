@@ -535,7 +535,7 @@ Interface funcionando online em: https://librando-frontend.onrender.com/ (menu *
 **a) Aplicação online e pública**
 - **URL:** https://librando-frontend.onrender.com/ (a mesma informada no Tópico 1, item a).
 - **Plataforma:** Render (deploy automático a partir do GitHub).
-- **Credenciais de teste** (a aplicação exige login): «E-MAIL DA CONTA DE TESTE» / «SENHA DA CONTA DE TESTE».
+- **Credenciais de teste** (a aplicação exige login): «admin@librando.com» / «123456».
 
 **b) Banco de dados online e persistindo dados**
 - **BD:** MySQL hospedado no Aiven. **Interface de acesso:** phpMyAdmin — https://librando-phpmyadmin.onrender.com
@@ -568,7 +568,7 @@ O envio de fotos usa `POST` com `multipart/form-data`, porque o PHP não process
 
 ### 4.3 Documentação da API
 
-Arquivo `docs/api/swagger.json` (OpenAPI 3.0, JSON válido), com `BearerAuth` (HTTP, `bearer`) e `security` nas rotas do perfil.
+Arquivo `https://github.com/angeldanylo35-ux/librando00/blob/main/docs/api/swagger.json](https://github.com/angeldanylo35-ux/librando00/blob/main/docs/api/swagger.json)` (OpenAPI 3.0, JSON válido), com `BearerAuth` (HTTP, `bearer`) e `security` nas rotas do perfil.
 
 | Método | Endpoint | O que documenta | Respostas |
 |---|---|---|---|
@@ -601,15 +601,15 @@ Arquivo `database/rf-007-editar-perfil-ddl.sql` (MySQL 8), equivalente às migra
 | HTML com CSS e JavaScript (Vue 3 + Tailwind CSS), página `Perfil.vue` | ✅ |
 | Mensagens de erro claras, em português (a API devolve `mensagem` e `campos`; o formulário exibe a mensagem) | ✅ |
 | Tratamento de erros (`try/catch`) nas chamadas à API, com retorno ao login em caso de `401` | ✅ |
-| Estado **preenchido**: perfil com nome, @, bio, localização e fotos | ✅ |
 | Estado **vazio**: sem foto (iniciais), sem bio ou localização (campos omitidos) | ✅ |
-| Estado **carregando**: botão "Salvando..." durante o envio | ✅ |
+| Estado **preenchido**: perfil com nome, @, bio, localização e fotos | ✅ |
 | Estado **erro**: mensagem do servidor exibida no formulário | ✅ |
+| Estado **carregando**: botão "Salvando..." durante o envio | ✅ |
+| Estado **sucesso**: mensagem "Perfil atualizado com sucesso!" após salvar, com o perfil exibindo os dados atualizados | ✅ |
 
 **Regras de validação (backend):** nome obrigatório (até 100); @ obrigatório, único, até 50, apenas letras, números, ponto e underline; localização até 100; bio até 300; fotos JPG, PNG ou WebP (perfil até 4 MB, capa até 6 MB). Somente esses campos são aceitos e a gravação é feita em um único `UPDATE`: em caso de falha, nada é alterado.
 
 ---
-
 ### 4.6 Autoavaliação (Tópico 4)
 
 | Parte | Situação |
@@ -671,24 +671,7 @@ Arquivo `database/rf-007-editar-perfil-ddl.sql` (MySQL 8), equivalente às migra
 | Arquivos | Disco `public` do Laravel | Guardar foto de perfil e foto de capa |
 | Hospedagem | Render (deploy a partir do GitHub) | Publicar frontend e backend |
 
-### 5.2 Fluxo de Dados (Editar Perfil)
-
-1. O usuário abre a tela de perfil; o Vue chama `GET /api/perfil` com o token.
-2. O Sanctum valida o token e identifica o usuário; o `PerfilController` devolve nome, @usuário, localização, bio e URLs das fotos.
-3. O formulário é preenchido com esses dados; o usuário altera os campos e/ou escolhe novas imagens.
-4. O Vue envia `POST /api/perfil` (multipart/form-data) com o token.
-5. O Laravel valida os campos (tamanho, formato do @, unicidade, tipo e tamanho das imagens).
-6. Se houver erro, responde `400` com a mensagem e a lista de campos inválidos; o Vue exibe a mensagem de erro no formulário, sem fechá-lo.
-7. Se estiver válido, o backend grava as imagens no disco, atualiza a linha do usuário no MySQL em um único `UPDATE` e só depois apaga as imagens antigas.
-8. A API responde `200` com o perfil atualizado; o Vue fecha o formulário e exibe os dados atualizados na tela.
-
-### 5.3 Padrão de Design
-
-**API REST em camadas (MVC sem camada de visão no servidor).** O fluxo é: Rota → Middleware de autenticação → Controller → Model (Eloquent) → Banco. A "View" do MVC é a SPA em Vue, que consome apenas JSON.
-
-*Justificativa:* separa responsabilidades (a tela não conhece o banco, e o banco não conhece a tela), permite evoluir frontend e backend de forma independente e segue o padrão do framework, o que reduz código e erros.
-
-### 5.4 Decisões Arquiteturais (ADRs)
+### 5.2 Decisões Arquiteturais (ADRs)
 
 **ADR-001: Frontend e backend separados (SPA + API REST)**
 - *Decisão:* Vue 3 como SPA e Laravel apenas como API JSON.
@@ -720,11 +703,25 @@ Arquivo `database/rf-007-editar-perfil-ddl.sql` (MySQL 8), equivalente às migra
 - *Razão:* gratuito para o escopo da disciplina, URL pública sem configuração de servidor e integração contínua direta com o repositório.
 - *Consequência:* segredos ficam nas variáveis de ambiente do Render, nunca no repositório.
 
+### 5.3 Fluxo de Dados (Editar Perfil)
+
+1. O usuário abre a tela de perfil; o Vue chama `GET /api/perfil` com o token.
+2. O Sanctum valida o token e identifica o usuário; o `PerfilController` devolve nome, @usuário, localização, bio e URLs das fotos.
+3. O formulário é preenchido com esses dados; o usuário altera os campos e/ou escolhe novas imagens.
+4. O Vue envia `POST /api/perfil` (multipart/form-data) com o token.
+5. O Laravel valida os campos (tamanho, formato do @, unicidade, tipo e tamanho das imagens).
+6. Se houver erro, responde `400` com a mensagem e a lista de campos inválidos; o Vue exibe a mensagem de erro no formulário, sem fechá-lo.
+7. Se estiver válido, o backend grava as imagens no disco, atualiza a linha do usuário no MySQL em um único `UPDATE` e só depois apaga as imagens antigas.
+8. A API responde `200` com o perfil atualizado; o Vue fecha o formulário, exibe a mensagem de sucesso e mostra os dados atualizados na tela.
+
+### 5.4 Padrão de Design
+
+**API REST em camadas (MVC sem camada de visão no servidor).** O fluxo é: Rota → Middleware de autenticação → Controller → Model (Eloquent) → Banco. A "View" do MVC é a SPA em Vue, que consome apenas JSON.
+
+*Justificativa:* separa responsabilidades (a tela não conhece o banco, e o banco não conhece a tela), permite evoluir frontend e backend de forma independente e segue o padrão do framework, o que reduz código e erros.
 ---
 
 ## 6. Segurança OWASP
-
-> ⚠️ **Antes de entregar:** execute cada teste abaixo na aplicação publicada, confirme que o resultado é o descrito (ajuste o texto se for diferente) e apague este aviso. Em testes por Postman/curl, envie o cabeçalho `Accept: application/json`.
 
 ### Controle 1: Controle de acesso e autenticação nas rotas do perfil
 
