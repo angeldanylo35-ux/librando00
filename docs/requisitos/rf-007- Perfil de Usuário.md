@@ -535,7 +535,7 @@ Interface funcionando online em: https://librando-frontend.onrender.com/ (menu *
 **a) Aplicação online e pública**
 - **URL:** https://librando-frontend.onrender.com/ (a mesma informada no Tópico 1, item a).
 - **Plataforma:** Render (deploy automático a partir do GitHub).
-- **Credenciais de teste** (a aplicação exige login): «admin@librando.com» / «123456».
+- **Credenciais de teste** (a aplicação exige login): «teste@librando.com» / «Teste123».
 
 **b) Banco de dados online e persistindo dados**
 - **BD:** MySQL hospedado no Aiven. **Interface de acesso:** phpMyAdmin — https://librando-phpmyadmin.onrender.com
