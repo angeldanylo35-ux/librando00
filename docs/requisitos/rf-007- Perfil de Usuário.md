@@ -36,18 +36,8 @@
 - **Estrutura:**
 ```
 librando00-main/
-├── README.md
 ├── .gitignore
-├── docs/
-│   ├── api/
-│   │   └── swagger.json
-│   └── requisitos/
-│       ├── rf-001-login.md
-│       ├── rf-002-cadastrar.md
-│       ├── rf-003-Esqueci-minha-senha.md
-│       ├── rf-004-Tela-Inicial-Usuário.md
-│       ├── rf-006-Posts.md
-│       └── rf-007-Perfil de Usuário.md
+├── README.md
 ├── backend/
 │   ├── .editorconfig
 │   ├── .env.example
@@ -56,6 +46,7 @@ librando00-main/
 │   ├── .npmrc
 │   ├── AGENTS.md
 │   ├── CLAUDE.md
+│   ├── Dockerfile
 │   ├── README.md
 │   ├── artisan
 │   ├── composer.json
@@ -66,35 +57,38 @@ librando00-main/
 │   │   ├── Http/
 │   │   │   ├── Controllers/
 │   │   │   │   ├── Controller.php
-│   │   │   │   ├── api/
+│   │   │   │   ├── Api/
 │   │   │   │   │   ├── AuthController.php
 │   │   │   │   │   ├── PasswordResetController.php
 │   │   │   │   │   ├── PerfilController.php
 │   │   │   │   │   └── PostController.php
-│   │   │   │   └── auth/
-│   │   │   │       └── PasswordResetController.php
-│   │   └── Mail/
-│   │       ├── RecuperacaoSenha.php
-│   │       └── VerificacaoCadastro.php
-│   │   └── Models/
-│   │       ├── CadastroPendente.php
-│   │       ├── PasswordResetCode.php
-│   │       ├── Post.php
-│   │       ├── RecuperacaoSenha.php
-│   │       ├── User.php
-│   │       ├── Usuario.php
-│   │       ├── VerificacaoEmail.php
-│   │       └── enqueteopcao.php
-│   │   └── Notifications/
-│   │       ├── PasswordChangedNotification.php
-│   │       └── ResetCodeNotification.php
-│   │   └── Providers/
-│   │       └── AppServiceProvider.php
+│   │   │   │   ├── api/  *(duplicado/legado)*
+│   │   │   │   └── auth/ *(legado)*
+│   │   │   └── ...
+│   │   ├── Mail/
+│   │   │   ├── RecuperacaoSenha.php
+│   │   │   └── VerificacaoCadastro.php
+│   │   ├── Models/
+│   │   │   ├── CadastroPendente.php
+│   │   │   ├── EnqueteOpcao.php
+│   │   │   ├── PasswordResetCode.php
+│   │   │   ├── Post.php
+│   │   │   ├── RecuperacaoSenha.php
+│   │   │   ├── User.php
+│   │   │   ├── Usuario.php
+│   │   │   ├── VerificacaoEmail.php
+│   │   │   └── enqueteopcao.php
+│   │   ├── Notifications/
+│   │   │   ├── PasswordChangedNotification.php
+│   │   │   └── ResetCodeNotification.php
+│   │   ├── Providers/
+│   │   │   └── AppServiceProvider.php
+│   │   └── Services/
+│   │       └── ImageService.php
 │   ├── bootstrap/
 │   │   ├── app.php
 │   │   ├── providers.php
 │   │   └── cache/
-│   │       └── .gitignore
 │   ├── config/
 │   │   ├── app.php
 │   │   ├── auth.php
@@ -109,7 +103,6 @@ librando00-main/
 │   │   ├── services.php
 │   │   └── session.php
 │   ├── database/
-│   │   ├── .gitignore
 │   │   ├── factories/
 │   │   │   └── UserFactory.php
 │   │   ├── migrations/
@@ -125,11 +118,11 @@ librando00-main/
 │   │   │   ├── 2026_10_12_020211_create_posts_table.php
 │   │   │   ├── 2026_10_12_020212_create_enquete_opcoes_table.php
 │   │   │   ├── 2026_10_17_185642_add_perfil_to_usuarios_table.php
-│   │   │   ├── 2026_10_17_193725_ajusta_colunas_perfil_em_usuarios.php
-│   │   │   └── migrations/
-│   │       └── seeders/
-│   │           ├── DatabaseSeeder.php
-│   │           └── UsuarioSeeder.php
+│   │   │   └── 2026_10_17_193725_ajusta_colunas_perfil_em_usuarios.php
+│   │   ├── seeders/
+│   │   │   ├── DatabaseSeeder.php
+│   │   │   └── UsuarioSeeder.php
+│   │   └── .gitignore
 │   ├── public/
 │   │   ├── .htaccess
 │   │   ├── favicon.ico
@@ -155,22 +148,22 @@ librando00-main/
 │   │   └── web.php
 │   ├── storage/
 │   │   ├── app/
-│   │   │   ├── .gitignore
-│   │   │   └── private/
-│   │   │       └── .gitignore
 │   │   ├── framework/
-│   │   │   ├── cache/
-│   │   │   ├── sessions/
-│   │   │   ├── testing/
-│   │   │   └── views/
 │   │   └── logs/
-│   │       └── .gitignore
 │   └── tests/
-│       ├── TestCase.php
-│       ├── Feature/
-│       │   └── ExampleTest.php
-│       └── Unit/
-│           └── ExampleTest.php
+│   │   ├── TestCase.php
+│   │   ├── Feature/
+│   │   └── Unit/
+├── docs/
+│   ├── api/
+│   │   └── swagger.json
+│   └── requisitos/
+│       ├── rf-001-login.md
+│       ├── rf-002-cadastrar.md
+│       ├── rf-003-Esqueci-minha-senha.md
+│       ├── rf-004-Tela-Inicial-Usuário.md
+│       ├── rf-006-Posts.md
+│       └── rf-007-Perfil de Usuário.md
 └── frontend/
     ├── .gitignore
     ├── README.md
