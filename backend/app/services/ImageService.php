@@ -1,34 +1,50 @@
 <?php
+
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Exception;
 
 class ImageService
 {
-    public static function uploadParaImgBB(UploadedFile $file)
+    public static function uploadParaImgBB(UploadedFile $file): string
     {
-        $apiKey = env('IMGBB_API_KEY');
+        $apiKey = config('services.imgbb.key');
 
         if (!$apiKey) {
-            throw new Exception('A chave IMGBB_API_KEY não está configurada no ambiente.');
+            throw new Exception('A chave do ImgBB não está configurada.');
         }
 
-        // Converte o ficheiro para base64
-        $imageResource = fopen($file->getRealPath(), 'r');
-        $imageStream = stream_get_contents($imageResource);
-        $imageBase64 = base64_encode($imageStream);
+        $response = Http::asForm()
+            ->timeout(30)
+            ->post('https://api.imgbb.com/1/upload', [
+                'key' => $apiKey,
+                'image' => base64_encode(
+                    file_get_contents($file->getRealPath())
+                ),
+            ]);
 
-        $response = Http::asForm()->post("https://api.imgbb.com/1/upload", [
-            'key' => $apiKey,
-            'image' => $imageBase64,
-        ]);
+        if (!$response->successful()) {
+            Log::error('Falha no ImgBB', [
+                'status' => $response->status(),
+                'resposta' => $response->json(),
+            ]);
 
-        if ($response->successful()) {
-            return $response->json('data.url');
+            throw new Exception('O ImgBB recusou o upload da imagem.');
         }
 
-        throw new Exception('Erro ao fazer upload da imagem para o ImgBB.');
+        $url = $response->json('data.url');
+
+        if (!is_string($url) || !filter_var($url, FILTER_VALIDATE_URL)) {
+            Log::error('Resposta inválida do ImgBB', [
+                'resposta' => $response->json(),
+            ]);
+
+            throw new Exception('O ImgBB não retornou uma URL válida.');
+        }
+
+        return $url;
     }
 }
