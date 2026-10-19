@@ -7,7 +7,9 @@ return [
     | Third Party Services
     |--------------------------------------------------------------------------
     */
-
+    'imgbb' => [
+    'key' => env('IMGBB_API_KEY'),
+    ],
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],
