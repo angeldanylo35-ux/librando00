@@ -340,13 +340,13 @@ async function publish() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F8F9FA] pl-0 lg:pl-56 text-left font-sans text-[#1A1A1A] antialiased pb-24 lg:pb-0">
+  <div class="min-h-screen bg-[#F8F9FA] pl-0 min-[980px]:pl-56 text-left font-sans text-[#1A1A1A] antialiased pb-24 min-[980px]:pb-0">
     
     <!-- SIDEBAR / BARRA INFERIOR NO MOBILE -->
-    <aside class="fixed inset-x-0 bottom-0 z-20 flex flex-row justify-around border-t border-gray-200 bg-white px-2 py-3 lg:inset-y-0 lg:left-0 lg:w-56 lg:flex-col lg:justify-start lg:px-4 lg:py-8 lg:border-r lg:border-t-0">
+    <aside class="fixed inset-x-0 bottom-0 z-20 flex flex-row justify-around items-center border-t border-gray-200 bg-white px-2 py-3 min-[980px]:inset-y-0 min-[980px]:left-0 min-[980px]:w-56 min-[980px]:flex-col min-[980px]:justify-start min-[980px]:px-4 min-[980px]:py-8 min-[980px]:border-r min-[980px]:border-t-0">
       
-      <!-- LOGO (Aparece apenas no Desktop) -->
-      <div class="hidden px-1 lg:block">
+      <!-- LOGO (Exibido na barra lateral apenas no Desktop 980px+) -->
+      <div class="hidden min-[980px]:block px-1">
         <h1 class="text-[32px] font-extrabold leading-none tracking-tight" style="color: #635BFF !important;">
           Librando.
         </h1>
@@ -356,13 +356,13 @@ async function publish() {
       </div>
 
       <!-- NAVEGAÇÃO -->
-      <nav class="flex w-full flex-row justify-around items-center lg:mt-8 lg:flex-col lg:items-stretch lg:gap-1" aria-label="Principal">
+      <nav class="flex w-full flex-row justify-around items-center min-[980px]:mt-6 min-[980px]:flex-col min-[980px]:items-stretch min-[980px]:gap-1" aria-label="Principal">
         <button
           v-for="item in navItems"
           :key="item.label"
           type="button"
-          class="flex items-center justify-center gap-2 rounded-lg p-2.5 lg:px-3 lg:py-3 lg:justify-start lg:text-[16px] transition-colors"
-          :class="item.active ? 'text-[#635BFF] lg:bg-[#EEEDFF] lg:font-medium' : 'text-[#1A1A1A] hover:bg-gray-50'"
+          class="relative flex items-center justify-center gap-2 rounded-lg p-2.5 min-[980px]:px-3 min-[980px]:py-3 min-[980px]:justify-start min-[980px]:text-[16px] transition-colors"
+          :class="item.active ? 'text-[#635BFF] min-[980px]:bg-[#EEEDFF] min-[980px]:font-medium' : 'text-[#1A1A1A] hover:bg-gray-50'"
           :aria-current="item.active ? 'page' : undefined"
           @click="navegarPara(item.route)"
         >
@@ -377,27 +377,29 @@ async function publish() {
             aria-hidden="true"
             v-html="icons[item.icon]"
           />
-          <span class="hidden lg:inline">{{ item.label }}</span>
+          <span class="hidden min-[980px]:inline">{{ item.label }}</span>
+          
+          <!-- BADGE POSICIONADA DENTRO DO ÍCONE NO MOBILE -->
           <span
             v-if="item.badge"
-            class="absolute top-1 right-1 lg:static ml-1 flex h-4 w-4 lg:h-5.5 lg:min-w-5.5 items-center justify-center rounded-full bg-[#635BFF] px-1 text-[10px] lg:text-[12px] font-semibold text-white"
+            class="absolute top-1 right-1.5 min-[980px]:static min-[980px]:ml-auto flex h-4 w-4 min-[980px]:h-5.5 min-[980px]:min-w-5.5 items-center justify-center rounded-full bg-[#635BFF] text-[10px] min-[980px]:text-[12px] font-semibold text-white"
           >
             {{ item.badge }}
           </span>
         </button>
 
-        <!-- Botão criar vídeo (Oculto no mobile, visível no desktop) -->
+        <!-- Botão criar vídeo -->
         <button
           type="button"
-          class="hidden lg:mt-3 lg:flex items-center justify-center gap-3 rounded-lg border border-gray-200 bg-white px-3 py-3 text-[15px] font-semibold text-[#1A1A1A] transition-colors hover:bg-gray-50"
+          class="hidden min-[980px]:mt-3 min-[980px]:flex items-center justify-center gap-3 rounded-lg border border-gray-200 bg-white px-3 py-3 text-[15px] font-semibold text-[#1A1A1A] transition-colors hover:bg-gray-50"
         >
           <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" v-html="icons.plus" />
           Criar vídeo
         </button>
       </nav>
 
-      <!-- PERFIL DO USUÁRIO NA SIDEBAR (Apenas Desktop) -->
-      <div class="mt-auto hidden lg:block">
+      <!-- PERFIL DO USUÁRIO NA SIDEBAR (Apenas Desktop 980px+) -->
+      <div class="mt-auto hidden min-[980px]:block">
         <div class="mt-3 border-t border-gray-200 pt-4">
           <button type="button" class="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-gray-50" @click="router.push('/perfil')">
             <img
@@ -422,24 +424,35 @@ async function publish() {
     </aside>
 
     <!-- CONTEÚDO PRINCIPAL -->
-    <div class="mx-auto grid max-w-285 grid-cols-1 justify-center gap-6 px-4 py-4 lg:gap-12 lg:px-8 lg:py-8 lg:grid-cols-[minmax(0,720px)_minmax(0,320px)]">
+    <div class="mx-auto grid max-w-285 grid-cols-1 justify-center gap-6 px-4 py-4 min-[980px]:gap-12 min-[980px]:px-8 min-[980px]:py-8 min-[980px]:grid-cols-[minmax(0,720px)_minmax(0,320px)]">
       <main class="min-w-0">
-        <header class="mb-5 flex items-end justify-between">
-          <h2
-            class="text-[20px] lg:text-[24px] font-bold tracking-tight"
-            style="color: #1A1A1A !important; -webkit-text-fill-color: #1A1A1A !important; opacity: 1 !important; visibility: visible !important;"
-          >
-            Seu mundo em Libras.
-          </h2>
+        <header class="mb-5 flex items-center justify-between">
+          <!-- Esquerda: Título -->
+          <div class="flex-1 text-left">
+            <h2
+              class="text-[18px] min-[980px]:text-[24px] font-bold tracking-tight"
+              style="color: #1A1A1A !important; -webkit-text-fill-color: #1A1A1A !important; opacity: 1 !important; visibility: visible !important;"
+            >
+              Seu mundo em Libras.
+            </h2>
+          </div>
 
-          <div class="flex gap-4 lg:gap-6 text-[14px]" role="tablist">
+          <!-- Centro: Logo Librando (Visível apenas em telas menores que 980px) -->
+          <div class="flex-1 text-center min-[980px]:hidden">
+            <h1 class="text-[22px] font-extrabold" style="color: #635BFF !important;">
+              Librando.
+            </h1>
+          </div>
+
+          <!-- Direita: Abas -->
+          <div class="flex-1 flex justify-end gap-4 min-[980px]:gap-6 text-[14px]" role="tablist">
             <button
               v-for="tab in tabs"
               :key="tab"
               type="button"
               role="tab"
               :aria-selected="activeTab === tab"
-              class="border-b-2 pb-1.5 transition-colors"
+              class="border-b-2 pb-1.5 transition-colors shrink-0"
               :class="activeTab === tab ? 'border-[#635BFF] font-medium text-[#635BFF]' : 'border-transparent text-gray-600'"
               @click="activeTab = tab"
             >
@@ -639,7 +652,7 @@ async function publish() {
           class="mb-5 overflow-hidden rounded-2xl border border-gray-200 bg-white"
         >
           <!-- CABEÇALHO DO POST -->
-          <div class="flex items-center gap-3 px-4 lg:px-5 py-4">
+          <div class="flex items-center gap-3 px-4 min-[980px]:px-5 py-4">
             <img
               v-if="post.foto"
               :src="post.foto"
@@ -665,7 +678,7 @@ async function publish() {
             <template v-if="post.own">
               <button
                 type="button"
-                class="rounded-lg border border-gray-200 px-2.5 py-1.5 lg:px-3 lg:py-2 text-[12px] lg:text-[13px] font-semibold text-[#635BFF] hover:bg-[#EEEDFF] disabled:opacity-50"
+                class="rounded-lg border border-gray-200 px-2.5 py-1.5 min-[980px]:px-3 min-[980px]:py-2 text-[12px] min-[980px]:text-[13px] font-semibold text-[#635BFF] hover:bg-[#EEEDFF] disabled:opacity-50"
                 :disabled="postSendoExcluido === post.id || salvandoEdicao"
                 @click="postEmEdicao === post.id ? cancelarEdicao() : iniciarEdicao(post)"
               >
@@ -674,7 +687,7 @@ async function publish() {
 
               <button
                 type="button"
-                class="rounded-lg border border-red-200 px-2.5 py-1.5 lg:px-3 lg:py-2 text-[12px] lg:text-[13px] font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
+                class="rounded-lg border border-red-200 px-2.5 py-1.5 min-[980px]:px-3 min-[980px]:py-2 text-[12px] min-[980px]:text-[13px] font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
                 :disabled="postSendoExcluido === post.id || salvandoEdicao"
                 @click="excluirPost(post)"
               >
@@ -686,7 +699,7 @@ async function publish() {
           <!-- EDITAR TEXTO DA PUBLICAÇÃO -->
           <div
             v-if="postEmEdicao === post.id"
-            class="mx-4 lg:mx-5 mb-4 rounded-xl border border-[#635BFF]/30 bg-[#F8F7FF] p-4"
+            class="mx-4 min-[980px]:mx-5 mb-4 rounded-xl border border-[#635BFF]/30 bg-[#F8F7FF] p-4"
           >
             <label :for="`editar-post-${post.id}`" class="mb-2 block text-[13px] font-semibold text-[#635BFF]">
               Editar publicação
@@ -746,7 +759,7 @@ async function publish() {
           <!-- ENQUETE -->
           <div
             v-else-if="postEmEdicao !== post.id && post.tipo === 'enquete'"
-            class="px-4 lg:px-5 pb-1 text-left"
+            class="px-4 min-[980px]:px-5 pb-1 text-left"
           >
             <p class="text-[16px] font-medium leading-7">{{ post.caption }}</p>
             <ul class="mt-3 space-y-2">
@@ -764,13 +777,13 @@ async function publish() {
           <!-- POST DE TEXTO -->
           <div
             v-else-if="postEmEdicao !== post.id"
-            class="px-4 lg:px-5 pb-1 text-left text-[16px] leading-7"
+            class="px-4 min-[980px]:px-5 pb-1 text-left text-[16px] leading-7"
           >
             {{ post.caption }}
           </div>
 
           <!-- AÇÕES DO POST -->
-          <div class="flex items-center justify-between px-4 lg:px-5 py-4 text-gray-500">
+          <div class="flex items-center justify-between px-4 min-[980px]:px-5 py-4 text-gray-500">
             <div class="flex items-center gap-6">
               <!-- Curtida -->
               <button
@@ -812,8 +825,8 @@ async function publish() {
         </article>
       </main>
 
-      <!-- BARRA LATERAL DIREITA (Sugestões/Tendências - Apenas Desktop) -->
-      <aside class="hidden lg:block space-y-5">
+      <!-- BARRA LATERAL DIREITA (Apenas Desktop 980px+) -->
+      <aside class="hidden min-[980px]:block space-y-5">
         <div class="rounded-2xl border border-gray-200 bg-white p-4">
           <h3 class="text-[16px] font-bold text-[#1A1A1A]">Tendências em Libras</h3>
           <ul class="mt-3 space-y-3">
