@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Services\ImageService;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -86,25 +87,21 @@ class PerfilController extends Controller
         // RN-13: só atualiza o que foi enviado (campo ausente = mantém o atual)
         $dados = $request->only(self::CAMPOS);
 
-        // Grava os arquivos e guarda a URL pública nas colunas *_url
-        $novosArquivos = [];
-        $antigos = [];
-
+        // Envia os arquivos diretamente para o ImgBB (Nuvem)
         try {
             foreach (self::ARQUIVOS as $campo => [$coluna, $pasta]) {
                 if ($request->hasFile($campo)) {
-                    $caminho = $request->file($campo)->store($pasta, 'public');
-                    $novosArquivos[] = $caminho;
-                    $antigos[] = $user->{$coluna};
-                    $dados[$coluna] = asset('storage/' . $caminho);
+                    // Faz upload para o ImgBB e obtém o link direto permanente
+                    $urlPublica = \App\Services\ImageService::uploadParaImgBB($request->file($campo));
+                    $dados[$coluna] = $urlPublica;
                 }
             }
         } catch (\Throwable $e) {
-            Log::error('Falha ao gravar imagem do perfil: ' . $e->getMessage());
+            Log::error('Falha ao enviar imagem para o ImgBB: ' . $e->getMessage());
 
             return response()->json([
                 'sucesso' => false,
-                'mensagem' => 'Não foi possível salvar a imagem. Tente novamente.',
+                'mensagem' => 'Não foi possível enviar a imagem para a nuvem. Tente novamente.',
             ], 500);
         }
 
@@ -118,8 +115,6 @@ class PerfilController extends Controller
         try {
             $user->forceFill($dados)->save(); // um único UPDATE: ou grava tudo ou não grava nada (RNF-06)
         } catch (QueryException $e) {
-            Storage::disk('public')->delete($novosArquivos); // não deixa arquivo órfão
-
             // Duas pessoas pegando o mesmo @ ao mesmo tempo: o índice único do banco barra
             if ($e->getCode() === '23000' && array_key_exists('nome_usuario', $dados)) {
                 return response()->json([
@@ -136,21 +131,12 @@ class PerfilController extends Controller
                 'mensagem' => 'Não foi possível salvar o perfil. Tente novamente.',
             ], 500);
         } catch (\Throwable $e) {
-            Storage::disk('public')->delete($novosArquivos);
-
             Log::error('Falha ao atualizar perfil: ' . $e->getMessage());
 
             return response()->json([
                 'sucesso' => false,
                 'mensagem' => 'Não foi possível salvar o perfil. Tente novamente.',
             ], 500);
-        }
-
-        // Só apaga as imagens antigas depois que o banco confirmou
-        foreach ($antigos as $urlAntiga) {
-            if ($urlAntiga && Str::contains($urlAntiga, '/storage/')) {
-                Storage::disk('public')->delete(Str::after($urlAntiga, '/storage/'));
-            }
         }
 
         // RN-10: só chega aqui se o banco confirmou
@@ -160,7 +146,6 @@ class PerfilController extends Controller
             'perfil' => $this->formatar($user->fresh()),
         ]);
     }
-
     private function formatar($u): array
     {
         return [
