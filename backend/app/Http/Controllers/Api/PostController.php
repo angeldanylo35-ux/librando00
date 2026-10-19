@@ -221,12 +221,21 @@ class PostController extends Controller
 
     private function formatar(Post $post): array
     {
+        $urlMidia = $post->midia_path;
+
+        // Se existir um caminho de mídia, verificamos se já é um link completo da nuvem (ImgBB)
+        if ($urlMidia) {
+            // Se não começar com http (ou https), significa que é um caminho antigo do storage local do Render
+            if (!str_starts_with($urlMidia, 'http')) {
+                $urlMidia = url('storage/' . ltrim($urlMidia, '/'));
+            }
+        }
+
         return [
             'id' => $post->id,
             'tipo' => $post->tipo,
             'conteudo' => $post->conteudo,
-            // Como midia_path já guarda o link completo da nuvem (ex: https://i.ibb.co/...), devolvemos direto
-            'midia_url' => $post->midia_path, 
+            'midia_url' => $urlMidia, 
             'opcoes' => $post->opcoes->map(fn ($o) => [
                 'id' => $o->id,
                 'texto' => $o->texto,
