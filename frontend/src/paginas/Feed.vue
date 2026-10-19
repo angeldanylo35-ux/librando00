@@ -36,7 +36,6 @@ const perfil = ref({
   foto_perfil_url: '',
 })
 
-// Mesmos nomes de antes, então o template que usa {{ nome }} e {{ nomeUsuario }} não muda
 const nome = computed(() => perfil.value.nome || 'Usuário')
 const nomeUsuario = computed(() => perfil.value.nome_usuario || 'usuario')
 
@@ -61,7 +60,7 @@ async function carregarPerfil() {
     localStorage.setItem('nome', data.perfil.nome)
     localStorage.setItem('nome_usuario', data.perfil.nome_usuario)
   } catch (e) {
-    // sem conexão: mantém o nome e o @ que já estavam salvos no navegador
+    // sem conexão
   }
 }
 
@@ -75,21 +74,6 @@ const navItems = [
   { label: 'Meu perfil', icon: 'user', route: '/perfil' },
   { label: 'Mais', icon: 'menu' },
 ]
-
-const suggestions = [
-  { name: 'Bia Santos', handle: '@bia.sinais', note: 'Seguida por Ana Clara', initials: 'BS' },
-  { name: 'Pedro Oliveira', handle: '@pedro.emlibras', note: 'Educador de Libras', initials: 'PO' },
-  { name: 'Júlia Mendes', handle: '@julia.sinaliza', note: 'Novo no Librando', initials: 'JM' },
-  { name: 'Rafael Lima', handle: '@rafa.libras', note: 'Criador de conteúdo', initials: 'RL' },
-]
-
-const trending = [
-  { tag: '#LibrasNoDiaADia', count: '2,4 mil vídeos' },
-  { tag: '#CulturaSurda', count: '1,8 mil vídeos' },
-  { tag: '#AprendaLibras', count: '956 vídeos' },
-]
-
-const footerLinks = ['Sobre', 'Acessibilidade', 'Ajuda', 'Privacidade', 'Termos', 'Diretrizes da comunidade']
 
 const tabs = ['Para você', 'Seguindo']
 const activeTab = ref('Para você')
@@ -172,32 +156,8 @@ function alternarComentario(post) {
   post.comentou ? post.comments++ : post.comments--
 }
 
-function alternarRepost(post) {
-  post.repostou = !post.repostou
-  post.repostou ? post.reposts++ : post.reposts--
-
-  localStorage.setItem('librando_reacoes', JSON.stringify({
-    repostou: post.repostou,
-    totalReposts: post.reposts,
-    curtiu: post.curtiu,
-    totalCurtidas: post.likes,
-    comentou: post.comentou,
-    totalComentarios: post.comments,
-    salvou: post.salvou
-  }))
-}
-
-function enviarPost() {
-  // Mantido neutro
-}
-
-function alternarSalvar(post) {
-  post.salvou = !post.salvou
-}
-
 function iniciarEdicao(post) {
   if (!post.own) return
-
   postEmEdicao.value = post.id
   conteudoEdicao.value = post.caption || ''
   feedbackPost.value = ''
@@ -210,7 +170,6 @@ function cancelarEdicao() {
 
 async function salvarEdicao(post) {
   const conteudo = conteudoEdicao.value.trim()
-
   if (!conteudo || salvandoEdicao.value) return
 
   salvandoEdicao.value = true
@@ -231,11 +190,8 @@ async function salvarEdicao(post) {
     feedbackPost.value = data.mensagem || 'Publicação atualizada com sucesso.'
   } catch (erro) {
     if (tratarErroAuth(erro)) return
-
     feedbackPostOk.value = false
-    feedbackPost.value =
-      erro.response?.data?.mensagem ||
-      'Não foi possível atualizar a publicação. Verifique se a API de edição já está disponível.'
+    feedbackPost.value = erro.response?.data?.mensagem || 'Não foi possível atualizar a publicação.'
   } finally {
     salvandoEdicao.value = false
   }
@@ -243,11 +199,7 @@ async function salvarEdicao(post) {
 
 async function excluirPost(post) {
   if (!post.own || postSendoExcluido.value !== null) return
-
-  const confirmar = window.confirm(
-    'Tem certeza de que deseja excluir esta publicação? Essa ação não pode ser desfeita.',
-  )
-
+  const confirmar = window.confirm('Tem certeza de que deseja excluir esta publicação?')
   if (!confirmar) return
 
   postSendoExcluido.value = post.id
@@ -255,35 +207,24 @@ async function excluirPost(post) {
 
   try {
     const { data } = await api.delete(`/posts/${post.id}`)
-
     posts.value = posts.value.filter((item) => item.id !== post.id)
-
-    if (postEmEdicao.value === post.id) {
-      cancelarEdicao()
-    }
-
+    if (postEmEdicao.value === post.id) cancelarEdicao()
     feedbackPostOk.value = true
     feedbackPost.value = data.mensagem || 'Publicação excluída com sucesso.'
   } catch (erro) {
     if (tratarErroAuth(erro)) return
-
     feedbackPostOk.value = false
-    feedbackPost.value =
-      erro.response?.data?.mensagem ||
-      'Não foi possível excluir a publicação. Verifique se a API de exclusão já está disponível.'
+    feedbackPost.value = erro.response?.data?.mensagem || 'Não foi possível excluir a publicação.'
   } finally {
     postSendoExcluido.value = null
   }
 }
 
 function navegarPara(route) {
-  if (route) {
-    router.push(route)
-  }
+  if (route) router.push(route)
 }
 
 onMounted(async () => {
-  // Carrega o perfil antes dos posts para marcar corretamente quais são seus
   await carregarPerfil()
   carregarFeed()
 })
@@ -305,23 +246,19 @@ const remaining = computed(() => MAX_CHARS - draft.value.length)
 
 const tipoAtual = computed(() => {
   if (modoEnquete.value) return 'enquete'
-
   const mime = arquivo.value?.type ?? ''
   if (mime === 'image/gif') return 'gif'
   if (mime.startsWith('image/')) return 'imagem'
   if (mime.startsWith('video/')) return 'video'
-
   return 'texto'
 })
 
 const canPublish = computed(() => {
   if (publicando.value) return false
-
   if (modoEnquete.value) {
     const preenchidas = opcoes.value.filter((o) => o.trim()).length
     return draft.value.trim().length > 0 && preenchidas >= 2
   }
-
   return draft.value.trim().length > 0 || !!arquivo.value
 })
 
@@ -332,7 +269,6 @@ function abrirSeletor() {
 function escolherArquivo(event) {
   const f = event.target.files[0] ?? null
   if (!f) return
-
   modoEnquete.value = false
   arquivo.value = f
   previewUrl.value = URL.createObjectURL(f)
@@ -342,30 +278,20 @@ function escolherArquivo(event) {
 function removerArquivo() {
   arquivo.value = null
   previewUrl.value = ''
-
-  if (inputArquivo.value) {
-    inputArquivo.value.value = ''
-  }
+  if (inputArquivo.value) inputArquivo.value.value = ''
 }
 
 function alternarEnquete() {
   modoEnquete.value = !modoEnquete.value
-
-  if (modoEnquete.value) {
-    removerArquivo()
-  }
+  if (modoEnquete.value) removerArquivo()
 }
 
 function adicionarOpcao() {
-  if (opcoes.value.length < 4) {
-    opcoes.value.push('')
-  }
+  if (opcoes.value.length < 4) opcoes.value.push('')
 }
 
 function removerOpcao(i) {
-  if (opcoes.value.length > 2) {
-    opcoes.value.splice(i, 1)
-  }
+  if (opcoes.value.length > 2) opcoes.value.splice(i, 1)
 }
 
 function cancelar() {
@@ -378,7 +304,6 @@ function cancelar() {
 
 async function publish() {
   if (!canPublish.value) return
-
   publicando.value = true
   feedback.value = ''
 
@@ -391,10 +316,7 @@ async function publish() {
   }
 
   if (modoEnquete.value) {
-    opcoes.value
-      .map((o) => o.trim())
-      .filter(Boolean)
-      .forEach((o) => form.append('opcoes[]', o))
+    opcoes.value.map((o) => o.trim()).filter(Boolean).forEach((o) => form.append('opcoes[]', o))
   }
 
   try {
@@ -409,11 +331,8 @@ async function publish() {
     setTimeout(() => (feedback.value = ''), 4000)
   } catch (erro) {
     if (tratarErroAuth(erro)) return
-
     feedbackOk.value = false
-    feedback.value =
-      erro.response?.data?.mensagem ??
-      'Não foi possível realizar a publicação. Tente novamente.'
+    feedback.value = erro.response?.data?.mensagem ?? 'Não foi possível realizar a publicação.'
   } finally {
     publicando.value = false
   }
@@ -421,10 +340,13 @@ async function publish() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F8F9FA] pl-56 text-left font-sans text-[#1A1A1A] antialiased">
-    <!-- SIDEBAR -->
-    <aside class="fixed inset-y-0 left-0 z-20 flex w-56 flex-col border-r border-gray-200 bg-white px-4 py-8">
-      <div class="px-1">
+  <div class="min-h-screen bg-[#F8F9FA] pl-0 lg:pl-56 text-left font-sans text-[#1A1A1A] antialiased pb-24 lg:pb-0">
+    
+    <!-- SIDEBAR / BARRA INFERIOR NO MOBILE -->
+    <aside class="fixed inset-x-0 bottom-0 z-20 flex flex-row justify-around border-t border-gray-200 bg-white px-2 py-3 lg:inset-y-0 lg:left-0 lg:w-56 lg:flex-col lg:justify-start lg:px-4 lg:py-8 lg:border-r lg:border-t-0">
+      
+      <!-- LOGO (Aparece apenas no Desktop) -->
+      <div class="hidden px-1 lg:block">
         <h1 class="text-[32px] font-extrabold leading-none tracking-tight" style="color: #635BFF !important;">
           Librando.
         </h1>
@@ -433,13 +355,14 @@ async function publish() {
         </p>
       </div>
 
-      <nav class="mt-8 flex flex-col gap-1" aria-label="Principal">
+      <!-- NAVEGAÇÃO -->
+      <nav class="flex w-full flex-row justify-around items-center lg:mt-8 lg:flex-col lg:items-stretch lg:gap-1" aria-label="Principal">
         <button
           v-for="item in navItems"
           :key="item.label"
           type="button"
-          class="flex items-center gap-4 rounded-lg px-3 py-3 text-left text-[16px] transition-colors"
-          :class="item.active ? 'bg-[#EEEDFF] font-medium text-[#635BFF]' : 'text-[#1A1A1A] hover:bg-gray-50'"
+          class="flex items-center justify-center gap-2 rounded-lg p-2.5 lg:px-3 lg:py-3 lg:justify-start lg:text-[16px] transition-colors"
+          :class="item.active ? 'text-[#635BFF] lg:bg-[#EEEDFF] lg:font-medium' : 'text-[#1A1A1A] hover:bg-gray-50'"
           :aria-current="item.active ? 'page' : undefined"
           @click="navegarPara(item.route)"
         >
@@ -454,35 +377,27 @@ async function publish() {
             aria-hidden="true"
             v-html="icons[item.icon]"
           />
-          <span>{{ item.label }}</span>
+          <span class="hidden lg:inline">{{ item.label }}</span>
           <span
             v-if="item.badge"
-            class="ml-1 flex h-5.5 min-w-5.5 items-center justify-center rounded-full bg-[#635BFF] px-1.5 text-[12px] font-semibold text-white"
+            class="absolute top-1 right-1 lg:static ml-1 flex h-4 w-4 lg:h-5.5 lg:min-w-5.5 items-center justify-center rounded-full bg-[#635BFF] px-1 text-[10px] lg:text-[12px] font-semibold text-white"
           >
             {{ item.badge }}
           </span>
         </button>
 
+        <!-- Botão criar vídeo (Oculto no mobile, visível no desktop) -->
         <button
           type="button"
-          class="mt-3 flex items-center justify-center gap-3 rounded-lg border border-gray-200 bg-white px-3 py-3 text-[15px] font-semibold text-[#1A1A1A] transition-colors hover:bg-gray-50"
+          class="hidden lg:mt-3 lg:flex items-center justify-center gap-3 rounded-lg border border-gray-200 bg-white px-3 py-3 text-[15px] font-semibold text-[#1A1A1A] transition-colors hover:bg-gray-50"
         >
-          <svg
-            viewBox="0 0 24 24"
-            class="h-6 w-6"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-            v-html="icons.plus"
-          />
+          <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" v-html="icons.plus" />
           Criar vídeo
         </button>
       </nav>
 
-      <div class="mt-auto">
+      <!-- PERFIL DO USUÁRIO NA SIDEBAR (Apenas Desktop) -->
+      <div class="mt-auto hidden lg:block">
         <div class="mt-3 border-t border-gray-200 pt-4">
           <button type="button" class="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-gray-50" @click="router.push('/perfil')">
             <img
@@ -501,35 +416,23 @@ async function publish() {
               <span class="block truncate text-[14px] font-semibold">{{ nome }}</span>
               <span class="block truncate text-[12px] text-gray-500">@{{ nomeUsuario }}</span>
             </span>
-            <svg
-              viewBox="0 0 24 24"
-              class="h-4 w-4 text-[#1A1A1A]"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="m8 9 4-4 4 4M8 15l4 4 4-4" />
-            </svg>
           </button>
         </div>
       </div>
     </aside>
 
-    <!-- CONTEÚDO -->
-    <div class="mx-auto grid max-w-285 grid-cols-1 justify-center gap-12 px-8 py-8 lg:grid-cols-[minmax(0,720px)_minmax(0,320px)]">
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="mx-auto grid max-w-285 grid-cols-1 justify-center gap-6 px-4 py-4 lg:gap-12 lg:px-8 lg:py-8 lg:grid-cols-[minmax(0,720px)_minmax(0,320px)]">
       <main class="min-w-0">
         <header class="mb-5 flex items-end justify-between">
           <h2
-            class="text-[24px] font-bold tracking-tight"
+            class="text-[20px] lg:text-[24px] font-bold tracking-tight"
             style="color: #1A1A1A !important; -webkit-text-fill-color: #1A1A1A !important; opacity: 1 !important; visibility: visible !important;"
           >
             Seu mundo em Libras.
           </h2>
 
-          <div class="flex gap-6 text-[14px]" role="tablist">
+          <div class="flex gap-4 lg:gap-6 text-[14px]" role="tablist">
             <button
               v-for="tab in tabs"
               :key="tab"
@@ -736,7 +639,7 @@ async function publish() {
           class="mb-5 overflow-hidden rounded-2xl border border-gray-200 bg-white"
         >
           <!-- CABEÇALHO DO POST -->
-          <div class="flex items-center gap-3 px-5 py-4">
+          <div class="flex items-center gap-3 px-4 lg:px-5 py-4">
             <img
               v-if="post.foto"
               :src="post.foto"
@@ -758,48 +661,32 @@ async function publish() {
               <p class="mt-0.5 truncate text-[13px] text-gray-500">{{ post.role }}</p>
             </div>
 
-            <button
-              v-if="!post.own"
-              type="button"
-              class="rounded-lg bg-[#635BFF] px-5 py-2 text-[14px] font-semibold text-white hover:bg-[#5249e6]"
-            >
-              Seguir
-            </button>
-
-            <!-- BOTÕES DE EDIÇÃO E EXCLUSÃO: SOMENTE POSTS DO USUÁRIO -->
+            <!-- BOTÕES DE EDIÇÃO E EXCLUSÃO -->
             <template v-if="post.own">
               <button
                 type="button"
-                class="rounded-lg border border-gray-200 px-3 py-2 text-[13px] font-semibold text-[#635BFF] hover:bg-[#EEEDFF] disabled:opacity-50"
+                class="rounded-lg border border-gray-200 px-2.5 py-1.5 lg:px-3 lg:py-2 text-[12px] lg:text-[13px] font-semibold text-[#635BFF] hover:bg-[#EEEDFF] disabled:opacity-50"
                 :disabled="postSendoExcluido === post.id || salvandoEdicao"
                 @click="postEmEdicao === post.id ? cancelarEdicao() : iniciarEdicao(post)"
               >
-                {{ postEmEdicao === post.id ? 'Cancelar edição' : 'Editar' }}
+                {{ postEmEdicao === post.id ? 'Cancelar' : 'Editar' }}
               </button>
 
               <button
                 type="button"
-                class="rounded-lg border border-red-200 px-3 py-2 text-[13px] font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
+                class="rounded-lg border border-red-200 px-2.5 py-1.5 lg:px-3 lg:py-2 text-[12px] lg:text-[13px] font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
                 :disabled="postSendoExcluido === post.id || salvandoEdicao"
                 @click="excluirPost(post)"
               >
-                {{ postSendoExcluido === post.id ? 'Excluindo...' : 'Excluir' }}
+                {{ postSendoExcluido === post.id ? '...' : 'Excluir' }}
               </button>
             </template>
-
-            <button
-              type="button"
-              class="rounded-full p-2 text-[#1A1A1A] hover:bg-gray-100"
-              aria-label="Mais opções"
-            >
-              <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true" v-html="icons.more" />
-            </button>
           </div>
 
           <!-- EDITAR TEXTO DA PUBLICAÇÃO -->
           <div
             v-if="postEmEdicao === post.id"
-            class="mx-5 mb-4 rounded-xl border border-[#635BFF]/30 bg-[#F8F7FF] p-4"
+            class="mx-4 lg:mx-5 mb-4 rounded-xl border border-[#635BFF]/30 bg-[#F8F7FF] p-4"
           >
             <label :for="`editar-post-${post.id}`" class="mb-2 block text-[13px] font-semibold text-[#635BFF]">
               Editar publicação
@@ -810,13 +697,12 @@ async function publish() {
               v-model="conteudoEdicao"
               maxlength="280"
               rows="3"
-              class="w-full resize-y rounded-lg border border-gray-200 bg-white p-3 text-[14px] leading-6 text-[#1A1A1A] focus:border-[#635BFF] focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20"
-              placeholder="Atualize o texto da sua publicação..."
+              class="w-full resize-y rounded-lg border border-gray-200 bg-white p-3 text-[14px] leading-6 text-[#1A1A1A] focus:border-[#635BFF] focus:outline-none"
             />
 
             <div class="mt-3 flex items-center justify-between gap-3">
               <span class="text-[12px] text-gray-500">
-                {{ conteudoEdicao.length }}/280 caracteres
+                {{ conteudoEdicao.length }}/280
               </span>
 
               <div class="flex gap-2">
@@ -831,11 +717,11 @@ async function publish() {
 
                 <button
                   type="button"
-                  class="rounded-lg bg-[#635BFF] px-4 py-2 text-[13px] font-semibold text-white hover:bg-[#5249e6] disabled:cursor-not-allowed disabled:opacity-50"
+                  class="rounded-lg bg-[#635BFF] px-4 py-2 text-[13px] font-semibold text-white hover:bg-[#5249e6] disabled:opacity-50"
                   :disabled="!conteudoEdicao.trim() || salvandoEdicao"
                   @click="salvarEdicao(post)"
                 >
-                  {{ salvandoEdicao ? 'Salvando...' : 'Salvar alterações' }}
+                  {{ salvandoEdicao ? 'Salvando...' : 'Salvar' }}
                 </button>
               </div>
             </div>
@@ -860,7 +746,7 @@ async function publish() {
           <!-- ENQUETE -->
           <div
             v-else-if="postEmEdicao !== post.id && post.tipo === 'enquete'"
-            class="px-5 pb-1 text-left"
+            class="px-4 lg:px-5 pb-1 text-left"
           >
             <p class="text-[16px] font-medium leading-7">{{ post.caption }}</p>
             <ul class="mt-3 space-y-2">
@@ -878,15 +764,15 @@ async function publish() {
           <!-- POST DE TEXTO -->
           <div
             v-else-if="postEmEdicao !== post.id"
-            class="px-5 pb-1 text-left text-[16px] leading-7"
+            class="px-4 lg:px-5 pb-1 text-left text-[16px] leading-7"
           >
             {{ post.caption }}
           </div>
 
           <!-- AÇÕES DO POST -->
-          <div class="flex items-center justify-between px-5 pt-4 text-gray-500">
+          <div class="flex items-center justify-between px-4 lg:px-5 py-4 text-gray-500">
             <div class="flex items-center gap-6">
-              <!-- 1. Curtida -->
+              <!-- Curtida -->
               <button
                 type="button"
                 @click="alternarCurtida(post)"
@@ -899,19 +785,17 @@ async function publish() {
                   stroke-width="1.8"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  aria-hidden="true"
                   v-html="icons.heart"
                   :style="post.curtiu ? 'fill: currentColor;' : ''"
                 />
                 {{ post.likes }}
               </button>
 
-              <!-- 2. Comentário -->
+              <!-- Comentário -->
               <button
                 type="button"
                 @click="alternarComentario(post)"
-                :class="post.comentou ? 'text-[#635BFF]' : 'hover:text-[#635BFF]'"
-                class="flex items-center gap-1.5 text-[14px] transition-colors group"
+                class="flex items-center gap-1.5 text-[14px] hover:text-[#635BFF] transition-colors group"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -919,271 +803,30 @@ async function publish() {
                   stroke-width="1.8"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  aria-hidden="true"
                   v-html="icons.comment"
                 />
                 {{ post.comments }}
               </button>
-
-              <!-- 3. Repost -->
-              <button
-                type="button"
-                @click="alternarRepost(post)"
-                :class="post.repostou ? 'text-green-600' : 'hover:text-green-600'"
-                class="flex items-center gap-1.5 text-[14px] transition-colors group"
-                aria-label="Repostar"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  class="h-6 w-6 fill-none stroke-current"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                  v-html="icons.repost"
-                />
-                {{ post.reposts }}
-              </button>
-
-              <!-- 4. Enviar -->
-              <button
-                type="button"
-                @click="enviarPost"
-                class="hover:text-[#635BFF] transition-colors flex items-center gap-1.5"
-                aria-label="Compartilhar"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  class="h-6 w-6 fill-none stroke-current"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                  v-html="icons.send"
-                />
-              </button>
-            </div>
-
-            <!-- 5. Salvar -->
-            <button
-              type="button"
-              @click="alternarSalvar(post)"
-              :class="post.salvou ? 'text-[#635BFF]' : 'hover:text-[#635BFF]'"
-              class="transition-colors p-1"
-              aria-label="Salvar"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                class="h-6 w-6 fill-none stroke-current"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-                v-html="icons.bookmark"
-                :style="post.salvou ? 'fill: currentColor;' : ''"
-              />
-            </button>
-          </div>
-
-          <!-- LEGENDA E COMENTÁRIOS -->
-          <div class="px-5 pb-4 pt-3 text-left text-[14px]">
-            <p v-if="postEmEdicao !== post.id && post.midiaUrl && post.caption">
-              <span class="mr-1.5 font-semibold">{{ post.user }}</span>{{ post.caption }}
-            </p>
-
-            <div class="mt-3 flex items-center gap-3 border-t border-gray-200 pt-3">
-              <svg
-                viewBox="0 0 24 24"
-                class="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.7"
-                stroke-linecap="round"
-                aria-hidden="true"
-                v-html="icons.smile"
-              />
-              <span class="flex-1 text-[13px] text-gray-500">Adicione um comentário...</span>
-              <button type="button" class="text-[13px] font-semibold text-[#635BFF]">
-                Publicar
-              </button>
             </div>
           </div>
         </article>
-
-        <!-- MENSAGEM DE RETORNO DA EDIÇÃO OU EXCLUSÃO -->
-        <p
-          v-if="feedbackPost"
-          class="mb-5 rounded-xl px-4 py-3 text-[14px]"
-          :class="feedbackPostOk ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'"
-          role="status"
-        >
-          {{ feedbackPost }}
-          <button
-            type="button"
-            class="ml-2 font-semibold underline"
-            aria-label="Fechar mensagem"
-            @click="feedbackPost = ''"
-          >
-            Fechar
-          </button>
-        </p>
       </main>
 
-      <!-- COLUNA DIREITA -->
-      <aside class="sticky top-8 hidden h-fit self-start lg:block">
-        <!-- PESQUISA -->
-        <div class="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3">
-          <svg
-            viewBox="0 0 24 24"
-            class="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            aria-hidden="true"
-            v-html="icons.search"
-          />
-          <input
-            type="text"
-            placeholder="Pesquisar no Librando"
-            class="w-full bg-transparent text-[14px] placeholder:text-gray-500 focus:outline-none"
-            aria-label="Pesquisar no Librando"
-          />
-        </div>
-
-        <!-- PERFIL ATUAL -->
-        <div class="mt-6 flex items-center gap-3">
-          <img
-            v-if="perfil.foto_perfil_url"
-            :src="perfil.foto_perfil_url"
-            class="h-12 w-12 rounded-full object-cover"
-            alt=""
-          />
-          <span
-            v-else
-            class="flex h-12 w-12 items-center justify-center rounded-full bg-[#1A1A1A] text-[14px] font-semibold text-white"
-          >
-            {{ meuInicial }}
-          </span>
-          <div class="min-w-0 flex-1 leading-tight">
-            <p class="text-[14px] font-medium">{{ nomeUsuario }}</p>
-            <p class="mt-0.5 text-[13px] text-gray-500">{{ nome }}</p>
-          </div>
-          <button type="button" class="text-[12px] font-semibold text-[#635BFF]">
-            Trocar
-          </button>
-        </div>
-
-        <!-- SUGESTÕES -->
-        <div class="mt-6 flex items-center justify-between">
-          <h3 class="text-[14px] text-gray-700">Sugestões para você</h3>
-          <button type="button" class="text-[12px] font-semibold text-[#635BFF]">
-            Ver todos
-          </button>
-        </div>
-
-        <ul class="mt-4 space-y-4">
-          <li v-for="s in suggestions" :key="s.handle" class="flex items-center gap-3">
-            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-700 text-[12px] font-semibold text-white">
-              {{ s.initials }}
-            </span>
-            <div class="min-w-0 flex-1 leading-tight">
-              <p class="truncate text-[13px] font-medium">{{ s.name }}</p>
-              <p class="mt-0.5 truncate text-[12px] text-gray-500">{{ s.handle }}</p>
-              <p class="mt-0.5 truncate text-[11px] text-gray-500">{{ s.note }}</p>
-            </div>
-            <button
-              type="button"
-              class="rounded-lg bg-[#635BFF] px-4 py-2 text-[13px] font-semibold text-white hover:bg-[#5249e6]"
-            >
-              Seguir
-            </button>
-          </li>
-        </ul>
-
-        <!-- EM ALTA -->
-        <div class="mt-6 border-t border-gray-200 pt-6">
-          <h3 class="text-[14px] text-gray-700">Em alta na comunidade</h3>
-          <ul class="mt-4 space-y-3">
-            <li v-for="t in trending" :key="t.tag">
-              <button type="button" class="flex w-full items-center gap-3 text-left">
-                <span class="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white text-[#635BFF]">
-                  <svg
-                    viewBox="0 0 24 24"
-                    class="h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    aria-hidden="true"
-                    v-html="icons.hash"
-                  />
-                </span>
-                <span class="flex-1 leading-tight">
-                  <span class="block text-[13px] font-semibold">{{ t.tag }}</span>
-                  <span class="mt-0.5 block text-[12px] text-gray-500">{{ t.count }}</span>
-                </span>
-                <svg
-                  viewBox="0 0 24 24"
-                  class="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                  v-html="icons.chevron"
-                />
-              </button>
+      <!-- BARRA LATERAL DIREITA (Sugestões/Tendências - Apenas Desktop) -->
+      <aside class="hidden lg:block space-y-5">
+        <div class="rounded-2xl border border-gray-200 bg-white p-4">
+          <h3 class="text-[16px] font-bold text-[#1A1A1A]">Tendências em Libras</h3>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-[14px] font-semibold text-[#635BFF]">#LibrasNoDiaADia</p>
+              <p class="text-[12px] text-gray-500">2,4 mil publicações</p>
+            </li>
+            <li>
+              <p class="text-[14px] font-semibold text-[#635BFF]">#CulturaSurda</p>
+              <p class="text-[12px] text-gray-500">1,8 mil publicações</p>
             </li>
           </ul>
         </div>
-
-        <!-- BOAS-VINDAS -->
-        <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-5">
-          <svg
-            viewBox="0 0 24 24"
-            class="h-7 w-7 text-[#635BFF]"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-            v-html="icons.hand"
-          />
-          <h3 class="mt-3 text-[16px] font-medium">Cada sinal aproxima.</h3>
-          <p class="mt-2 text-[13px] leading-5 text-gray-500">
-            Um espaço para compartilhar, aprender e se conectar em Libras. Do seu jeito.
-          </p>
-          <a
-            href="#"
-            class="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#635BFF]"
-            @click.prevent
-          >
-            Conheça o Librando
-            <svg
-              viewBox="0 0 24 24"
-              class="h-3.5 w-3.5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-              v-html="icons.arrowUp"
-            />
-          </a>
-        </div>
-
-        <!-- RODAPÉ -->
-        <nav class="mt-6 flex flex-wrap gap-x-1.5 gap-y-1 text-[11px] text-gray-500" aria-label="Rodapé">
-          <template v-for="(link, i) in footerLinks" :key="link">
-            <a href="#" class="hover:underline" @click.prevent>{{ link }}</a>
-            <span v-if="i < footerLinks.length - 1" aria-hidden="true">·</span>
-          </template>
-        </nav>
-        <p class="mt-3 text-[11px] text-gray-500">© 2026 LIBRANDO</p>
       </aside>
     </div>
   </div>
