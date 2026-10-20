@@ -614,14 +614,14 @@ Interface funcionando online em: https://librando-frontend.onrender.com/ (menu *
 
 ### 4.2 CRUD: as operações do RF-007
 
-O RF-007 trata do perfil do **próprio** usuário autenticado. Não há `{id}` nas rotas: a conta editada é sempre a dona do token (RN-02). A conta é criada no RF-002 (`POST /api/cadastro`) e a exclusão de conta não faz parte deste requisito.
+O RF-007 trata do perfil e das ações de conta do **próprio** usuário autenticado. Não há `{id}` nas rotas de perfil ou de exclusão: a conta afetada deve ser sempre a dona do token (RN-02). A conta é criada no RF-002 (`POST /api/cadastro`). Os endpoints de logout e exclusão indicados neste documento são propostas e devem ser confirmados com as rotas efetivamente implementadas e com o Swagger.
 
 | Operação | Ação na interface | Método HTTP | Endpoint | Resposta esperada | Verificação |
 |---|---|---|---|---|---|
 | **C**reate | Não se aplica: a conta é criada no RF-002 | — | — | — | — |
 | **R**ead | Abrir "Meu perfil" | `GET` | `/api/perfil` | `200 OK` / `401` | Dados conferem com a linha do usuário na tabela `usuarios` |
 | **U**pdate | Editar perfil → alterar campos e fotos → Salvar | `POST` (ou `PUT`/`PATCH`) | `/api/perfil` | `200 OK` / `400` / `401` / `500` | Alteração aparece no perfil após recarregar e no banco |
-| **D**elete | Não se aplica: exclusão de conta fora do escopo | — | — | — | — |
+| **D**elete | Excluir a própria conta após confirmação | `DELETE` | `/api/conta` (proposto; confirmar rota real) | `200`/`204`, `401`, `403` ou `500` | Autorização pela conta do token; confirmação no frontend; política de dados relacionados definida |
 
 O envio de fotos usa `POST` com `multipart/form-data`, porque o PHP não processa arquivos em requisições `PUT`. Por isso a interface usa `POST /api/perfil`. Como a rota não tem `{id}`, não há resposta `404` documentada para o perfil.
 
