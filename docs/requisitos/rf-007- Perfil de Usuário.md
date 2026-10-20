@@ -499,6 +499,7 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 | **RN-20** | Remoção de repost | Quando a funcionalidade estiver disponível, o usuário poderá desfazer um repost realizado por ele, removendo somente a associação do repost e preservando a publicação original. |
 | **RN-21** | Proteção de publicações de terceiros | Visualizar ou repostar uma publicação não concede ao usuário permissão para editar ou excluir o conteúdo original de outro autor. |
 | **RN-22** | Atualização das seções | Após a conclusão de uma operação de edição, exclusão ou remoção de repost, o sistema deverá atualizar a seção correspondente para refletir o estado atual dos dados. |
+| **RN-23** | Hospedagem de imagens | O sistema deverá utilizar o serviço externo ImgBB para hospedar as imagens de perfil e de capa. Após o envio bem-sucedido, a URL retornada pelo serviço deverá ser associada ao perfil correspondente e utilizada para exibir a imagem na aplicação. |
 
 <!--
 ANTES DE ENTREGAR (comentário invisível, apague depois):
