@@ -267,7 +267,7 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 | 🟢 **Create** |     ❌     | Não se aplica à edição do perfil; a criação da conta é tratada pelo RF-002 e a criação de publicações pelo RF-006.                                                                                                                         |
 | 🔵 **Read**   |     ✅     | Recupera os dados necessários para exibir o perfil autorizado, as publicações próprias e os posts repostados.                                                                                                                              |
 | 🟡 **Update** |     ✅     | Processa e persiste as alterações válidas solicitadas pelo usuário autorizado. As solicitações de edição de publicações seguem o mecanismo definido no RF-006.                                                                             |
-| 🔴 **Delete** |     ❌     | A exclusão do perfil não faz parte deste requisito. A exclusão de publicações é processada conforme o RF-006. A remoção de um repost, quando disponível, deverá remover somente a associação do repost, preservando a publicação original. |
+| 🔴 **Delete** |     ❌     | O usuário cadastrado possui permissão para solicitar a exclusão da própria conta por meio do perfil. A exclusão deverá ocorrer somente mediante solicitação explícita do usuário e após a validação de sua identidade. |
 
 ### ✅ 2.4 Validações Necessárias
 
