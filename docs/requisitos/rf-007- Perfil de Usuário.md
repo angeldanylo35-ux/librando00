@@ -640,7 +640,7 @@ Arquivo `database/rf-007-editar-perfil-ddl.sql` (MySQL 8), equivalente às migra
 
 ### 5.1 Diagrama de Arquitetura
 
-```
+```text
 ┌──────────────────────────┐      HTTPS / JSON (multipart p/ imagens)      ┌─────────────────────────────┐
 │  NAVEGADOR DO USUÁRIO    │ ───────────────────────────────────────────▶  │  BACKEND (Render)           │
 │                          │      Authorization: Bearer <token>            │  Laravel (API REST)         │
@@ -650,13 +650,16 @@ Arquivo `database/rf-007-editar-perfil-ddl.sql` (MySQL 8), equivalente às migra
 │  Perfil.vue              │                                               │  PerfilController           │
 │  services/api.js (HTTP)  │                                               │    └─ Validator             │
 └──────────────────────────┘                                               │  Model Usuario (Eloquent)   │
-                                                                           └───────┬─────────────┬───────┘
-                                                                                   │ SQL         │ arquivos
-                                                                                   ▼ (PDO)       ▼
+                                                                           │  ImageService               │
+                                                                           └────────┬───────────┬────────┘
+                                                                                    │ SQL       │ HTTPS
+                                                                                    ▼           ▼
                                                                            ┌──────────────┐  ┌──────────────────┐
-                                                                           │ MySQL        │  │ Disco "public"   │
-                                                                           │ tb: usuarios │  │ perfis/ e capas/ │
-                                                                           │ + tokens     │  │ (fotos)          │
+                                                                           │ MySQL        │  │ ImgBB            │
+                                                                           │ Aiven        │  │ Hospedagem de    │
+                                                                           │ tb: usuarios│  │ imagens          │
+                                                                           │ + tokens     │  │ (fotos de perfil │
+                                                                           │ + URLs       │  │ e de capa)       │
                                                                            └──────────────┘  └──────────────────┘
 ```
 
@@ -666,10 +669,11 @@ Arquivo `database/rf-007-editar-perfil-ddl.sql` (MySQL 8), equivalente às migra
 |---|---|---|
 | Frontend | Vue 3, Vite, Tailwind, Vue Router | Tela de perfil e formulário de edição, exibição de erros, envio do token |
 | Cliente HTTP | `services/api.js` | Centraliza as chamadas à API e anexa o token Bearer |
-| Backend | Laravel (API REST) | Autenticar, validar, gravar e devolver o perfil |
+| Backend | Laravel (API REST) | Autenticar, validar, processar a edição e devolver o perfil |
 | Autenticação | Laravel Sanctum | Emite e valida o token pessoal de cada usuário |
-| Banco de dados | MySQL (Aiven) | Persistir dados do perfil na tabela `usuarios` |
-| Arquivos | Disco `public` do Laravel | Guardar foto de perfil e foto de capa |
+| Banco de dados | MySQL (Aiven) | Persistir os dados do perfil e as URLs das imagens na tabela `usuarios` |
+| Hospedagem de imagens | ImgBB | Armazenar as imagens enviadas e fornecer as URLs utilizadas pelo sistema |
+| Serviço de imagens | `ImageService` | Centralizar a integração com o ImgBB e o processamento do envio das imagens |
 | Hospedagem | Render (deploy a partir do GitHub) | Publicar frontend e backend |
 
 ### 5.2 Decisões Arquiteturais (ADRs)
@@ -681,45 +685,45 @@ Arquivo `database/rf-007-editar-perfil-ddl.sql` (MySQL 8), equivalente às migra
 
 **ADR-002: Autenticação com Laravel Sanctum (token Bearer)**
 - *Decisão:* o login devolve um token pessoal; o frontend o envia no cabeçalho `Authorization` e as rotas protegidas usam `auth:sanctum`.
-- *Razão:* é a solução oficial do Laravel para SPAs/APIs, é stateless (sem sessão no servidor) e dispensa cookies, o que simplifica o CORS (sem `credentials`) e elimina a necessidade de token CSRF.
-- *Consequência:* o token precisa ser guardado com cuidado no cliente e é invalidado no logout ou na expiração.
+- *Razão:* é a solução oficial do Laravel para APIs, permite autenticação por token e simplifica a comunicação entre frontend e backend separados.
+- *Consequência:* o token precisa ser guardado com cuidado no cliente e é invalidado no logout, conforme a implementação da aplicação.
 
 **ADR-003: Rota `/perfil` sem `{id}` e uso de `POST` com multipart**
 - *Decisão:* o perfil editado é sempre o do usuário autenticado (a rota não recebe id), e a edição com imagens usa `POST /perfil`; `PUT`/`PATCH /perfil` ficam disponíveis para envio só de texto.
-- *Razão:* sem `{id}` na URL, um usuário não consegue editar o perfil de outro por troca de identificador. O PHP não interpreta arquivos enviados via `PUT` multipart, por isso o `POST` carrega as imagens.
-- *Consequência:* a documentação Swagger precisa listar os três métodos da rota.
+- *Razão:* sem `{id}` na URL, um usuário não consegue editar o perfil de outro por troca de identificador. O `POST` com `multipart/form-data` permite enviar os campos e arquivos de imagem na mesma requisição.
+- *Consequência:* a documentação Swagger precisa listar os métodos disponibilizados pela rota.
 
 **ADR-004: MySQL com Eloquent ORM**
-- *Decisão:* dados do perfil na tabela `usuarios` do MySQL (hospedado online no Aiven), acessados via Eloquent.
-- *Razão:* banco relacional é adequado a dados estruturados com restrições de unicidade (`nome_usuario`, `email`); o Eloquent usa consultas parametrizadas, o que previne SQL Injection, e o índice `UNIQUE` do banco serve de segunda barreira contra @ duplicado em requisições simultâneas.
-- *Consequência:* o banco precisa estar acessível pela internet para o backend publicado.
+- *Decisão:* dados do perfil na tabela `usuarios` do MySQL, hospedado online no Aiven, acessados via Eloquent.
+- *Razão:* o banco relacional é adequado a dados estruturados com restrições de unicidade (`nome_usuario`, `email`). O Eloquent utiliza consultas parametrizadas, reduzindo o risco de SQL Injection, e os índices `UNIQUE` do banco ajudam a impedir valores duplicados.
+- *Consequência:* o banco precisa estar acessível pelo backend publicado, e as credenciais devem ser configuradas nas variáveis de ambiente do Render.
 
-**ADR-005: Imagens no disco `public` do Laravel, com URL salva no banco**
-- *Decisão:* as fotos são gravadas em `perfis/` e `capas/` com nome aleatório gerado pelo Laravel; no banco guarda-se apenas a URL (`foto_perfil_url`, `foto_capa_url`).
-- *Razão:* simples, sem serviço externo, e mantém o banco leve. O arquivo antigo só é removido depois que o banco confirma a gravação, e um arquivo novo é descartado se o `UPDATE` falhar, evitando arquivos órfãos.
-- *Consequência:* em hospedagens com disco temporário (como o plano gratuito do Render), as imagens precisam de disco persistente ou de um serviço de armazenamento externo para sobreviver a novos deploys.
+**ADR-005: Hospedagem externa de imagens com ImgBB e armazenamento das URLs no banco**
+- *Decisão:* as fotos de perfil e de capa são enviadas pelo backend ao ImgBB por meio do serviço de integração `ImageService`. Após o envio bem-sucedido, a aplicação utiliza as URLs retornadas pelo serviço e armazena essas referências nos campos `foto_perfil_url` e `foto_capa_url` da tabela `usuarios`.
+- *Razão:* a hospedagem externa evita depender do disco local do Laravel para manter os arquivos. Isso é especialmente importante no Render, cujo sistema de arquivos pode ser temporário. O banco armazena somente as referências das imagens, mantendo os arquivos fora do banco de dados.
+- *Consequência:* a exibição das fotos depende da disponibilidade do ImgBB e da validade das URLs armazenadas. A chave de API do ImgBB deve permanecer em uma variável de ambiente do backend, sem ser exposta no frontend ou no repositório. Caso o envio da imagem ou a atualização do banco falhe, o tratamento de erros deve evitar atualizar o perfil com uma URL inválida e informar a falha ao usuário.
 
 **ADR-006: Deploy no Render a partir do GitHub**
-- *Decisão:* frontend e backend publicados no Render, com deploy automático a cada push na branch principal; o backend roda em contêiner Docker.
-- *Razão:* gratuito para o escopo da disciplina, URL pública sem configuração de servidor e integração contínua direta com o repositório.
-- *Consequência:* segredos ficam nas variáveis de ambiente do Render, nunca no repositório.
+- *Decisão:* frontend e backend publicados separadamente no Render, com deploy automático a cada push na branch principal; o backend roda em contêiner Docker.
+- *Razão:* permite disponibilizar o sistema por URLs públicas e automatizar a publicação a partir do repositório.
+- *Consequência:* segredos e credenciais ficam nas variáveis de ambiente do Render, nunca no repositório.
 
 ### 5.3 Fluxo de Dados (Editar Perfil)
 
 1. O usuário abre a tela de perfil; o Vue chama `GET /api/perfil` com o token.
 2. O Sanctum valida o token e identifica o usuário; o `PerfilController` devolve nome, @usuário, localização, bio e URLs das fotos.
 3. O formulário é preenchido com esses dados; o usuário altera os campos e/ou escolhe novas imagens.
-4. O Vue envia `POST /api/perfil` (multipart/form-data) com o token.
-5. O Laravel valida os campos (tamanho, formato do @, unicidade, tipo e tamanho das imagens).
-6. Se houver erro, responde `400` com a mensagem e a lista de campos inválidos; o Vue exibe a mensagem de erro no formulário, sem fechá-lo.
-7. Se estiver válido, o backend grava as imagens no disco, atualiza a linha do usuário no MySQL em um único `UPDATE` e só depois apaga as imagens antigas.
-8. A API responde `200` com o perfil atualizado; o Vue fecha o formulário, exibe a mensagem de sucesso e mostra os dados atualizados na tela.
+4. O Vue envia `POST /api/perfil` (`multipart/form-data`) com o token de autenticação.
+5. O Laravel valida os campos, incluindo tamanho, formato do nome de usuário, unicidade e tipo e tamanho dos arquivos de imagem.
+6. Se houver erro de validação, a API responde com uma mensagem e os campos inválidos; o Vue exibe o erro no formulário, sem fechá-lo.
+7. Se estiver válido, o backend utiliza o `ImageService` para enviar as novas imagens ao ImgBB. Após o envio bem-sucedido, recebe as URLs correspondentes e atualiza os campos `foto_perfil_url` e/ou `foto_capa_url`, juntamente com os demais dados, na tabela `usuarios` do MySQL. Se nenhuma imagem nova for enviada, as URLs existentes são mantidas.
+8. A API responde com o perfil atualizado; o Vue fecha o formulário, exibe a mensagem de sucesso e apresenta os dados atualizados na tela. Se ocorrer uma falha no envio da imagem ou na gravação dos dados, o sistema deve informar o erro e evitar apresentar uma atualização como concluída quando ela não foi persistida.
 
 ### 5.4 Padrão de Design
 
-**API REST em camadas (MVC sem camada de visão no servidor).** O fluxo é: Rota → Middleware de autenticação → Controller → Model (Eloquent) → Banco. A "View" do MVC é a SPA em Vue, que consome apenas JSON.
+**API REST em camadas (MVC sem camada de visão no servidor).** O fluxo é: Rota → Middleware de autenticação → Controller → Serviço de imagens, quando necessário → Model (Eloquent) → Banco de dados. Quando há imagens, o serviço de imagens também se comunica com o ImgBB para hospedá-las e obter suas URLs. A “View” do MVC é a SPA em Vue, que consome apenas JSON.
 
-*Justificativa:* separa responsabilidades (a tela não conhece o banco, e o banco não conhece a tela), permite evoluir frontend e backend de forma independente e segue o padrão do framework, o que reduz código e erros.
+*Justificativa:* separa responsabilidades (a tela não conhece o banco, e o banco não conhece a tela), permite evoluir frontend e backend de forma independente e centraliza a integração com o serviço externo de imagens. O uso do Eloquent e de um serviço dedicado facilita a manutenção e reduz a duplicação de código.
 ---
 
 ## 6. Segurança OWASP
