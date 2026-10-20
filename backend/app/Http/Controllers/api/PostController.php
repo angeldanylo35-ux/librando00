@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Services\ImageService;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -98,8 +99,10 @@ class PostController extends Controller
 
                 if ($request->hasFile('midia')) {
                     $arquivo = $request->file('midia');
-                    $caminho = $arquivo->store('posts', 'public');
-                    $dados['midia_path'] = $caminho;
+
+                    $urlMidia = ImageService::uploadParaImgBB($arquivo);
+
+                    $dados['midia_path'] = $urlMidia;
                     $dados['midia_mime'] = $arquivo->getMimeType();
                 }
 
@@ -210,8 +213,8 @@ class PostController extends Controller
             ], 500);
         }
 
-        // Só apaga o arquivo depois que o banco confirmou a exclusão
-        if ($caminho) {
+        
+        if ($caminho && !str_starts_with($caminho, 'http')) {
             Storage::disk('public')->delete($caminho);
         }
 
@@ -227,7 +230,11 @@ class PostController extends Controller
         'id' => $post->id,
         'tipo' => $post->tipo,
         'conteudo' => $post->conteudo,
-        'midia_url' => $post->midia_path ? '/storage/' . $post->midia_path : null,
+        'midia_url' => $post->midia_path
+            ? (str_starts_with($post->midia_path, 'http')
+                ? $post->midia_path
+                : url('storage/' . ltrim($post->midia_path, '/')))
+            : null,
         'opcoes' => $post->opcoes->map(fn ($o) => [
             'id' => $o->id,
             'texto' => $o->texto,
