@@ -12,7 +12,6 @@ const icons = {
   send: '<path d="M21 3 3 10.5l7 3 3 7z"/><path d="M21 3 10 13.5"/>',
   heart: '<path d="M12 20.5s-8-4.7-8-11A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.500c0 6.300-8 11-8 11z"/>',
   bookmark: '<path d="M6 3h12v18l-6-4-6 4z"/>',
-  user: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6 18.500c1.500-2.500 3.500-3.500 6-3.500s4.500 1 6 3.500"/>',
   plus: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/>',
   menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
   search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.500-3.500"/>',
@@ -25,7 +24,8 @@ const icons = {
   arrowUp: '<path d="M7 17 17 7M8 7h9v9"/>',
   film: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M7 5l2 4M12 5l2 4M17 5l2 4"/>',
   poll: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
-  repost: '<polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>'
+  repost: '<polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>',
+  logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>'
 }
 
 /* Perfil do usuário logado (vem do banco: GET /perfil) */
@@ -64,6 +64,13 @@ async function carregarPerfil() {
   }
 }
 
+function sair() {
+  localStorage.removeItem('token')
+  localStorage.removeItem('nome')
+  localStorage.removeItem('nome_usuario')
+  router.replace('/login')
+}
+
 const navItems = [
   { label: 'Página inicial', icon: 'home', route: '/feed', active: true },
   { label: 'Explorar', icon: 'explore' },
@@ -71,8 +78,8 @@ const navItems = [
   { label: 'Mensagens', icon: 'send', badge: 3 },
   { label: 'Notificações', icon: 'heart' },
   { label: 'Salvos', icon: 'bookmark' },
-  { label: 'Meu perfil', icon: 'user', route: '/perfil' },
   { label: 'Mais', icon: 'menu' },
+  { label: 'Sair', icon: 'logout', action: 'sair', mobileOnly: true }
 ]
 
 const tabs = ['Para você', 'Seguindo']
@@ -220,8 +227,12 @@ async function excluirPost(post) {
   }
 }
 
-function navegarPara(route) {
-  if (route) router.push(route)
+function navegarPara(item) {
+  if (item.action === 'sair') {
+    sair()
+  } else if (item.route) {
+    router.push(item.route)
+  }
 }
 
 onMounted(async () => {
@@ -340,97 +351,90 @@ async function publish() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F8F9FA] pl-0 min-[980px]:pl-56 text-left font-sans text-[#1A1A1A] antialiased pb-24 min-[980px]:pb-0">
+  <div class="min-h-screen bg-[#F8F9FA] pl-0 min-[980px]:pl-56 text-left font-sans text-[#1A1A1A] antialiased pb-20 min-[980px]:pb-0">
     
     <!-- SIDEBAR / BARRA INFERIOR NO MOBILE -->
-    <aside class="fixed inset-x-0 bottom-0 z-20 flex flex-row justify-around items-center border-t border-gray-200 bg-white px-2 py-3 min-[980px]:inset-y-0 min-[980px]:left-0 min-[980px]:w-56 min-[980px]:flex-col min-[980px]:justify-start min-[980px]:px-4 min-[980px]:py-8 min-[980px]:border-r min-[980px]:border-t-0">
+    <aside class="fixed inset-x-0 bottom-0 z-20 flex flex-row justify-around items-center border-t border-gray-200 bg-white px-2 py-2 min-[980px]:inset-y-0 min-[980px]:left-0 min-[980px]:w-56 min-[980px]:flex-col min-[980px]:justify-between min-[980px]:px-4 min-[980px]:py-6 min-[980px]:border-r min-[980px]:border-t-0 min-[980px]:max-h-screen min-[980px]:overflow-y-auto">
       
-      <!-- LOGO (Exibido na barra lateral apenas no Desktop 980px+) -->
-      <div class="hidden min-[980px]:block px-1">
-        <h1 class="text-[32px] font-extrabold leading-none tracking-tight" style="color: #635BFF !important;">
-          Librando.
-        </h1>
-        <p class="mt-1.5 text-[11px] font-medium tracking-wide" style="color: #1A1A1A !important;">
-          CONEXÕES EM LIBRAS
-        </p>
-      </div>
+      <!-- PARTE SUPERIOR DA SIDEBAR -->
+      <div class="w-full">
+        <!-- LOGO (Exibido na barra lateral apenas no Desktop 980px+) -->
+        <div class="hidden min-[980px]:block px-1 mb-4">
+          <h1 class="text-[28px] font-extrabold leading-none tracking-tight" style="color: #635BFF !important;">
+            Librando.
+          </h1>
+          <p class="mt-1 text-[10px] font-medium tracking-wide" style="color: #1A1A1A !important;">
+            CONEXÕES EM LIBRAS
+          </p>
+        </div>
 
-      <!-- NAVEGAÇÃO -->
-      <nav class="flex w-full flex-row justify-around items-center min-[980px]:mt-6 min-[980px]:flex-col min-[980px]:items-stretch min-[980px]:gap-1" aria-label="Principal">
-        <button
-          v-for="item in navItems"
-          :key="item.label"
-          type="button"
-          class="relative flex items-center justify-center gap-2 rounded-lg p-2.5 min-[980px]:px-3 min-[980px]:py-3 min-[980px]:justify-start min-[980px]:text-[16px] transition-colors"
-          :class="item.active ? 'text-[#635BFF] min-[980px]:bg-[#EEEDFF] min-[980px]:font-medium' : 'text-[#1A1A1A] hover:bg-gray-50'"
-          :aria-current="item.active ? 'page' : undefined"
-          @click="navegarPara(item.route)"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            class="h-6 w-6 shrink-0"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-            v-html="icons[item.icon]"
-          />
-          <span class="hidden min-[980px]:inline">{{ item.label }}</span>
-          
-          <!-- BADGE POSICIONADA DENTRO DO ÍCONE NO MOBILE -->
-          <span
-            v-if="item.badge"
-            class="absolute top-1 right-1.5 min-[980px]:static min-[980px]:ml-auto flex h-4 w-4 min-[980px]:h-5.5 min-[980px]:min-w-5.5 items-center justify-center rounded-full bg-[#635BFF] text-[10px] min-[980px]:text-[12px] font-semibold text-white"
+        <!-- NAVEGAÇÃO -->
+        <nav class="flex w-full flex-row justify-around items-center min-[980px]:flex-col min-[980px]:items-stretch min-[980px]:space-y-0.5" aria-label="Principal">
+          <button
+            v-for="item in navItems"
+            :key="item.label"
+            type="button"
+            class="relative flex items-center justify-center gap-2 rounded-lg p-2 min-[980px]:px-3 min-[980px]:py-2 min-[980px]:justify-start min-[980px]:text-[14px] transition-colors"
+            :class="[
+              item.active ? 'text-[#635BFF] min-[980px]:bg-[#EEEDFF] min-[980px]:font-medium' : 'text-[#1A1A1A] hover:bg-gray-50',
+              item.mobileOnly ? 'min-[980px]:hidden text-red-600' : ''
+            ]"
+            :aria-current="item.active ? 'page' : undefined"
+            @click="navegarPara(item)"
           >
-            {{ item.badge }}
-          </span>
-        </button>
-
-        <!-- Botão criar vídeo -->
-        <button
-          type="button"
-          class="hidden min-[980px]:mt-3 min-[980px]:flex items-center justify-center gap-3 rounded-lg border border-gray-200 bg-white px-3 py-3 text-[15px] font-semibold text-[#1A1A1A] transition-colors hover:bg-gray-50"
-        >
-          <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" v-html="icons.plus" />
-          Criar vídeo
-        </button>
-      </nav>
-
-      <!-- PERFIL DO USUÁRIO NA SIDEBAR (Apenas Desktop 980px+) -->
-      <div class="mt-auto hidden min-[980px]:block">
-        <div class="mt-3 border-t border-gray-200 pt-4">
-          <button type="button" class="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-gray-50" @click="router.push('/perfil')">
-            <img
-              v-if="perfil.foto_perfil_url"
-              :src="perfil.foto_perfil_url"
-              class="h-9 w-9 shrink-0 rounded-full object-cover"
-              alt=""
+            <svg
+              viewBox="0 0 24 24"
+              class="h-5 w-5 shrink-0"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              v-html="icons[item.icon]"
             />
+            <span class="hidden min-[980px]:inline">{{ item.label }}</span>
+            <!-- BADGE POSICIONADA DENTRO DO ÍCONE NO MOBILE -->
             <span
-              v-else
-              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-[13px] font-semibold text-white"
+              v-if="item.badge"
+              class="absolute top-1 right-1.5 min-[980px]:static min-[980px]:ml-auto flex h-4 w-4 min-[980px]:h-4.5 min-[980px]:min-w-4.5 items-center justify-center rounded-full bg-[#635BFF] text-[10px] font-semibold text-white"
             >
-              {{ meuInicial }}
-            </span>
-            <span class="min-w-0 flex-1">
-              <span class="block truncate text-[14px] font-semibold">{{ nome }}</span>
-              <span class="block truncate text-[12px] text-gray-500">@{{ nomeUsuario }}</span>
+              {{ item.badge }}
             </span>
           </button>
-        </div>
+
+          <!-- Botão criar vídeo -->
+          <button
+            type="button"
+            class="hidden min-[980px]:mt-2 min-[980px]:flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-[13px] font-semibold text-[#1A1A1A] transition-colors hover:bg-gray-50"
+          >
+            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" v-html="icons.plus" />
+            Criar vídeo
+          </button>
+        </nav>
+      </div>
+
+      <!-- BOTÃO SAIR NA PARTE INFERIOR DA SIDEBAR (Apenas Desktop 980px+) -->
+      <div class="hidden min-[980px]:block w-full pt-2 border-t border-gray-200 mt-2">
+        <button
+          type="button"
+          class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-red-600 hover:bg-red-50 transition-colors font-medium text-[14px]"
+          @click="sair"
+        >
+          <svg viewBox="0 0 24 24" class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" v-html="icons.logout" />
+          <span>Sair</span>
+        </button>
       </div>
     </aside>
 
     <!-- CONTEÚDO PRINCIPAL -->
-    <div class="mx-auto grid max-w-285 grid-cols-1 justify-center gap-6 px-4 py-4 min-[980px]:gap-12 min-[980px]:px-8 min-[980px]:py-8 min-[980px]:grid-cols-[minmax(0,720px)_minmax(0,320px)]">
+    <div class="mx-auto grid max-w-285 grid-cols-1 justify-center gap-6 px-4 py-4 min-[980px]:gap-10 min-[980px]:px-6 min-[980px]:py-6 min-[980px]:grid-cols-[minmax(0,720px)_minmax(0,320px)]">
       <main class="min-w-0">
-        <header class="mb-5 flex items-center justify-between">
+        <header class="mb-5 flex items-center justify-between gap-2">
           <!-- Esquerda: Título -->
-          <div class="flex-1 text-left">
+          <div class="flex-1 text-left min-w-0">
             <h2
-              class="text-[18px] min-[980px]:text-[24px] font-bold tracking-tight"
+              class="text-[18px] min-[980px]:text-[22px] font-bold tracking-tight truncate"
               style="color: #1A1A1A !important; -webkit-text-fill-color: #1A1A1A !important; opacity: 1 !important; visibility: visible !important;"
             >
               Seu mundo em Libras.
@@ -439,20 +443,20 @@ async function publish() {
 
           <!-- Centro: Logo Librando (Visível apenas em telas menores que 980px) -->
           <div class="flex-1 text-center min-[980px]:hidden">
-            <h1 class="text-[22px] font-extrabold" style="color: #635BFF !important;">
+            <h1 class="text-[20px] font-extrabold" style="color: #635BFF !important;">
               Librando.
             </h1>
           </div>
 
           <!-- Direita: Abas -->
-          <div class="flex-1 flex justify-end gap-4 min-[980px]:gap-6 text-[14px]" role="tablist">
+          <div class="flex-1 flex justify-end gap-3 min-[980px]:gap-5 text-[14px]" role="tablist">
             <button
               v-for="tab in tabs"
               :key="tab"
               type="button"
               role="tab"
               :aria-selected="activeTab === tab"
-              class="border-b-2 pb-1.5 transition-colors shrink-0"
+              class="border-b-2 pb-1 transition-colors shrink-0"
               :class="activeTab === tab ? 'border-[#635BFF] font-medium text-[#635BFF]' : 'border-transparent text-gray-600'"
               @click="activeTab = tab"
             >
@@ -553,8 +557,8 @@ async function publish() {
                 {{ feedback }}
               </p>
 
-              <div class="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 pt-3">
-                <div class="flex items-center gap-2">
+              <div class="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 pt-3">
+                <div class="flex items-center gap-1.5 flex-wrap">
                   <input
                     ref="inputArquivo"
                     type="file"
@@ -564,13 +568,13 @@ async function publish() {
                   />
                   <button
                     type="button"
-                    class="flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-[14px] font-medium transition-colors"
+                    class="flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[13px] font-medium transition-colors"
                     :class="arquivo ? 'bg-[#EEEDFF] text-[#635BFF]' : 'text-[#1A1A1A] hover:bg-gray-100'"
                     @click="abrirSeletor"
                   >
                     <svg
                       viewBox="0 0 24 24"
-                      class="h-5 w-5"
+                      class="h-4 w-4 shrink-0"
                       fill="none"
                       stroke="currentColor"
                       stroke-width="1.7"
@@ -579,18 +583,18 @@ async function publish() {
                       aria-hidden="true"
                       v-html="icons.film"
                     />
-                    Vídeo / Imagem
+                    <span>Vídeo / Imagem</span>
                   </button>
 
                   <button
                     type="button"
-                    class="flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-[14px] font-medium transition-colors"
+                    class="flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[13px] font-medium transition-colors"
                     :class="modoEnquete ? 'bg-[#EEEDFF] text-[#635BFF]' : 'text-[#1A1A1A] hover:bg-gray-100'"
                     @click="alternarEnquete"
                   >
                     <svg
                       viewBox="0 0 24 24"
-                      class="h-5 w-5"
+                      class="h-4 w-4 shrink-0"
                       fill="none"
                       stroke="currentColor"
                       stroke-width="1.7"
@@ -599,14 +603,14 @@ async function publish() {
                       aria-hidden="true"
                       v-html="icons.poll"
                     />
-                    Enquete
+                    <span>Enquete</span>
                   </button>
                 </div>
 
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 shrink-0 ml-auto">
                   <span
                     v-if="draft.length > 0"
-                    class="text-[13px] tabular-nums"
+                    class="text-[12px] tabular-nums"
                     :class="remaining < 20 ? 'text-red-600' : 'text-gray-500'"
                   >
                     {{ remaining }}
@@ -615,7 +619,7 @@ async function publish() {
                   <button
                     v-if="draft || arquivo || modoEnquete"
                     type="button"
-                    class="whitespace-nowrap rounded-lg px-3 py-2 text-[14px] font-medium text-gray-600 hover:bg-gray-100"
+                    class="whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-gray-600 hover:bg-gray-100"
                     @click="cancelar"
                   >
                     Cancelar
@@ -624,8 +628,7 @@ async function publish() {
                   <button
                     type="button"
                     :disabled="!canPublish"
-                    class="whitespace-nowrap rounded-lg bg-[#635BFF] px-5 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-[#5249e6] disabled:cursor-not-allowed disabled:opacity-40"
-                    @click="publish"
+                    class="whitespace-nowrap rounded-lg bg-[#635BFF] px-4 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#5249e6] disabled:cursor-not-allowed disabled:opacity-40 shrink-0"
                   >
                     {{ publicando ? 'Publicando...' : 'Publicar' }}
                   </button>

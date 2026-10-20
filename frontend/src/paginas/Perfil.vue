@@ -13,7 +13,8 @@ const icons = {
   heart: '<path d="M12 20.5s-8-4.7-8-11A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.500c0 6.300-8 11-8 11z"/>',
   bookmark: '<path d="M6 3h12v18l-6-4-6 4z"/>',
   user: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6 18.500c1.500-2.500 3.500-3.500 6-3.500s4.500 1 6 3.500"/>',
-  menu: '<path d="M4 6h16M4 12h16M4 18h16"/>'
+  menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
+  logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>'
 }
 
 const navItems = [
@@ -29,6 +30,7 @@ const navItems = [
 
 const abaAtiva = ref('publicacoes')
 const mensagemErro = ref('')
+const excluindoConta = ref(false)
 
 /* ---------- Perfil (vem do banco: GET /perfil) ---------- */
 const dados = ref({
@@ -60,6 +62,13 @@ function guardarNoNavegador(perfil) {
   localStorage.setItem('nome_usuario', perfil.nome_usuario)
 }
 
+function sair() {
+  localStorage.removeItem('token')
+  localStorage.removeItem('nome')
+  localStorage.removeItem('nome_usuario')
+  router.replace('/login')
+}
+
 async function carregar() {
   try {
     const { data } = await api.get('/perfil')
@@ -68,6 +77,30 @@ async function carregar() {
   } catch (e) {
     if (tratarErroAuth(e)) return
     mensagemErro.value = e.response?.data?.mensagem ?? 'Não foi possível carregar o perfil.'
+  }
+}
+
+async function excluirConta() {
+  const confirmado = window.confirm(
+    'Tem certeza absoluta de que deseja excluir a sua conta? Esta ação é permanente e não poderá ser desfeita.'
+  )
+  if (!confirmado || excluindoConta.value) return
+
+  excluindoConta.value = true
+  mensagemErro.value = ''
+
+  try {
+    await api.delete('/perfil')
+    localStorage.removeItem('token')
+    localStorage.removeItem('nome')
+    localStorage.removeItem('nome_usuario')
+    router.replace('/login')
+  } catch (e) {
+    if (tratarErroAuth(e)) return
+    mensagemErro.value = e.response?.data?.mensagem ?? 'Não foi possível excluir a conta. O endpoint de exclusão pode não estar disponível no backend.'
+    alert(mensagemErro.value)
+  } finally {
+    excluindoConta.value = false
   }
 }
 
@@ -308,50 +341,63 @@ onBeforeUnmount(limparPreviews)
 
       <!-- ESQUERDA: Sidebar / Barra inferior no mobile -->
       <aside class="fixed inset-x-0 bottom-0 z-25 flex flex-row justify-around items-center border-t border-gray-200 bg-white px-2 py-3 min-[980px]:inset-y-0 min-[980px]:left-0 min-[980px]:w-56 min-[980px]:flex-col min-[980px]:justify-start min-[980px]:px-4 min-[980px]:py-8 min-[980px]:border-r min-[980px]:border-t-0">
-        <div class="w-full">
-          <!-- Logo (Apenas Desktop 980px+) -->
-          <div class="hidden min-[980px]:block px-1 mb-6 text-left">
-            <h1 class="brand-logo text-3xl font-extrabold leading-none">Librando.</h1>
-            <p class="text-[10px] text-gray-500 font-bold tracking-wider mt-1">CONEXÕES EM LIBRAS</p>
+        <div class="w-full flex flex-col h-full justify-between">
+          <div>
+            <!-- Logo (Apenas Desktop 980px+) -->
+            <div class="hidden min-[980px]:block px-1 mb-6 text-left">
+              <h1 class="brand-logo text-3xl font-extrabold leading-none">Librando.</h1>
+              <p class="text-[10px] text-gray-500 font-bold tracking-wider mt-1">CONEXÕES EM LIBRAS</p>
+            </div>
+
+            <!-- Navegação com destaque correto na aba ativa -->
+            <nav class="flex w-full flex-row justify-around items-center min-[980px]:space-y-1 min-[980px]:flex-col min-[980px]:items-stretch" aria-label="Principal">
+              <button
+                v-for="item in navItems"
+                :key="item.label"
+                type="button"
+                class="relative flex items-center justify-center gap-2 rounded-lg p-2.5 min-[980px]:px-3 min-[980px]:py-3 min-[980px]:justify-start min-[980px]:text-[16px] transition-colors"
+                :class="item.active ? 'text-[#635BFF] font-bold min-[980px]:bg-purple-50' : 'text-gray-700 hover:bg-gray-100'"
+                @click="navegarPara(item.route)"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  class="w-6 h-6 stroke-current fill-none shrink-0"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  v-html="icons[item.icon]"
+                />
+                <span class="hidden min-[980px]:inline">{{ item.label }}</span>
+                <!-- Badge de notificação -->
+                <span
+                  v-if="item.badge"
+                  class="absolute top-1 right-1.5 min-[980px]:static min-[980px]:ml-auto flex h-4 w-4 min-[980px]:h-5.5 min-[980px]:min-w-5.5 items-center justify-center rounded-full bg-[#635BFF] text-[10px] min-[980px]:text-[12px] font-semibold text-white"
+                >
+                  {{ item.badge }}
+                </span>
+              </button>
+            </nav>
           </div>
 
-          <!-- Navegação com destaque correto na aba ativa -->
-          <nav class="flex w-full flex-row justify-around items-center min-[980px]:space-y-1 min-[980px]:flex-col min-[980px]:items-stretch" aria-label="Principal">
+          <!-- Botão Sair na sidebar do Desktop -->
+          <div class="hidden min-[980px]:block mt-auto pt-4 border-t border-gray-200">
             <button
-              v-for="item in navItems"
-              :key="item.label"
               type="button"
-              class="relative flex items-center justify-center gap-2 rounded-lg p-2.5 min-[980px]:px-3 min-[980px]:py-3 min-[980px]:justify-start min-[980px]:text-[16px] transition-colors"
-              :class="item.active ? 'text-[#635BFF] font-bold min-[980px]:bg-purple-50' : 'text-gray-700 hover:bg-gray-100'"
-              @click="navegarPara(item.route)"
+              class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-red-600 hover:bg-red-50 transition-colors font-medium text-[15px]"
+              @click="sair"
             >
-              <svg
-                viewBox="0 0 24 24"
-                class="w-6 h-6 stroke-current fill-none shrink-0"
-                stroke-width="1.7"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-                v-html="icons[item.icon]"
-              />
-              <span class="hidden min-[980px]:inline">{{ item.label }}</span>
-              
-              <!-- Badge de notificação -->
-              <span
-                v-if="item.badge"
-                class="absolute top-1 right-1.5 min-[980px]:static min-[980px]:ml-auto flex h-4 w-4 min-[980px]:h-5.5 min-[980px]:min-w-5.5 items-center justify-center rounded-full bg-[#635BFF] text-[10px] min-[980px]:text-[12px] font-semibold text-white"
-              >
-                {{ item.badge }}
-              </span>
+              <svg viewBox="0 0 24 24" class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" v-html="icons.logout" />
+              <span>Sair</span>
             </button>
-          </nav>
+          </div>
         </div>
       </aside>
 
       <!-- CENTRO -->
       <main class="w-full min-[980px]:flex-1 min-[980px]:max-w-[720px] xl:max-w-[800px] border-r border-gray-200 bg-white min-h-screen text-left">
 
-        <!-- Topo centralizado para tela minimizada -->
+        <!-- Topo com Logo Centralizado no modo responsivo -->
         <header class="grid grid-cols-3 items-center px-4 py-3 sticky top-0 bg-white/90 backdrop-blur-md z-10 border-b border-gray-100">
           <!-- Esquerda: Seta e Info -->
           <div class="flex items-center gap-2">
@@ -410,6 +456,19 @@ onBeforeUnmount(limparPreviews)
           <p class="text-sm text-gray-500">@{{ dados.nome_usuario }}</p>
           <p v-if="dados.bio" class="text-sm mt-3 text-gray-800 leading-normal">{{ dados.bio }}</p>
           <p v-if="dados.localizacao" class="text-xs text-gray-500 mt-3">📍 {{ dados.localizacao }}</p>
+
+          <!-- Botão de Excluir Conta -->
+          <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+            <span class="text-xs text-gray-500">Gerenciamento da conta</span>
+            <button
+              type="button"
+              :disabled="excluindoConta"
+              class="px-4 py-1.5 border border-red-200 text-red-600 rounded-full font-bold text-sm hover:bg-red-50 transition-colors disabled:opacity-50"
+              @click="excluirConta"
+            >
+              {{ excluindoConta ? 'Excluindo...' : 'Excluir minha conta' }}
+            </button>
+          </div>
         </div>
 
         <!-- Abas -->
