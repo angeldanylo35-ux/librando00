@@ -251,7 +251,7 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 | 🟢 **Create** |     ❌     | Não se aplica. A criação da conta pertence ao RF-002 — Cadastro de Usuários. A criação de publicações pertence ao RF-006.                                                                                                   |
 | 🔵 **Read**   |     ✅     | Pode visualizar as informações do próprio perfil, suas publicações e os posts repostados.                                                                                                                                   |
 | 🟡 **Update** |     ✅     | Pode editar o próprio Nome, Nome de Usuário (@), Bio, Foto de Perfil, Foto da Capa e Localização. Para editar publicações próprias, utiliza a opção correspondente prevista no RF-006.                                      |
-| 🔴 **Delete** |     ❌     | O usuário cadastrado tem permissão para fazer a exclusão de sua própria conta, não sendo permitido a exclusão das contas de outros usuários. |
+| 🔴 **Delete** |     ✅     | O usuário cadastrado tem permissão para fazer a exclusão de sua própria conta, não sendo permitido a exclusão das contas de outros usuários. |
 
 #### ⚙️ 2. Sistema Librando
 
