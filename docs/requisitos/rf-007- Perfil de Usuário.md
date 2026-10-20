@@ -201,6 +201,13 @@ librando00-main/
         │   └── index.js
         └── services/
             └── api.js
+
+### d) Serviço Externo de Hospedagem de Imagens
+
+- **Serviço:** ImgBB
+- **Documentação da API:** [https://api.imgbb.com/](https://api.imgbb.com/)
+- **Funcionalidade:** Hospedagem das imagens de perfil e de capa dos usuários.
+
 ```
 ## 📋 2. Atores e Descrição
 
