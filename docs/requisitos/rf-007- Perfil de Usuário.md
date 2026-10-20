@@ -240,10 +240,10 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 
 #### 👤 1. Usuário Cadastrado
 
-- **🎭 Papel:** visualizar e atualizar as informações do próprio perfil, consultar suas publicações e visualizar os posts repostados.
-- **🔐 Permissões:** consultar e editar os dados permitidos de sua própria conta, além de acessar as opções de edição e exclusão de suas publicações conforme o RF-006.
-- **🖥️ Acesso:** página de perfil, formulário de edição, seção de publicações próprias e seção de publicações repostadas.
-- **🚫 Restrições:** não poderá modificar perfis de outros usuários, editar ou excluir publicações de terceiros, nem excluir a própria conta por meio deste requisito.
+- **🎭 Papel:** visualizar e atualizar as informações do próprio perfil, consultar suas publicações, visualizar os posts repostados, encerrar a sessão e solicitar a exclusão da própria conta.
+- **🔐 Permissões:** consultar e editar os dados permitidos de sua própria conta, acessar as opções de edição e exclusão de suas publicações conforme o RF-006, encerrar a própria sessão e solicitar a exclusão da própria conta.
+- **🖥️ Acesso:** página de perfil, formulário de edição, seção de publicações próprias, seção de publicações repostadas e opção de conta no menu lateral.
+- **🚫 Restrições:** não poderá modificar perfis de outros usuários nem editar ou excluir publicações de terceiros. A exclusão de conta limita-se à própria conta autenticada e exige confirmação explícita.
 
 ##### 📊 Permissões CRUD — Usuário Cadastrado
 
@@ -268,7 +268,7 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 | 🟢 **Create** |     ❌     | Não se aplica à edição do perfil; a criação da conta é tratada pelo RF-002 e a criação de publicações pelo RF-006.                                                                                                                         |
 | 🔵 **Read**   |     ✅     | Recupera os dados necessários para exibir o perfil autorizado, as publicações próprias e os posts repostados.                                                                                                                              |
 | 🟡 **Update** |     ✅     | Processa e persiste as alterações válidas solicitadas pelo usuário autorizado. As solicitações de edição de publicações seguem o mecanismo definido no RF-006.                                                                             |
-| 🔴 **Delete** |     ❌     | O usuário cadastrado possui permissão para solicitar a exclusão da própria conta por meio do perfil. A exclusão deverá ocorrer somente mediante solicitação explícita do usuário e após a validação de sua identidade. |
+| 🔴 **Delete** |     ✅     | O sistema processa a exclusão somente da conta autenticada, após confirmação explícita e validação da autorização. |
 
 ### ✅ 2.4 Validações Necessárias
 
@@ -289,6 +289,13 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 15. 🔁 **Consulta de reposts:** o sistema deverá apresentar as publicações repostadas pelo usuário em uma seção específica, distinguindo-as das publicações de sua própria autoria.
 16. 🚫 **Proteção de publicações de terceiros:** o sistema deverá impedir a edição ou exclusão de publicações de outros usuários por meio das opções disponibilizadas no perfil.
 17. ↩️ **Remoção de repost:** quando disponível, a operação deverá remover somente a associação do repost do usuário autenticado, sem excluir ou modificar a publicação original.
+18. 🚪 **Opção de sair:** o menu lateral deverá apresentar uma opção para encerrar a sessão autenticada.
+19. 🔐 **Encerramento seguro:** ao sair, o sistema deverá invalidar ou revogar o token da sessão no backend, quando aplicável, e remover o token armazenado no frontend.
+20. 🗑️ **Exclusão da própria conta:** a opção de exclusão deverá estar disponível no contexto do perfil ou das configurações da conta.
+21. ⚠️ **Confirmação de exclusão:** antes de excluir a conta, o sistema deverá explicar que a ação é permanente ou indicar as consequências definidas pelo projeto, e solicitar confirmação explícita.
+22. 🛡️ **Autorização da exclusão:** o backend deverá identificar a conta pelo usuário autenticado, sem confiar em um `id` de usuário enviado pelo frontend.
+23. 🔒 **Proteção após exclusão:** após a exclusão bem-sucedida, o sistema deverá invalidar os tokens relacionados à conta, limpar a sessão no frontend e redirecionar para a tela de login ou página pública.
+24. 🧩 **Integridade dos dados relacionados:** o tratamento de publicações, comentários, reposts e demais dados vinculados deverá seguir a política de exclusão definida para o projeto, sem deixar registros inconsistentes.
 
 ## 🔄 3. Casos de Uso e Requisitos Não Funcionais
 
