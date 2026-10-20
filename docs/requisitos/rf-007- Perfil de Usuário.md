@@ -214,7 +214,7 @@ librando00-main/
 ### 📝 2.1 Descrição do Requisito
 O requisito funcional RF-007 — Perfil de Usuário tem como objetivo permitir que usuários cadastrados no Librando visualizem e editem as informações básicas de seus próprios perfis, encerrem sua sessão e solicitem a exclusão da própria conta. Essa funcionalidade busca oferecer autonomia aos usuários para manter seus dados atualizados e personalizar sua identificação dentro da rede social, contribuindo para uma experiência de uso mais acessível, inclusiva e organizada.
 
-A funcionalidade de edição do perfil disponibiliza os campos Nome, Nome de Usuário (@), Localização Bio, Foto de Perfil e Foto de Capa. O campo Nome é obrigatório e permite que o usuário informe seu nome de identificação. O campo Nome de Usuário (@) também é obrigatório e representa o identificador utilizado na plataforma, devendo ser único para evitar conflitos entre contas. Já o campo Bio é opcional e permite que o usuário apresente informações adicionais sobre si mesmo. O sistema deve validar os dados antes de salvar as alterações, impedindo o envio de informações obrigatórias vazias e a utilização de nomes de usuário já existentes.
+A funcionalidade de edição do perfil disponibiliza os campos Nome, Nome de Usuário (@), Localização, Bio, Foto de Perfil e Foto de Capa. O campo Nome é obrigatório e permite que o usuário informe seu nome de identificação. O campo Nome de Usuário (@) também é obrigatório e representa o identificador utilizado na plataforma, devendo ser único para evitar conflitos entre contas. Já o campo Bio é opcional e permite que o usuário apresente informações adicionais sobre si mesmo. O sistema deve validar os dados antes de salvar as alterações, impedindo o envio de informações obrigatórias vazias e a utilização de nomes de usuário já existentes.
 
 Além das informações do perfil, o usuário deverá poder visualizar suas próprias publicações em uma seção específica do perfil. Em cada publicação de sua autoria, deverão ser disponibilizadas as opções de edição e exclusão, quando aplicáveis. Essas opções deverão utilizar as funcionalidades e regras estabelecidas no RF-006 — Criação e Publicação de Postagens, sem duplicar a implementação dessas operações no RF-007.
 
@@ -520,8 +520,6 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 
 ---
 
----
-
 ### ⚙️ 3.6 Requisitos Não Funcionais
 
 | ID | Requisito | Descrição |
@@ -564,7 +562,7 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 | **RN-15** | Exibição de publicações próprias | O perfil deverá apresentar as publicações criadas pelo usuário autenticado em uma seção própria. |
 | **RN-16** | Integração com o RF-006 | As operações de criação, edição e exclusão de publicações deverão seguir as regras e os mecanismos definidos no RF-006, sem duplicação de sua implementação no RF-007. |
 | **RN-17** | Edição por autoria | O usuário poderá editar somente as publicações de sua autoria, respeitando as regras de autorização do RF-006. |
-| **RN-18** | Exclusão por autoria | O usuário poderá solicitar a exclusão de suas próprias publicações por meio da opção disponibilizada no post, conforme as regras do RF-006. A exclusão da própria conta faz parte do RF-007 e deve seguir as regras RN-24 a RN-28. |
+| **RN-18** | Exclusão por autoria | O usuário poderá solicitar a exclusão de suas próprias publicações por meio da opção disponibilizada no post, conforme as regras do RF-006. A exclusão da própria conta faz parte do RF-007 e deve seguir as regras RN-26 a RN-28. |
 | **RN-19** | Exibição de reposts | O perfil deverá apresentar em seção específica os posts repostados pelo usuário, distinguindo-os das publicações próprias. |
 | **RN-20** | Remoção de repost | Quando a funcionalidade estiver disponível, o usuário poderá desfazer um repost realizado por ele, removendo somente a associação do repost e preservando a publicação original. |
 | **RN-21** | Proteção de publicações de terceiros | Visualizar ou repostar uma publicação não concede ao usuário permissão para editar ou excluir o conteúdo original de outro autor. |
@@ -585,7 +583,8 @@ Interface funcionando online em: https://librando-frontend.onrender.com/ (menu *
 | Create | — | — | Não se aplica (a conta é criada no RF-002: `POST /api/cadastro`) |
 | Read | GET | /api/perfil | 200 / 401 |
 | Update | POST (ou PUT/PATCH) | /api/perfil | 200 / 400 / 401 / 500 |
-| Delete | DELETE (proposto) | `/api/conta` (a confirmar na implementação) | 200/204 / 401 / 403 / 500 |
+| Delete | DELETE | `/api/conta` | 200/204 / 401 / 500 |
+| Logout | POST | `/api/logout` | 200/204 / 401 |
 
 ⛔ Documentação da API (obrigatória): `docs/api/swagger.json`
 
@@ -614,22 +613,23 @@ Interface funcionando online em: https://librando-frontend.onrender.com/ (menu *
 
 ### 4.2 CRUD: as operações do RF-007
 
-O RF-007 trata do perfil e das ações de conta do **próprio** usuário autenticado. Não há `{id}` nas rotas de perfil ou de exclusão: a conta afetada deve ser sempre a dona do token (RN-02). A conta é criada no RF-002 (`POST /api/cadastro`). Os endpoints de logout e exclusão indicados neste documento são propostas e devem ser confirmados com as rotas efetivamente implementadas e com o Swagger.
+O RF-007 trata do perfil e das ações de conta do **próprio** usuário autenticado. Não há `{id}` nas rotas de perfil, de logout ou de exclusão: a conta afetada deve ser sempre a dona do token (RN-02). A conta é criada no RF-002 (`POST /api/cadastro`). Os endpoints de logout e exclusão indicados neste documento são propostas e devem ser confirmados com as rotas efetivamente implementadas e com o Swagger.
 
 | Operação | Ação na interface | Método HTTP | Endpoint | Resposta esperada | Verificação |
 |---|---|---|---|---|---|
 | **C**reate | Não se aplica: a conta é criada no RF-002 | — | — | — | — |
 | **R**ead | Abrir "Meu perfil" | `GET` | `/api/perfil` | `200 OK` / `401` | Dados conferem com a linha do usuário na tabela `usuarios` |
 | **U**pdate | Editar perfil → alterar campos e fotos → Salvar | `POST` (ou `PUT`/`PATCH`) | `/api/perfil` | `200 OK` / `400` / `401` / `500` | Alteração aparece no perfil após recarregar e no banco |
-| **D**elete | Excluir a própria conta após confirmação | `DELETE` | `/api/conta` (proposto; confirmar rota real) | `200`/`204`, `401`, `403` ou `500` | Autorização pela conta do token; confirmação no frontend; política de dados relacionados definida |
+| **D**elete | Excluir a própria conta após confirmação | `DELETE` | `/api/conta` | `200`/`204`, `401` ou `500` | Autorização pela conta do token; confirmação no frontend; política de dados relacionados definida (RN-28) |
+| **Logout** | Sair no menu lateral | `POST` | `/api/logout` | `200`/`204` ou `401` | Token revogado no backend (não pode ser reutilizado) e removido do frontend |
 
-O envio de fotos usa `POST` com `multipart/form-data`, porque o PHP não processa arquivos em requisições `PUT`. Por isso a interface usa `POST /api/perfil`. Como a rota não tem `{id}`, não há resposta `404` documentada para o perfil.
+O envio de fotos usa `POST` com `multipart/form-data`, porque o PHP não processa arquivos em requisições `PUT`. Por isso a interface usa `POST /api/perfil`. Como a rota não tem `{id}`, não há resposta `404` documentada para o perfil. Pelo mesmo motivo, `DELETE /api/conta` não documenta `403`, pois a conta excluída é sempre a do token; esse código só passaria a existir se a exclusão exigisse a senha do usuário como confirmação adicional.
 
 ---
 
 ### 4.3 Documentação da API
 
-Arquivo `https://github.com/angeldanylo35-ux/librando00/blob/main/docs/api/swagger.json](https://github.com/angeldanylo35-ux/librando00/blob/main/docs/api/swagger.json)` (OpenAPI 3.0, JSON válido), com `BearerAuth` (HTTP, `bearer`) e `security` nas rotas do perfil.
+Arquivo [https://github.com/angeldanylo35-ux/librando00/blob/main/docs/api/swagger.json](https://github.com/angeldanylo35-ux/librando00/blob/main/docs/api/swagger.json) (OpenAPI 3.0, JSON válido), com `BearerAuth` (HTTP, `bearer`) e `security` nas rotas do perfil.
 
 | Método | Endpoint | O que documenta | Respostas |
 |---|---|---|---|
@@ -637,11 +637,14 @@ Arquivo `https://github.com/angeldanylo35-ux/librando00/blob/main/docs/api/swagg
 | POST | `/api/perfil` | `multipart/form-data` (ou JSON): `nome`, `nome_usuario`, `localizacao`, `bio`, `foto_perfil`, `foto_capa` | `200`, `400`, `401`, `500` |
 | PUT | `/api/perfil` | JSON com os campos de texto | `200`, `400`, `401`, `500` |
 | PATCH | `/api/perfil` | JSON com os campos de texto (parcial) | `200`, `400`, `401`, `500` |
+| POST | `/api/logout` | Encerra a sessão revogando o token atual; sem corpo; `security: BearerAuth` | `200` ou `204`, `401` |
+| DELETE | `/api/conta` | Exclui a conta do usuário autenticado e invalida todos os seus tokens; sem `id` e sem corpo; `security: BearerAuth` | `200` ou `204`, `401`, `500` |
 
-- Cada método traz exemplo de resposta e, nos métodos com corpo (POST, PUT e PATCH), exemplo de requisição.
+- Cada método traz exemplo de resposta e, nos métodos com corpo (POST, PUT e PATCH de `/perfil`), exemplo de requisição.
 - Os campos do `requestBody` são os mesmos do formulário de edição da interface.
 - Os códigos documentados são os que a API retorna (`200` sucesso, `400` dados inválidos, `401` sem token, `500` falha ao salvar).
 - O arquivo também documenta `login`, `cadastro`, `verificar-email`, `esqueci-senha` e `redefinir-senha`; o login devolve o token Bearer usado no perfil.
+- As rotas `POST /api/logout` e `DELETE /api/conta` só devem ser acrescentadas ao `swagger.json` (e marcadas como confirmadas neste documento) depois de implementadas e testadas.
 - O arquivo não contém senhas, tokens ou chaves reais (os exemplos usam valores fictícios).
 
 ---
@@ -779,8 +782,9 @@ Arquivo `database/rf-007-editar-perfil-ddl.sql` (MySQL 8), equivalente às migra
 
 **ADR-007: Encerramento de sessão e exclusão da própria conta**
 - *Decisão:* disponibilizar a opção **Sair** no menu lateral e permitir a solicitação de exclusão da própria conta a partir do contexto do perfil/configurações. A exclusão deve exigir confirmação explícita.
-- *Segurança:* a API deve identificar a conta pelo token autenticado, revogar o token ao sair e invalidar os tokens da conta após exclusão, conforme o mecanismo de autenticação utilizado.
-- *Dados relacionados:* o comportamento para publicações, comentários, reposts e outros registros associados precisa seguir uma política definida pelo projeto e ser implementado sem deixar dados inconsistentes.
+- *Segurança:* a API deve identificar a conta pelo token autenticado (sempre a partir de `$request->user()`, nunca de um `id` enviado pelo cliente). No logout, deve revogar apenas o token atual (`currentAccessToken()->delete()`). Na exclusão, deve invalidar todos os tokens da conta (`tokens()->delete()`) antes ou junto da exclusão do usuário.
+- *Dados relacionados:* o comportamento para publicações, comentários, reposts e outros registros associados precisa seguir uma política definida pelo projeto e ser implementado sem deixar dados inconsistentes. Política proposta (a confirmar na implementação): exclusão em transação, com remoção em cascata de posts, opções de enquete, reposts e tokens; se qualquer etapa falhar, nada é excluído (ver RN-28).
+- *Limitação conhecida:* as imagens de perfil e de capa já enviadas ao ImgBB não são removidas na exclusão da conta e continuam hospedadas no serviço externo. Essa decisão deve ser mantida ou revista na implementação, considerando o RNF-14.
 - *Consequência:* as rotas e respostas de logout/exclusão devem ser confirmadas na implementação e documentadas em `docs/api/swagger.json`. Até essa validação, os endpoints indicados neste documento são propostas, não confirmação de implementação.
 
 ### 5.3 Fluxo de Dados (Editar Perfil)
@@ -845,8 +849,8 @@ Arquivo `database/rf-007-editar-perfil-ddl.sql` (MySQL 8), equivalente às migra
 
 ### Controle 6: Logout e exclusão segura da conta
 
-**Vulnerabilidade OWASP (Risco):** uma sessão que não seja invalidada pode continuar utilizável após o usuário sair; uma rota de exclusão sem autorização adequada pode permitir que uma pessoa exclua a conta de outra.
+**Vulnerabilidade OWASP (Risco):** A01 – Broken Access Control e A07 – Identification and Authentication Failures. Uma sessão que não seja invalidada pode continuar utilizável após o usuário sair (A07); uma rota de exclusão sem autorização adequada pode permitir que uma pessoa exclua a conta de outra (A01).
 
-**Implementação (Como proteger?):** o logout deve revogar o token autenticado no backend e remover o token do frontend. A exclusão deve exigir autenticação, confirmação explícita e identificar a conta pelo usuário autenticado, sem confiar em um `id` enviado pelo cliente. Os tokens relacionados devem ser invalidados após a exclusão.
+**Implementação (Como proteger?):** o logout deve revogar o token autenticado no backend e remover o token do frontend. A exclusão deve exigir autenticação, confirmação explícita e identificar a conta pelo usuário autenticado, sem confiar em um id enviado pelo cliente. Os tokens relacionados devem ser invalidados após a exclusão.
 
-**Teste (Como provar que funciona?):** testar logout com token válido e tentar reutilizar o mesmo token depois; testar exclusão cancelada; testar exclusão confirmada em conta de teste; e enviar requisições sem token, com token inválido e com um `id` de outra conta. Registrar os resultados somente após executar os testes. como texto, sem executar código, inclusive após recarregar a página. Também deve ser verificado se as URLs de imagens são tratadas de forma segura. Os resultados devem ser registrados conforme os testes realmente executados.
+**Teste (Como provar que funciona?):** testar logout com token válido e tentar reutilizar o mesmo token depois; testar exclusão cancelada; testar exclusão confirmada em conta de teste; e enviar requisições sem token, com token inválido e com um id de outra conta. Registrar os resultados somente após executar os testes.
