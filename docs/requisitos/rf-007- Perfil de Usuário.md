@@ -203,7 +203,7 @@ librando00-main/
             └── api.js
 
 ```
-### ### d) Serviço Externo de Hospedagem de Imagens
+### d) Serviço Externo de Hospedagem de Imagens
 
 - **Serviço:** ImgBB
 - **Documentação da API:** [https://api.imgbb.com/](https://api.imgbb.com/)
