@@ -629,9 +629,9 @@ Arquivo `database/rf-007-editar-perfil-ddl.sql` (MySQL 8), equivalente às migra
 1. Abrir a URL do item a) em uma janela anônima e entrar com as credenciais de teste.
 2. Abrir **Meu perfil** → conferir os dados na tela e a linha correspondente em `usuarios` no phpMyAdmin (**Read**).
 3. Clicar em **Editar perfil** → alterar nome, bio e localização → **Salvar** → recarregar a página → conferir a alteração na tela e no banco (**Update**).
-4. Trocar a foto de perfil e a capa → **Salvar** → recarregar → conferir que as imagens permanecem.
+4. Trocar a foto de perfil e a capa → **Salvar** → verificar se as imagens foram enviadas corretamente ao ImgBB, se as URLs retornadas ficaram associadas ao perfil nos campos correspondentes da tabela `usuarios` e se as fotos continuam sendo exibidas após recarregar a página.
 5. Tentar salvar com nome vazio, com @ de outra conta, com @ contendo espaço e com imagem inválida ou acima do limite → conferir as mensagens de erro.
-6. Conferir o repositório: estrutura de pastas, DDL, `.gitignore` e ausência de segredos.
+6. Conferir o repositório: estrutura de pastas, DDL, `.gitignore` e ausência de segredos, incluindo a chave de API do ImgBB.
 7. Abrir `docs/api/swagger.json` em https://editor.swagger.io → conferir que não há erro e que `GET`, `POST`, `PUT` e `PATCH` de `/perfil` correspondem aos testes realizados.
 
 ---
