@@ -307,7 +307,7 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 | 📋 **Requisito relacionado** | RF-007 — Perfil de Usuário                                                                                                                                                                                                               |
 | 👤 **Ator principal**        | Usuário Cadastrado                                                                                                                                                                                                                       |
 | ⚙️ **Ator secundário**       | Sistema Librando                                                                                                                                                                                                                         |
-| 🎯 **Objetivo**              | Permitir que o usuário visualize e atualize as informações do próprio perfil, incluindo nome, nome de usuário, biografia, localização, foto de perfil e foto de capa, além de consultar suas publicações próprias e os posts repostados. |
+| 🎯 **Objetivo**              | Permitir que o usuário visualize e atualize as informações do próprio perfil, consulte suas publicações e reposts, encerre a sessão pelo menu lateral e solicite a exclusão da própria conta com confirmação. |
 | 🔗 **Relacionamento**        | Funcionalidade de visualização e edição do perfil da rede social Librando, integrada ao RF-006 — Criação e Publicação de Postagens para as opções de gerenciamento de publicações próprias.                                              |
 
 ### 🔐 3.2 Pré-condições
@@ -351,6 +351,18 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 27. 🛡️ O sistema verifica se o repost está associado ao usuário autenticado.
 28. 💾 O sistema remove a associação do repost, preservando a publicação original de outro usuário.
 29. ✅ O sistema atualiza a seção de reposts e apresenta o resultado da operação.
+30. 🚪 O usuário seleciona **Sair** no menu lateral.
+31. 🔐 O sistema solicita ao backend o encerramento da sessão e invalida o token atual, quando aplicável.
+32. 🧹 O frontend remove o token e os dados locais da sessão.
+33. ↪️ O sistema redireciona o usuário para a tela de login ou página pública.
+34. 🗑️ Para excluir a conta, o usuário acessa a opção **Excluir minha conta**.
+35. ⚠️ O sistema apresenta uma mensagem com as consequências da exclusão e solicita confirmação explícita.
+36. ❌ Se o usuário cancelar, o sistema fecha a confirmação e mantém a conta sem alterações.
+37. ✅ Se confirmar, o sistema envia a solicitação de exclusão autenticada ao backend.
+38. 🛡️ O backend identifica a conta pelo token do usuário autenticado e verifica a autorização.
+39. 💾 O sistema processa a exclusão conforme a política de dados relacionados definida para o Librando.
+40. 🔒 Após a exclusão bem-sucedida, o sistema invalida os tokens relacionados, limpa a sessão local e redireciona para a tela de login ou página pública.
+41. 📣 O sistema informa que a solicitação foi concluída; em caso de falha, informa que a conta não foi excluída e não apresenta sucesso indevidamente.
 
 ### 🔀 3.4 Fluxos Alternativos
 
@@ -452,6 +464,40 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 
 **Resultado:** o sistema não deverá confirmar a remoção sem concluir a operação. A publicação original deverá permanecer preservada.
 
+#### 🚪 FA-11 — Cancelamento ou falha ao sair
+
+1. O usuário seleciona **Sair** no menu lateral.
+2. O sistema tenta encerrar a sessão no backend.
+3. Se ocorrer uma falha de comunicação, o frontend deverá limpar os dados locais de autenticação e impedir que a sessão local continue sendo usada, apresentando uma mensagem adequada.
+
+**Resultado:** o usuário é direcionado para uma área pública ou para a tela de login; o backend deverá revogar o token sempre que a solicitação alcançar o servidor.
+
+#### 🗑️ FA-12 — Cancelamento da exclusão da conta
+
+1. O usuário seleciona **Excluir minha conta**.
+2. O sistema apresenta a confirmação e explica as consequências da operação.
+3. O usuário seleciona **Cancelar**.
+4. O sistema fecha a confirmação sem enviar a solicitação de exclusão.
+
+**Resultado:** a conta e seus dados permanecem inalterados.
+
+#### ⚠️ FA-13 — Falha ao excluir a conta
+
+1. O usuário confirma a exclusão da própria conta.
+2. O sistema tenta processar a solicitação.
+3. O backend identifica uma falha de validação, autorização, comunicação ou persistência.
+4. O sistema informa que a exclusão não foi concluída e não exibe uma mensagem de sucesso.
+
+**Resultado:** a operação deverá ser tratada de forma consistente, evitando exclusão parcial dos dados. O usuário poderá tentar novamente quando o problema for resolvido.
+
+#### 🛡️ FA-14 — Sessão inválida ao solicitar exclusão
+
+1. O usuário tenta confirmar a exclusão, mas o token está ausente, expirado ou inválido.
+2. O backend bloqueia a solicitação.
+3. O frontend limpa os dados locais de autenticação e direciona o usuário para a tela de login.
+
+**Resultado:** nenhuma conta é excluída por uma solicitação não autenticada.
+
 ### 🏁 3.5 Pós-condições
 
 - ✅ As informações válidas do perfil são atualizadas e persistidas.
@@ -467,6 +513,12 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 - 🔁 As publicações repostadas ficam disponíveis para consulta em uma seção específica do perfil.
 - ↩️ Ao desfazer um repost, somente a associação do repost é removida, preservando a publicação original de terceiros.
 - 🚫 O usuário não consegue editar ou excluir publicações de terceiros por meio das opções do perfil.
+- 🚪 Ao sair, a sessão local é encerrada e o token é removido do frontend; o backend revoga o token conforme a implementação.
+- 🗑️ A conta é excluída somente após confirmação explícita e validação de autorização.
+- 🔒 Após a exclusão, os tokens relacionados são invalidados e o usuário é redirecionado para uma área pública.
+- 🧩 Os dados relacionados à conta são tratados conforme a política de exclusão definida pelo projeto.
+
+---
 
 ---
 
@@ -485,6 +537,9 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 | 🔁 **RNF-09** | **Consulta de reposts** | A seção de publicações repostadas deverá distinguir os conteúdos repostados das publicações de autoria do usuário e preservar a identificação do autor original. |
 | 🛡️ **RNF-10** | **Autorização de publicações** | As opções de edição e exclusão deverão respeitar a autoria e as permissões definidas no RF-006, com validação realizada no processamento da solicitação. |
 | 💾 **RNF-11** | **Integridade dos reposts** | A remoção de um repost deverá preservar a publicação original e os dados associados a outros usuários. |
+| 🔐 **RNF-12** | **Segurança da sessão** | O encerramento da sessão deverá remover as credenciais locais e revogar o token no backend, quando aplicável, impedindo a reutilização do token revogado. |
+| 🗑️ **RNF-13** | **Exclusão segura da conta** | A exclusão deverá exigir autenticação válida, confirmação explícita e autorização baseada na conta autenticada. |
+| 💾 **RNF-14** | **Consistência da exclusão** | A exclusão deverá tratar os dados relacionados de acordo com a política definida pelo projeto, evitando registros órfãos e informando falhas sem indicar sucesso indevido. |
 
 ---
 
@@ -509,20 +564,17 @@ Após o envio das alterações do perfil, o sistema deverá verificar os dados i
 | **RN-15** | Exibição de publicações próprias | O perfil deverá apresentar as publicações criadas pelo usuário autenticado em uma seção própria. |
 | **RN-16** | Integração com o RF-006 | As operações de criação, edição e exclusão de publicações deverão seguir as regras e os mecanismos definidos no RF-006, sem duplicação de sua implementação no RF-007. |
 | **RN-17** | Edição por autoria | O usuário poderá editar somente as publicações de sua autoria, respeitando as regras de autorização do RF-006. |
-| **RN-18** | Exclusão por autoria | O usuário poderá solicitar a exclusão de suas próprias publicações por meio da opção disponibilizada no post, conforme as regras do RF-006. A exclusão da conta não pertence ao RF-007. |
+| **RN-18** | Exclusão por autoria | O usuário poderá solicitar a exclusão de suas próprias publicações por meio da opção disponibilizada no post, conforme as regras do RF-006. A exclusão da própria conta faz parte do RF-007 e deve seguir as regras RN-24 a RN-28. |
 | **RN-19** | Exibição de reposts | O perfil deverá apresentar em seção específica os posts repostados pelo usuário, distinguindo-os das publicações próprias. |
 | **RN-20** | Remoção de repost | Quando a funcionalidade estiver disponível, o usuário poderá desfazer um repost realizado por ele, removendo somente a associação do repost e preservando a publicação original. |
 | **RN-21** | Proteção de publicações de terceiros | Visualizar ou repostar uma publicação não concede ao usuário permissão para editar ou excluir o conteúdo original de outro autor. |
 | **RN-22** | Atualização das seções | Após a conclusão de uma operação de edição, exclusão ou remoção de repost, o sistema deverá atualizar a seção correspondente para refletir o estado atual dos dados. |
 | **RN-23** | Hospedagem de imagens | O sistema deverá utilizar o serviço externo ImgBB para hospedar as imagens de perfil e de capa. Após o envio bem-sucedido, a URL retornada pelo serviço deverá ser associada ao perfil correspondente e utilizada para exibir a imagem na aplicação. |
-
-<!--
-ANTES DE ENTREGAR (comentário invisível, apague depois):
-1. Trocar «E-MAIL DA CONTA DE TESTE» e «SENHA DA CONTA DE TESTE» (item 4.1 a) por uma conta criada só para o professor.
-2. Commitar docs/api/swagger.json e database/rf-007-editar-perfil-ddl.sql no repositório.
-3. Enviar a senha do usuário professor_leitura por e-mail ao professor (nunca neste arquivo).
-4. Se implementar validação verde/vermelha, mensagem de sucesso, <label for> ou responsividade, acrescentar a linha correspondente no item 4.5.
--->
+| **RN-24** | Encerramento de sessão | A opção **Sair** deverá estar disponível no menu lateral e encerrar a sessão do usuário autenticado. |
+| **RN-25** | Revogação de token | Ao sair, o backend deverá revogar o token utilizado, quando a autenticação estiver baseada em token, e o frontend deverá remover os dados locais de autenticação. |
+| **RN-26** | Exclusão da própria conta | O usuário poderá solicitar a exclusão somente da conta identificada pela autenticação atual; o frontend não poderá definir livremente qual conta será excluída. |
+| **RN-27** | Confirmação explícita | A exclusão da conta deverá exigir uma confirmação clara. Cancelar a confirmação não deverá modificar a conta. |
+| **RN-28** | Dados vinculados à conta | Publicações, comentários, reposts e demais dados associados deverão ser tratados conforme a política definida para o projeto e a implementação, com integridade dos dados preservada. |
 
 ## 4. Protótipo
 
@@ -533,7 +585,7 @@ Interface funcionando online em: https://librando-frontend.onrender.com/ (menu *
 | Create | — | — | Não se aplica (a conta é criada no RF-002: `POST /api/cadastro`) |
 | Read | GET | /api/perfil | 200 / 401 |
 | Update | POST (ou PUT/PATCH) | /api/perfil | 200 / 400 / 401 / 500 |
-| Delete | — | — | Não se aplica (a exclusão de conta está fora do escopo do RF-007) |
+| Delete | DELETE (proposto) | `/api/conta` (a confirmar na implementação) | 200/204 / 401 / 403 / 500 |
 
 ⛔ Documentação da API (obrigatória): `docs/api/swagger.json`
 
@@ -615,6 +667,9 @@ Arquivo `database/rf-007-editar-perfil-ddl.sql` (MySQL 8), equivalente às migra
 | Estado **erro**: mensagem do servidor exibida no formulário | ✅ |
 | Estado **carregando**: botão "Salvando..." durante o envio | ✅ |
 | Estado **sucesso**: mensagem "Perfil atualizado com sucesso!" após salvar, com o perfil exibindo os dados atualizados | ✅ |
+| Opção **Sair** visível no menu lateral e encerramento seguro da sessão | ⏳ A validar/implementar |
+| Confirmação antes de excluir a própria conta, com opção de cancelar | ⏳ A validar/implementar |
+| Limpeza da sessão e redirecionamento após logout ou exclusão bem-sucedidos | ⏳ A validar/implementar |
 
 **Regras de validação (backend):** nome obrigatório (até 100); @ obrigatório, único, até 50, apenas letras, números, ponto e underline; localização até 100; bio até 300; fotos JPG, PNG ou WebP (perfil até 4 MB, capa até 6 MB). Somente esses campos são aceitos e a gravação é feita em um único `UPDATE`: em caso de falha, nada é alterado.
 
@@ -626,7 +681,8 @@ Arquivo `database/rf-007-editar-perfil-ddl.sql` (MySQL 8), equivalente às migra
 | **CREATE** | Não se aplica ao perfil (conta criada no RF-002) |
 | **READ** (`GET /api/perfil`) | ✅ funcionando; documentado |
 | **UPDATE** (`POST /api/perfil`) | ✅ funcionando; documentado |
-| **DELETE** | Não se aplica ao perfil (exclusão de conta fora do escopo) |
+| **DELETE** (`DELETE /api/conta`, rota proposta) | ⏳ Confirmar/implementar exclusão segura da própria conta e atualizar o Swagger |
+| **Logout** (`POST /api/logout`, rota proposta) | ⏳ Confirmar/implementar revogação do token e limpeza da sessão |
 | **Qualidade da interface e integração** | Estados preenchido, vazio, carregando e erro; mensagens claras e tratamento de erros (item 4.5) |
 | **Pré-requisitos (a, b, c, d)** | ✅ aplicação, banco e repositório online; `swagger.json` no repositório |
 
@@ -641,6 +697,11 @@ Arquivo `database/rf-007-editar-perfil-ddl.sql` (MySQL 8), equivalente às migra
 5. Tentar salvar com nome vazio, com @ de outra conta, com @ contendo espaço e com imagem inválida ou acima do limite → conferir as mensagens de erro.
 6. Conferir o repositório: estrutura de pastas, DDL, `.gitignore` e ausência de segredos, incluindo a chave de API do ImgBB.
 7. Abrir `docs/api/swagger.json` em https://editor.swagger.io → conferir que não há erro e que `GET`, `POST`, `PUT` e `PATCH` de `/perfil` correspondem aos testes realizados.
+8. Selecionar **Sair** no menu lateral → verificar se o token é revogado no backend, removido do frontend e se o usuário é redirecionado para a tela de login.
+9. Solicitar a exclusão da conta e cancelar na confirmação → verificar que a conta permanece intacta.
+10. Em ambiente de teste, confirmar a exclusão da própria conta → verificar a resposta da API, a invalidação dos tokens, o redirecionamento e o tratamento dos dados relacionados conforme a política do projeto.
+11. Tentar executar logout e exclusão sem token ou com token inválido → confirmar que o backend bloqueia a solicitação e não exclui nenhuma conta.
+12. Verificar que a solicitação de exclusão não aceita um `id` arbitrário para excluir conta de outro usuário.
 
 ---
 
@@ -716,6 +777,12 @@ Arquivo `database/rf-007-editar-perfil-ddl.sql` (MySQL 8), equivalente às migra
 - *Razão:* permite disponibilizar o sistema por URLs públicas e automatizar a publicação a partir do repositório.
 - *Consequência:* segredos e credenciais ficam nas variáveis de ambiente do Render, nunca no repositório.
 
+**ADR-007: Encerramento de sessão e exclusão da própria conta**
+- *Decisão:* disponibilizar a opção **Sair** no menu lateral e permitir a solicitação de exclusão da própria conta a partir do contexto do perfil/configurações. A exclusão deve exigir confirmação explícita.
+- *Segurança:* a API deve identificar a conta pelo token autenticado, revogar o token ao sair e invalidar os tokens da conta após exclusão, conforme o mecanismo de autenticação utilizado.
+- *Dados relacionados:* o comportamento para publicações, comentários, reposts e outros registros associados precisa seguir uma política definida pelo projeto e ser implementado sem deixar dados inconsistentes.
+- *Consequência:* as rotas e respostas de logout/exclusão devem ser confirmadas na implementação e documentadas em `docs/api/swagger.json`. Até essa validação, os endpoints indicados neste documento são propostas, não confirmação de implementação.
+
 ### 5.3 Fluxo de Dados (Editar Perfil)
 
 1. O usuário abre a tela de perfil; o Vue chama `GET /api/perfil` com o token.
@@ -775,3 +842,11 @@ Arquivo `database/rf-007-editar-perfil-ddl.sql` (MySQL 8), equivalente às migra
 **Implementação (Como você protege?):** Os dados digitados pelo usuário, como nome, nome de usuário, bio, localização e texto das publicações, devem ser exibidos com a interpolação padrão do Vue, que trata o conteúdo como texto e escapa os caracteres especiais. A tela de perfil não deve usar `v-html` para exibir conteúdo não confiável. Como reforço, o backend valida o formato do nome de usuário e restringe os formatos de imagem aceitos. As imagens são enviadas ao ImgBB pelo backend por meio do `ImageService`, e as URLs retornadas pelo serviço são armazenadas no banco. Portanto, as URLs das imagens não são necessariamente geradas pelo próprio backend. A aplicação deve validar e tratar essas URLs antes de utilizá-las, evitando destinos inesperados.
 
 **Teste (Como provou que funciona?):** Os testes devem verificar se conteúdos como `<script>alert('XSS')</script>` e `<img src=x onerror=alert(1)>` são exibidos como texto, sem executar código, inclusive após recarregar a página. Também deve ser verificado se as URLs de imagens são tratadas de forma segura. Os resultados devem ser registrados conforme os testes realmente executados.
+
+### Controle 6: Logout e exclusão segura da conta
+
+**Vulnerabilidade OWASP (Risco):** uma sessão que não seja invalidada pode continuar utilizável após o usuário sair; uma rota de exclusão sem autorização adequada pode permitir que uma pessoa exclua a conta de outra.
+
+**Implementação (Como proteger?):** o logout deve revogar o token autenticado no backend e remover o token do frontend. A exclusão deve exigir autenticação, confirmação explícita e identificar a conta pelo usuário autenticado, sem confiar em um `id` enviado pelo cliente. Os tokens relacionados devem ser invalidados após a exclusão.
+
+**Teste (Como provar que funciona?):** testar logout com token válido e tentar reutilizar o mesmo token depois; testar exclusão cancelada; testar exclusão confirmada em conta de teste; e enviar requisições sem token, com token inválido e com um `id` de outra conta. Registrar os resultados somente após executar os testes. como texto, sem executar código, inclusive após recarregar a página. Também deve ser verificado se as URLs de imagens são tratadas de forma segura. Os resultados devem ser registrados conforme os testes realmente executados.
