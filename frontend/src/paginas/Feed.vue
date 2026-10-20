@@ -12,6 +12,7 @@ const icons = {
   send: '<path d="M21 3 3 10.5l7 3 3 7z"/><path d="M21 3 10 13.5"/>',
   heart: '<path d="M12 20.5s-8-4.7-8-11A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.500c0 6.300-8 11-8 11z"/>',
   bookmark: '<path d="M6 3h12v18l-6-4-6 4z"/>',
+  user: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6 18.500c1.500-2.500 3.500-3.500 6-3.500s4.500 1 6 3.500"/>',
   plus: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/>',
   menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
   search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.500-3.500"/>',
@@ -24,8 +25,7 @@ const icons = {
   arrowUp: '<path d="M7 17 17 7M8 7h9v9"/>',
   film: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M7 5l2 4M12 5l2 4M17 5l2 4"/>',
   poll: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
-  repost: '<polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>',
-  logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>'
+  repost: '<polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>'
 }
 
 /* Perfil do usuário logado (vem do banco: GET /perfil) */
@@ -36,6 +36,7 @@ const perfil = ref({
   foto_perfil_url: '',
 })
 
+// Mesmos nomes de antes, então o template que usa {{ nome }} e {{ nomeUsuario }} não muda
 const nome = computed(() => perfil.value.nome || 'Usuário')
 const nomeUsuario = computed(() => perfil.value.nome_usuario || 'usuario')
 
@@ -60,15 +61,8 @@ async function carregarPerfil() {
     localStorage.setItem('nome', data.perfil.nome)
     localStorage.setItem('nome_usuario', data.perfil.nome_usuario)
   } catch (e) {
-    // sem conexão
+    // sem conexão: mantém o nome e o @ que já estavam salvos no navegador
   }
-}
-
-function sair() {
-  localStorage.removeItem('token')
-  localStorage.removeItem('nome')
-  localStorage.removeItem('nome_usuario')
-  router.replace('/login')
 }
 
 const navItems = [
@@ -78,9 +72,24 @@ const navItems = [
   { label: 'Mensagens', icon: 'send', badge: 3 },
   { label: 'Notificações', icon: 'heart' },
   { label: 'Salvos', icon: 'bookmark' },
+  { label: 'Meu perfil', icon: 'user', route: '/perfil' },
   { label: 'Mais', icon: 'menu' },
-  { label: 'Sair', icon: 'logout', action: 'sair', mobileOnly: true }
 ]
+
+const suggestions = [
+  { name: 'Bia Santos', handle: '@bia.sinais', note: 'Seguida por Ana Clara', initials: 'BS' },
+  { name: 'Pedro Oliveira', handle: '@pedro.emlibras', note: 'Educador de Libras', initials: 'PO' },
+  { name: 'Júlia Mendes', handle: '@julia.sinaliza', note: 'Novo no Librando', initials: 'JM' },
+  { name: 'Rafael Lima', handle: '@rafa.libras', note: 'Criador de conteúdo', initials: 'RL' },
+]
+
+const trending = [
+  { tag: '#LibrasNoDiaADia', count: '2,4 mil vídeos' },
+  { tag: '#CulturaSurda', count: '1,8 mil vídeos' },
+  { tag: '#AprendaLibras', count: '956 vídeos' },
+]
+
+const footerLinks = ['Sobre', 'Acessibilidade', 'Ajuda', 'Privacidade', 'Termos', 'Diretrizes da comunidade']
 
 const tabs = ['Para você', 'Seguindo']
 const activeTab = ref('Para você')
@@ -163,8 +172,32 @@ function alternarComentario(post) {
   post.comentou ? post.comments++ : post.comments--
 }
 
+function alternarRepost(post) {
+  post.repostou = !post.repostou
+  post.repostou ? post.reposts++ : post.reposts--
+
+  localStorage.setItem('librando_reacoes', JSON.stringify({
+    repostou: post.repostou,
+    totalReposts: post.reposts,
+    curtiu: post.curtiu,
+    totalCurtidas: post.likes,
+    comentou: post.comentou,
+    totalComentarios: post.comments,
+    salvou: post.salvou
+  }))
+}
+
+function enviarPost() {
+  // Mantido neutro
+}
+
+function alternarSalvar(post) {
+  post.salvou = !post.salvou
+}
+
 function iniciarEdicao(post) {
   if (!post.own) return
+
   postEmEdicao.value = post.id
   conteudoEdicao.value = post.caption || ''
   feedbackPost.value = ''
@@ -177,6 +210,7 @@ function cancelarEdicao() {
 
 async function salvarEdicao(post) {
   const conteudo = conteudoEdicao.value.trim()
+
   if (!conteudo || salvandoEdicao.value) return
 
   salvandoEdicao.value = true
@@ -197,8 +231,11 @@ async function salvarEdicao(post) {
     feedbackPost.value = data.mensagem || 'Publicação atualizada com sucesso.'
   } catch (erro) {
     if (tratarErroAuth(erro)) return
+
     feedbackPostOk.value = false
-    feedbackPost.value = erro.response?.data?.mensagem || 'Não foi possível atualizar a publicação.'
+    feedbackPost.value =
+      erro.response?.data?.mensagem ||
+      'Não foi possível atualizar a publicação. Verifique se a API de edição já está disponível.'
   } finally {
     salvandoEdicao.value = false
   }
@@ -206,7 +243,11 @@ async function salvarEdicao(post) {
 
 async function excluirPost(post) {
   if (!post.own || postSendoExcluido.value !== null) return
-  const confirmar = window.confirm('Tem certeza de que deseja excluir esta publicação?')
+
+  const confirmar = window.confirm(
+    'Tem certeza de que deseja excluir esta publicação? Essa ação não pode ser desfeita.',
+  )
+
   if (!confirmar) return
 
   postSendoExcluido.value = post.id
@@ -214,28 +255,35 @@ async function excluirPost(post) {
 
   try {
     const { data } = await api.delete(`/posts/${post.id}`)
+
     posts.value = posts.value.filter((item) => item.id !== post.id)
-    if (postEmEdicao.value === post.id) cancelarEdicao()
+
+    if (postEmEdicao.value === post.id) {
+      cancelarEdicao()
+    }
+
     feedbackPostOk.value = true
     feedbackPost.value = data.mensagem || 'Publicação excluída com sucesso.'
   } catch (erro) {
     if (tratarErroAuth(erro)) return
+
     feedbackPostOk.value = false
-    feedbackPost.value = erro.response?.data?.mensagem || 'Não foi possível excluir a publicação.'
+    feedbackPost.value =
+      erro.response?.data?.mensagem ||
+      'Não foi possível excluir a publicação. Verifique se a API de exclusão já está disponível.'
   } finally {
     postSendoExcluido.value = null
   }
 }
 
-function navegarPara(item) {
-  if (item.action === 'sair') {
-    sair()
-  } else if (item.route) {
-    router.push(item.route)
+function navegarPara(route) {
+  if (route) {
+    router.push(route)
   }
 }
 
 onMounted(async () => {
+  // Carrega o perfil antes dos posts para marcar corretamente quais são seus
   await carregarPerfil()
   carregarFeed()
 })
@@ -257,19 +305,23 @@ const remaining = computed(() => MAX_CHARS - draft.value.length)
 
 const tipoAtual = computed(() => {
   if (modoEnquete.value) return 'enquete'
+
   const mime = arquivo.value?.type ?? ''
   if (mime === 'image/gif') return 'gif'
   if (mime.startsWith('image/')) return 'imagem'
   if (mime.startsWith('video/')) return 'video'
+
   return 'texto'
 })
 
 const canPublish = computed(() => {
   if (publicando.value) return false
+
   if (modoEnquete.value) {
     const preenchidas = opcoes.value.filter((o) => o.trim()).length
     return draft.value.trim().length > 0 && preenchidas >= 2
   }
+
   return draft.value.trim().length > 0 || !!arquivo.value
 })
 
@@ -280,6 +332,7 @@ function abrirSeletor() {
 function escolherArquivo(event) {
   const f = event.target.files[0] ?? null
   if (!f) return
+
   modoEnquete.value = false
   arquivo.value = f
   previewUrl.value = URL.createObjectURL(f)
@@ -289,20 +342,30 @@ function escolherArquivo(event) {
 function removerArquivo() {
   arquivo.value = null
   previewUrl.value = ''
-  if (inputArquivo.value) inputArquivo.value.value = ''
+
+  if (inputArquivo.value) {
+    inputArquivo.value.value = ''
+  }
 }
 
 function alternarEnquete() {
   modoEnquete.value = !modoEnquete.value
-  if (modoEnquete.value) removerArquivo()
+
+  if (modoEnquete.value) {
+    removerArquivo()
+  }
 }
 
 function adicionarOpcao() {
-  if (opcoes.value.length < 4) opcoes.value.push('')
+  if (opcoes.value.length < 4) {
+    opcoes.value.push('')
+  }
 }
 
 function removerOpcao(i) {
-  if (opcoes.value.length > 2) opcoes.value.splice(i, 1)
+  if (opcoes.value.length > 2) {
+    opcoes.value.splice(i, 1)
+  }
 }
 
 function cancelar() {
@@ -315,6 +378,7 @@ function cancelar() {
 
 async function publish() {
   if (!canPublish.value) return
+
   publicando.value = true
   feedback.value = ''
 
@@ -327,7 +391,10 @@ async function publish() {
   }
 
   if (modoEnquete.value) {
-    opcoes.value.map((o) => o.trim()).filter(Boolean).forEach((o) => form.append('opcoes[]', o))
+    opcoes.value
+      .map((o) => o.trim())
+      .filter(Boolean)
+      .forEach((o) => form.append('opcoes[]', o))
   }
 
   try {
@@ -342,8 +409,11 @@ async function publish() {
     setTimeout(() => (feedback.value = ''), 4000)
   } catch (erro) {
     if (tratarErroAuth(erro)) return
+
     feedbackOk.value = false
-    feedback.value = erro.response?.data?.mensagem ?? 'Não foi possível realizar a publicação.'
+    feedback.value =
+      erro.response?.data?.mensagem ??
+      'Não foi possível realizar a publicação. Tente novamente.'
   } finally {
     publicando.value = false
   }
@@ -351,112 +421,122 @@ async function publish() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F8F9FA] pl-0 min-[980px]:pl-56 text-left font-sans text-[#1A1A1A] antialiased pb-20 min-[980px]:pb-0">
-    
-    <!-- SIDEBAR / BARRA INFERIOR NO MOBILE -->
-    <aside class="fixed inset-x-0 bottom-0 z-20 flex flex-row justify-around items-center border-t border-gray-200 bg-white px-2 py-2 min-[980px]:inset-y-0 min-[980px]:left-0 min-[980px]:w-56 min-[980px]:flex-col min-[980px]:justify-between min-[980px]:px-4 min-[980px]:py-6 min-[980px]:border-r min-[980px]:border-t-0 min-[980px]:max-h-screen min-[980px]:overflow-y-auto">
-      
-      <!-- PARTE SUPERIOR DA SIDEBAR -->
-      <div class="w-full">
-        <!-- LOGO (Exibido na barra lateral apenas no Desktop 980px+) -->
-        <div class="hidden min-[980px]:block px-1 mb-4">
-          <h1 class="text-[28px] font-extrabold leading-none tracking-tight" style="color: #635BFF !important;">
-            Librando.
-          </h1>
-          <p class="mt-1 text-[10px] font-medium tracking-wide" style="color: #1A1A1A !important;">
-            CONEXÕES EM LIBRAS
-          </p>
-        </div>
+  <div class="min-h-screen bg-[#F8F9FA] pl-56 text-left font-sans text-[#1A1A1A] antialiased">
+    <!-- SIDEBAR -->
+    <aside class="fixed inset-y-0 left-0 z-20 flex w-56 flex-col border-r border-gray-200 bg-white px-4 py-8">
+      <div class="px-1">
+        <h1 class="text-[32px] font-extrabold leading-none tracking-tight" style="color: #635BFF !important;">
+          Librando.
+        </h1>
+        <p class="mt-1.5 text-[11px] font-medium tracking-wide" style="color: #1A1A1A !important;">
+          CONEXÕES EM LIBRAS
+        </p>
+      </div>
 
-        <!-- NAVEGAÇÃO -->
-        <nav class="flex w-full flex-row justify-around items-center min-[980px]:flex-col min-[980px]:items-stretch min-[980px]:space-y-0.5" aria-label="Principal">
-          <button
-            v-for="item in navItems"
-            :key="item.label"
-            type="button"
-            class="relative flex items-center justify-center gap-2 rounded-lg p-2 min-[980px]:px-3 min-[980px]:py-2 min-[980px]:justify-start min-[980px]:text-[14px] transition-colors"
-            :class="[
-              item.active ? 'text-[#635BFF] min-[980px]:bg-[#EEEDFF] min-[980px]:font-medium' : 'text-[#1A1A1A] hover:bg-gray-50',
-              item.mobileOnly ? 'min-[980px]:hidden text-red-600' : ''
-            ]"
-            :aria-current="item.active ? 'page' : undefined"
-            @click="navegarPara(item)"
+      <nav class="mt-8 flex flex-col gap-1" aria-label="Principal">
+        <button
+          v-for="item in navItems"
+          :key="item.label"
+          type="button"
+          class="flex items-center gap-4 rounded-lg px-3 py-3 text-left text-[16px] transition-colors"
+          :class="item.active ? 'bg-[#EEEDFF] font-medium text-[#635BFF]' : 'text-[#1A1A1A] hover:bg-gray-50'"
+          :aria-current="item.active ? 'page' : undefined"
+          @click="navegarPara(item.route)"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            class="h-6 w-6 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            v-html="icons[item.icon]"
+          />
+          <span>{{ item.label }}</span>
+          <span
+            v-if="item.badge"
+            class="ml-1 flex h-5.5 min-w-5.5 items-center justify-center rounded-full bg-[#635BFF] px-1.5 text-[12px] font-semibold text-white"
           >
+            {{ item.badge }}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="mt-3 flex items-center justify-center gap-3 rounded-lg border border-gray-200 bg-white px-3 py-3 text-[15px] font-semibold text-[#1A1A1A] transition-colors hover:bg-gray-50"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            class="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            v-html="icons.plus"
+          />
+          Criar vídeo
+        </button>
+      </nav>
+
+      <div class="mt-auto">
+        <div class="mt-3 border-t border-gray-200 pt-4">
+          <button type="button" class="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-gray-50" @click="router.push('/perfil')">
+            <img
+              v-if="perfil.foto_perfil_url"
+              :src="perfil.foto_perfil_url"
+              class="h-9 w-9 shrink-0 rounded-full object-cover"
+              alt=""
+            />
+            <span
+              v-else
+              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1A1A1A] text-[13px] font-semibold text-white"
+            >
+              {{ meuInicial }}
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block truncate text-[14px] font-semibold">{{ nome }}</span>
+              <span class="block truncate text-[12px] text-gray-500">@{{ nomeUsuario }}</span>
+            </span>
             <svg
               viewBox="0 0 24 24"
-              class="h-5 w-5 shrink-0"
+              class="h-4 w-4 text-[#1A1A1A]"
               fill="none"
               stroke="currentColor"
-              stroke-width="1.7"
+              stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
               aria-hidden="true"
-              v-html="icons[item.icon]"
-            />
-            <span class="hidden min-[980px]:inline">{{ item.label }}</span>
-            <!-- BADGE POSICIONADA DENTRO DO ÍCONE NO MOBILE -->
-            <span
-              v-if="item.badge"
-              class="absolute top-1 right-1.5 min-[980px]:static min-[980px]:ml-auto flex h-4 w-4 min-[980px]:h-4.5 min-[980px]:min-w-4.5 items-center justify-center rounded-full bg-[#635BFF] text-[10px] font-semibold text-white"
             >
-              {{ item.badge }}
-            </span>
+              <path d="m8 9 4-4 4 4M8 15l4 4 4-4" />
+            </svg>
           </button>
-
-          <!-- Botão criar vídeo -->
-          <button
-            type="button"
-            class="hidden min-[980px]:mt-2 min-[980px]:flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-[13px] font-semibold text-[#1A1A1A] transition-colors hover:bg-gray-50"
-          >
-            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" v-html="icons.plus" />
-            Criar vídeo
-          </button>
-        </nav>
-      </div>
-
-      <!-- BOTÃO SAIR NA PARTE INFERIOR DA SIDEBAR (Apenas Desktop 980px+) -->
-      <div class="hidden min-[980px]:block w-full pt-2 border-t border-gray-200 mt-2">
-        <button
-          type="button"
-          class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-red-600 hover:bg-red-50 transition-colors font-medium text-[14px]"
-          @click="sair"
-        >
-          <svg viewBox="0 0 24 24" class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" v-html="icons.logout" />
-          <span>Sair</span>
-        </button>
+        </div>
       </div>
     </aside>
 
-    <!-- CONTEÚDO PRINCIPAL -->
-    <div class="mx-auto grid max-w-285 grid-cols-1 justify-center gap-6 px-4 py-4 min-[980px]:gap-10 min-[980px]:px-6 min-[980px]:py-6 min-[980px]:grid-cols-[minmax(0,720px)_minmax(0,320px)]">
+    <!-- CONTEÚDO -->
+    <div class="mx-auto grid max-w-285 grid-cols-1 justify-center gap-12 px-8 py-8 lg:grid-cols-[minmax(0,720px)_minmax(0,320px)]">
       <main class="min-w-0">
-        <header class="mb-5 flex items-center justify-between gap-2">
-          <!-- Esquerda: Título -->
-          <div class="flex-1 text-left min-w-0">
-            <h2
-              class="text-[18px] min-[980px]:text-[22px] font-bold tracking-tight truncate"
-              style="color: #1A1A1A !important; -webkit-text-fill-color: #1A1A1A !important; opacity: 1 !important; visibility: visible !important;"
-            >
-              Seu mundo em Libras.
-            </h2>
-          </div>
+        <header class="mb-5 flex items-end justify-between">
+          <h2
+            class="text-[24px] font-bold tracking-tight"
+            style="color: #1A1A1A !important; -webkit-text-fill-color: #1A1A1A !important; opacity: 1 !important; visibility: visible !important;"
+          >
+            Seu mundo em Libras.
+          </h2>
 
-          <!-- Centro: Logo Librando (Visível apenas em telas menores que 980px) -->
-          <div class="flex-1 text-center min-[980px]:hidden">
-            <h1 class="text-[20px] font-extrabold" style="color: #635BFF !important;">
-              Librando.
-            </h1>
-          </div>
-
-          <!-- Direita: Abas -->
-          <div class="flex-1 flex justify-end gap-3 min-[980px]:gap-5 text-[14px]" role="tablist">
+          <div class="flex gap-6 text-[14px]" role="tablist">
             <button
               v-for="tab in tabs"
               :key="tab"
               type="button"
               role="tab"
               :aria-selected="activeTab === tab"
-              class="border-b-2 pb-1 transition-colors shrink-0"
+              class="border-b-2 pb-1.5 transition-colors"
               :class="activeTab === tab ? 'border-[#635BFF] font-medium text-[#635BFF]' : 'border-transparent text-gray-600'"
               @click="activeTab = tab"
             >
@@ -557,8 +637,8 @@ async function publish() {
                 {{ feedback }}
               </p>
 
-              <div class="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 pt-3">
-                <div class="flex items-center gap-1.5 flex-wrap">
+              <div class="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 pt-3">
+                <div class="flex items-center gap-2">
                   <input
                     ref="inputArquivo"
                     type="file"
@@ -568,13 +648,13 @@ async function publish() {
                   />
                   <button
                     type="button"
-                    class="flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[13px] font-medium transition-colors"
+                    class="flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-[14px] font-medium transition-colors"
                     :class="arquivo ? 'bg-[#EEEDFF] text-[#635BFF]' : 'text-[#1A1A1A] hover:bg-gray-100'"
                     @click="abrirSeletor"
                   >
                     <svg
                       viewBox="0 0 24 24"
-                      class="h-4 w-4 shrink-0"
+                      class="h-5 w-5"
                       fill="none"
                       stroke="currentColor"
                       stroke-width="1.7"
@@ -583,18 +663,18 @@ async function publish() {
                       aria-hidden="true"
                       v-html="icons.film"
                     />
-                    <span>Vídeo / Imagem</span>
+                    Vídeo / Imagem
                   </button>
 
                   <button
                     type="button"
-                    class="flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[13px] font-medium transition-colors"
+                    class="flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-[14px] font-medium transition-colors"
                     :class="modoEnquete ? 'bg-[#EEEDFF] text-[#635BFF]' : 'text-[#1A1A1A] hover:bg-gray-100'"
                     @click="alternarEnquete"
                   >
                     <svg
                       viewBox="0 0 24 24"
-                      class="h-4 w-4 shrink-0"
+                      class="h-5 w-5"
                       fill="none"
                       stroke="currentColor"
                       stroke-width="1.7"
@@ -603,14 +683,14 @@ async function publish() {
                       aria-hidden="true"
                       v-html="icons.poll"
                     />
-                    <span>Enquete</span>
+                    Enquete
                   </button>
                 </div>
 
-                <div class="flex items-center gap-2 shrink-0 ml-auto">
+                <div class="flex items-center gap-3">
                   <span
                     v-if="draft.length > 0"
-                    class="text-[12px] tabular-nums"
+                    class="text-[13px] tabular-nums"
                     :class="remaining < 20 ? 'text-red-600' : 'text-gray-500'"
                   >
                     {{ remaining }}
@@ -619,7 +699,7 @@ async function publish() {
                   <button
                     v-if="draft || arquivo || modoEnquete"
                     type="button"
-                    class="whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-gray-600 hover:bg-gray-100"
+                    class="whitespace-nowrap rounded-lg px-3 py-2 text-[14px] font-medium text-gray-600 hover:bg-gray-100"
                     @click="cancelar"
                   >
                     Cancelar
@@ -628,7 +708,8 @@ async function publish() {
                   <button
                     type="button"
                     :disabled="!canPublish"
-                    class="whitespace-nowrap rounded-lg bg-[#635BFF] px-4 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#5249e6] disabled:cursor-not-allowed disabled:opacity-40 shrink-0"
+                    class="whitespace-nowrap rounded-lg bg-[#635BFF] px-5 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-[#5249e6] disabled:cursor-not-allowed disabled:opacity-40"
+                    @click="publish"
                   >
                     {{ publicando ? 'Publicando...' : 'Publicar' }}
                   </button>
@@ -655,7 +736,7 @@ async function publish() {
           class="mb-5 overflow-hidden rounded-2xl border border-gray-200 bg-white"
         >
           <!-- CABEÇALHO DO POST -->
-          <div class="flex items-center gap-3 px-4 min-[980px]:px-5 py-4">
+          <div class="flex items-center gap-3 px-5 py-4">
             <img
               v-if="post.foto"
               :src="post.foto"
@@ -677,32 +758,48 @@ async function publish() {
               <p class="mt-0.5 truncate text-[13px] text-gray-500">{{ post.role }}</p>
             </div>
 
-            <!-- BOTÕES DE EDIÇÃO E EXCLUSÃO -->
+            <button
+              v-if="!post.own"
+              type="button"
+              class="rounded-lg bg-[#635BFF] px-5 py-2 text-[14px] font-semibold text-white hover:bg-[#5249e6]"
+            >
+              Seguir
+            </button>
+
+            <!-- BOTÕES DE EDIÇÃO E EXCLUSÃO: SOMENTE POSTS DO USUÁRIO -->
             <template v-if="post.own">
               <button
                 type="button"
-                class="rounded-lg border border-gray-200 px-2.5 py-1.5 min-[980px]:px-3 min-[980px]:py-2 text-[12px] min-[980px]:text-[13px] font-semibold text-[#635BFF] hover:bg-[#EEEDFF] disabled:opacity-50"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-[13px] font-semibold text-[#635BFF] hover:bg-[#EEEDFF] disabled:opacity-50"
                 :disabled="postSendoExcluido === post.id || salvandoEdicao"
                 @click="postEmEdicao === post.id ? cancelarEdicao() : iniciarEdicao(post)"
               >
-                {{ postEmEdicao === post.id ? 'Cancelar' : 'Editar' }}
+                {{ postEmEdicao === post.id ? 'Cancelar edição' : 'Editar' }}
               </button>
 
               <button
                 type="button"
-                class="rounded-lg border border-red-200 px-2.5 py-1.5 min-[980px]:px-3 min-[980px]:py-2 text-[12px] min-[980px]:text-[13px] font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
+                class="rounded-lg border border-red-200 px-3 py-2 text-[13px] font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
                 :disabled="postSendoExcluido === post.id || salvandoEdicao"
                 @click="excluirPost(post)"
               >
-                {{ postSendoExcluido === post.id ? '...' : 'Excluir' }}
+                {{ postSendoExcluido === post.id ? 'Excluindo...' : 'Excluir' }}
               </button>
             </template>
+
+            <button
+              type="button"
+              class="rounded-full p-2 text-[#1A1A1A] hover:bg-gray-100"
+              aria-label="Mais opções"
+            >
+              <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true" v-html="icons.more" />
+            </button>
           </div>
 
           <!-- EDITAR TEXTO DA PUBLICAÇÃO -->
           <div
             v-if="postEmEdicao === post.id"
-            class="mx-4 min-[980px]:mx-5 mb-4 rounded-xl border border-[#635BFF]/30 bg-[#F8F7FF] p-4"
+            class="mx-5 mb-4 rounded-xl border border-[#635BFF]/30 bg-[#F8F7FF] p-4"
           >
             <label :for="`editar-post-${post.id}`" class="mb-2 block text-[13px] font-semibold text-[#635BFF]">
               Editar publicação
@@ -713,12 +810,13 @@ async function publish() {
               v-model="conteudoEdicao"
               maxlength="280"
               rows="3"
-              class="w-full resize-y rounded-lg border border-gray-200 bg-white p-3 text-[14px] leading-6 text-[#1A1A1A] focus:border-[#635BFF] focus:outline-none"
+              class="w-full resize-y rounded-lg border border-gray-200 bg-white p-3 text-[14px] leading-6 text-[#1A1A1A] focus:border-[#635BFF] focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20"
+              placeholder="Atualize o texto da sua publicação..."
             />
 
             <div class="mt-3 flex items-center justify-between gap-3">
               <span class="text-[12px] text-gray-500">
-                {{ conteudoEdicao.length }}/280
+                {{ conteudoEdicao.length }}/280 caracteres
               </span>
 
               <div class="flex gap-2">
@@ -733,11 +831,11 @@ async function publish() {
 
                 <button
                   type="button"
-                  class="rounded-lg bg-[#635BFF] px-4 py-2 text-[13px] font-semibold text-white hover:bg-[#5249e6] disabled:opacity-50"
+                  class="rounded-lg bg-[#635BFF] px-4 py-2 text-[13px] font-semibold text-white hover:bg-[#5249e6] disabled:cursor-not-allowed disabled:opacity-50"
                   :disabled="!conteudoEdicao.trim() || salvandoEdicao"
                   @click="salvarEdicao(post)"
                 >
-                  {{ salvandoEdicao ? 'Salvando...' : 'Salvar' }}
+                  {{ salvandoEdicao ? 'Salvando...' : 'Salvar alterações' }}
                 </button>
               </div>
             </div>
@@ -762,7 +860,7 @@ async function publish() {
           <!-- ENQUETE -->
           <div
             v-else-if="postEmEdicao !== post.id && post.tipo === 'enquete'"
-            class="px-4 min-[980px]:px-5 pb-1 text-left"
+            class="px-5 pb-1 text-left"
           >
             <p class="text-[16px] font-medium leading-7">{{ post.caption }}</p>
             <ul class="mt-3 space-y-2">
@@ -780,15 +878,15 @@ async function publish() {
           <!-- POST DE TEXTO -->
           <div
             v-else-if="postEmEdicao !== post.id"
-            class="px-4 min-[980px]:px-5 pb-1 text-left text-[16px] leading-7"
+            class="px-5 pb-1 text-left text-[16px] leading-7"
           >
             {{ post.caption }}
           </div>
 
           <!-- AÇÕES DO POST -->
-          <div class="flex items-center justify-between px-4 min-[980px]:px-5 py-4 text-gray-500">
+          <div class="flex items-center justify-between px-5 pt-4 text-gray-500">
             <div class="flex items-center gap-6">
-              <!-- Curtida -->
+              <!-- 1. Curtida -->
               <button
                 type="button"
                 @click="alternarCurtida(post)"
@@ -801,17 +899,19 @@ async function publish() {
                   stroke-width="1.8"
                   stroke-linecap="round"
                   stroke-linejoin="round"
+                  aria-hidden="true"
                   v-html="icons.heart"
                   :style="post.curtiu ? 'fill: currentColor;' : ''"
                 />
                 {{ post.likes }}
               </button>
 
-              <!-- Comentário -->
+              <!-- 2. Comentário -->
               <button
                 type="button"
                 @click="alternarComentario(post)"
-                class="flex items-center gap-1.5 text-[14px] hover:text-[#635BFF] transition-colors group"
+                :class="post.comentou ? 'text-[#635BFF]' : 'hover:text-[#635BFF]'"
+                class="flex items-center gap-1.5 text-[14px] transition-colors group"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -819,30 +919,271 @@ async function publish() {
                   stroke-width="1.8"
                   stroke-linecap="round"
                   stroke-linejoin="round"
+                  aria-hidden="true"
                   v-html="icons.comment"
                 />
                 {{ post.comments }}
               </button>
+
+              <!-- 3. Repost -->
+              <button
+                type="button"
+                @click="alternarRepost(post)"
+                :class="post.repostou ? 'text-green-600' : 'hover:text-green-600'"
+                class="flex items-center gap-1.5 text-[14px] transition-colors group"
+                aria-label="Repostar"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  class="h-6 w-6 fill-none stroke-current"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  v-html="icons.repost"
+                />
+                {{ post.reposts }}
+              </button>
+
+              <!-- 4. Enviar -->
+              <button
+                type="button"
+                @click="enviarPost"
+                class="hover:text-[#635BFF] transition-colors flex items-center gap-1.5"
+                aria-label="Compartilhar"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  class="h-6 w-6 fill-none stroke-current"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  v-html="icons.send"
+                />
+              </button>
+            </div>
+
+            <!-- 5. Salvar -->
+            <button
+              type="button"
+              @click="alternarSalvar(post)"
+              :class="post.salvou ? 'text-[#635BFF]' : 'hover:text-[#635BFF]'"
+              class="transition-colors p-1"
+              aria-label="Salvar"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                class="h-6 w-6 fill-none stroke-current"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                v-html="icons.bookmark"
+                :style="post.salvou ? 'fill: currentColor;' : ''"
+              />
+            </button>
+          </div>
+
+          <!-- LEGENDA E COMENTÁRIOS -->
+          <div class="px-5 pb-4 pt-3 text-left text-[14px]">
+            <p v-if="postEmEdicao !== post.id && post.midiaUrl && post.caption">
+              <span class="mr-1.5 font-semibold">{{ post.user }}</span>{{ post.caption }}
+            </p>
+
+            <div class="mt-3 flex items-center gap-3 border-t border-gray-200 pt-3">
+              <svg
+                viewBox="0 0 24 24"
+                class="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                aria-hidden="true"
+                v-html="icons.smile"
+              />
+              <span class="flex-1 text-[13px] text-gray-500">Adicione um comentário...</span>
+              <button type="button" class="text-[13px] font-semibold text-[#635BFF]">
+                Publicar
+              </button>
             </div>
           </div>
         </article>
+
+        <!-- MENSAGEM DE RETORNO DA EDIÇÃO OU EXCLUSÃO -->
+        <p
+          v-if="feedbackPost"
+          class="mb-5 rounded-xl px-4 py-3 text-[14px]"
+          :class="feedbackPostOk ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'"
+          role="status"
+        >
+          {{ feedbackPost }}
+          <button
+            type="button"
+            class="ml-2 font-semibold underline"
+            aria-label="Fechar mensagem"
+            @click="feedbackPost = ''"
+          >
+            Fechar
+          </button>
+        </p>
       </main>
 
-      <!-- BARRA LATERAL DIREITA (Apenas Desktop 980px+) -->
-      <aside class="hidden min-[980px]:block space-y-5">
-        <div class="rounded-2xl border border-gray-200 bg-white p-4">
-          <h3 class="text-[16px] font-bold text-[#1A1A1A]">Tendências em Libras</h3>
-          <ul class="mt-3 space-y-3">
-            <li>
-              <p class="text-[14px] font-semibold text-[#635BFF]">#LibrasNoDiaADia</p>
-              <p class="text-[12px] text-gray-500">2,4 mil publicações</p>
-            </li>
-            <li>
-              <p class="text-[14px] font-semibold text-[#635BFF]">#CulturaSurda</p>
-              <p class="text-[12px] text-gray-500">1,8 mil publicações</p>
+      <!-- COLUNA DIREITA -->
+      <aside class="sticky top-8 hidden h-fit self-start lg:block">
+        <!-- PESQUISA -->
+        <div class="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3">
+          <svg
+            viewBox="0 0 24 24"
+            class="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+            v-html="icons.search"
+          />
+          <input
+            type="text"
+            placeholder="Pesquisar no Librando"
+            class="w-full bg-transparent text-[14px] placeholder:text-gray-500 focus:outline-none"
+            aria-label="Pesquisar no Librando"
+          />
+        </div>
+
+        <!-- PERFIL ATUAL -->
+        <div class="mt-6 flex items-center gap-3">
+          <img
+            v-if="perfil.foto_perfil_url"
+            :src="perfil.foto_perfil_url"
+            class="h-12 w-12 rounded-full object-cover"
+            alt=""
+          />
+          <span
+            v-else
+            class="flex h-12 w-12 items-center justify-center rounded-full bg-[#1A1A1A] text-[14px] font-semibold text-white"
+          >
+            {{ meuInicial }}
+          </span>
+          <div class="min-w-0 flex-1 leading-tight">
+            <p class="text-[14px] font-medium">{{ nomeUsuario }}</p>
+            <p class="mt-0.5 text-[13px] text-gray-500">{{ nome }}</p>
+          </div>
+          <button type="button" class="text-[12px] font-semibold text-[#635BFF]">
+            Trocar
+          </button>
+        </div>
+
+        <!-- SUGESTÕES -->
+        <div class="mt-6 flex items-center justify-between">
+          <h3 class="text-[14px] text-gray-700">Sugestões para você</h3>
+          <button type="button" class="text-[12px] font-semibold text-[#635BFF]">
+            Ver todos
+          </button>
+        </div>
+
+        <ul class="mt-4 space-y-4">
+          <li v-for="s in suggestions" :key="s.handle" class="flex items-center gap-3">
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-700 text-[12px] font-semibold text-white">
+              {{ s.initials }}
+            </span>
+            <div class="min-w-0 flex-1 leading-tight">
+              <p class="truncate text-[13px] font-medium">{{ s.name }}</p>
+              <p class="mt-0.5 truncate text-[12px] text-gray-500">{{ s.handle }}</p>
+              <p class="mt-0.5 truncate text-[11px] text-gray-500">{{ s.note }}</p>
+            </div>
+            <button
+              type="button"
+              class="rounded-lg bg-[#635BFF] px-4 py-2 text-[13px] font-semibold text-white hover:bg-[#5249e6]"
+            >
+              Seguir
+            </button>
+          </li>
+        </ul>
+
+        <!-- EM ALTA -->
+        <div class="mt-6 border-t border-gray-200 pt-6">
+          <h3 class="text-[14px] text-gray-700">Em alta na comunidade</h3>
+          <ul class="mt-4 space-y-3">
+            <li v-for="t in trending" :key="t.tag">
+              <button type="button" class="flex w-full items-center gap-3 text-left">
+                <span class="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white text-[#635BFF]">
+                  <svg
+                    viewBox="0 0 24 24"
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    aria-hidden="true"
+                    v-html="icons.hash"
+                  />
+                </span>
+                <span class="flex-1 leading-tight">
+                  <span class="block text-[13px] font-semibold">{{ t.tag }}</span>
+                  <span class="mt-0.5 block text-[12px] text-gray-500">{{ t.count }}</span>
+                </span>
+                <svg
+                  viewBox="0 0 24 24"
+                  class="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  v-html="icons.chevron"
+                />
+              </button>
             </li>
           </ul>
         </div>
+
+        <!-- BOAS-VINDAS -->
+        <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-5">
+          <svg
+            viewBox="0 0 24 24"
+            class="h-7 w-7 text-[#635BFF]"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            v-html="icons.hand"
+          />
+          <h3 class="mt-3 text-[16px] font-medium">Cada sinal aproxima.</h3>
+          <p class="mt-2 text-[13px] leading-5 text-gray-500">
+            Um espaço para compartilhar, aprender e se conectar em Libras. Do seu jeito.
+          </p>
+          <a
+            href="#"
+            class="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#635BFF]"
+            @click.prevent
+          >
+            Conheça o Librando
+            <svg
+              viewBox="0 0 24 24"
+              class="h-3.5 w-3.5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              v-html="icons.arrowUp"
+            />
+          </a>
+        </div>
+
+        <!-- RODAPÉ -->
+        <nav class="mt-6 flex flex-wrap gap-x-1.5 gap-y-1 text-[11px] text-gray-500" aria-label="Rodapé">
+          <template v-for="(link, i) in footerLinks" :key="link">
+            <a href="#" class="hover:underline" @click.prevent>{{ link }}</a>
+            <span v-if="i < footerLinks.length - 1" aria-hidden="true">·</span>
+          </template>
+        </nav>
+        <p class="mt-3 text-[11px] text-gray-500">© 2026 LIBRANDO</p>
       </aside>
     </div>
   </div>
