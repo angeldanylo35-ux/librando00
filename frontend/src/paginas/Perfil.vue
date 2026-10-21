@@ -90,14 +90,14 @@ async function excluirConta() {
   mensagemErro.value = ''
 
   try {
-    await api.delete('/perfil')
+    await api.delete('/conta')
     localStorage.removeItem('token')
     localStorage.removeItem('nome')
     localStorage.removeItem('nome_usuario')
     router.replace('/login')
   } catch (e) {
     if (tratarErroAuth(e)) return
-    mensagemErro.value = e.response?.data?.mensagem ?? 'Não foi possível excluir a conta. O endpoint de exclusão pode não estar disponível no backend.'
+    mensagemErro.value = e.response?.data?.mensagem ?? 'Não foi possível excluir a conta. Tente novamente.'
     alert(mensagemErro.value)
   } finally {
     excluindoConta.value = false
