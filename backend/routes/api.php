@@ -24,4 +24,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/perfil', [PerfilController::class, 'show']);
     Route::post('/perfil', [PerfilController::class, 'update']); // aceita arquivos (foto de perfil e capa)
     Route::match(['put', 'patch'], '/perfil', [PerfilController::class, 'update']);
+
+    // RF-007: sair e excluir a própria conta
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::delete('/conta', [PerfilController::class, 'excluirConta']);
 });
