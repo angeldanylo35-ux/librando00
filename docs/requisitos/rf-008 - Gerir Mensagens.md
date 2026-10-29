@@ -26,7 +26,6 @@
 - **Tabelas relacionadas:** a definir conforme a implementação das conversas e mensagens.
 - **Permissões:** o acesso de leitura para avaliação deverá respeitar as credenciais disponibilizadas pela equipe do projeto.
 
-> ⚠️ **Pendente:** confirmar a existência das tabelas de conversas, mensagens, participantes e status de leitura no banco de dados.
 
 ### c) Link do GitHub (Repositório)
 
