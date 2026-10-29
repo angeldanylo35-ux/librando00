@@ -1,135 +1,153 @@
-# RF-008 — Gerir Mensagens
+# RF-008: Gerir Mensagens
 
-## 1. Identificação
+## 🎯 1. Identificação
 
-| Campo | Definição |
-|---|---|
-| **ID** | RF-008 |
-| **Título** | Gerir Mensagens |
-| **Prioridade** | ALTA |
-| **Complexidade** | ALTA — 8 Story Points |
-| **Status** | A DEFINIR |
-| **Caso de Uso** | UC-008 |
+- **ID:** RF-008
+- **Título:** Gerir Mensagens
+- **Tipo:** Requisito Funcional
+- **Prioridade:** ALTA
+- **Complexidade:** 8 story points
 
-## 2. Localização dos Artefatos
+## 📍 Localização dos Artefatos
 
-| Artefato | Localização |
-|---|---|
-| Repositório GitHub | [Librando](https://github.com/angeldanylo35-ux/librando00.git) |
-| Aplicação online | A definir |
-| Banco de dados online | A definir |
-| Quadro de tarefas | Trello do projeto |
+### a) URL da Aplicação (Deploy Online)
 
-## 3. Descrição e Benefícios
+- **Deploy:** https://librando-frontend.onrender.com/
+- **Plataforma:** [Render](https://render.com)
+- **Acesso:** Público, com autenticação para acessar as funcionalidades restritas.
+- **Funcionalidade:** Gerenciamento de mensagens e conversas.
 
-O sistema Librando deverá permitir que usuários cadastrados acessem a opção **Conversas**, disponível na página principal da aplicação. Nessa área, o usuário poderá visualizar suas conversas, enviar mensagens, consultar mensagens recebidas e enviadas, atualizar e excluir suas próprias mensagens.
+### b) Link do Banco de Dados Online
 
-O sistema também deverá disponibilizar a pesquisa de conversas e a visualização do status de leitura das mensagens, permitindo que os usuários acompanhem a comunicação de maneira mais organizada, prática e acessível.
+- **SGBD:** MySQL (Aiven)
+- **Interface de acesso:** phpMyAdmin
+- **Link:** https://librando-phpmyadmin.onrender.com
+- **Banco de dados:** `defaultdb`
+- **Tabelas relacionadas:** a definir conforme a implementação das conversas e mensagens.
+- **Permissões:** o acesso de leitura para avaliação deverá respeitar as credenciais disponibilizadas pela equipe do projeto.
 
-O recurso deverá respeitar a privacidade dos usuários e manter as operações de gerenciamento de mensagens restritas aos participantes autorizados de cada conversa.
+> ⚠️ **Pendente:** confirmar a existência das tabelas de conversas, mensagens, participantes e status de leitura no banco de dados.
 
-## 4. Atores e Permissões CRUD
+### c) Link do GitHub (Repositório)
 
-### 4.1. Usuário Cadastrado
+- **Repositório:** [Librando](https://github.com/angeldanylo35-ux/librando00)
+- **Branch principal:** `main`
+- **Diretórios relevantes:**
+  - `backend/`: implementação da API, regras de negócio, autenticação e persistência.
+  - `frontend/`: interface da aplicação.
+  - `docs/api/swagger.json`: documentação da API.
+  - `docs/requisitos/`: documentação dos requisitos funcionais.
+
+**Estrutura prevista para a documentação do requisito:**
+
+```text
+librando00/
+└── docs/
+    └── requisitos/
+        └── rf-008-gerir-mensagens.md
+```
+
+> ⚠️ A estrutura e os arquivos específicos da funcionalidade de mensagens deverão ser atualizados conforme a implementação real no repositório.
+
+## 📋 2. Atores e Descrição
+
+### 📝 2.1 Descrição do Requisito
+
+O requisito funcional **RF-008 — Gerir Mensagens** tem como objetivo permitir que usuários cadastrados no Librando acessem a funcionalidade de conversas pela página principal da aplicação. Ao selecionar a opção **Conversas**, o usuário deverá ser direcionado para uma área na qual poderá consultar suas conversas e visualizar as mensagens enviadas e recebidas.
+
+A funcionalidade deverá permitir o envio de mensagens, a visualização do conteúdo das conversas, a atualização e a exclusão das próprias mensagens. Essas operações deverão respeitar a autoria dos conteúdos e as permissões dos participantes, impedindo que um usuário altere ou exclua mensagens pertencentes a outras pessoas.
+
+Além do gerenciamento das mensagens, o sistema deverá disponibilizar a visualização do status de leitura, permitindo que o usuário identifique se uma mensagem foi lida pelo destinatário, quando essa informação estiver disponível. Também deverá existir uma opção de pesquisa para facilitar a localização de conversas às quais o usuário tenha acesso.
+
+O sistema deverá validar as solicitações antes de executá-las, garantindo que somente usuários autenticados e autorizados possam consultar ou gerenciar mensagens. Caso ocorra uma falha durante o envio, a atualização, a exclusão ou a consulta, a aplicação deverá apresentar uma mensagem clara, sem informar que uma operação foi concluída quando isso não tiver sido confirmado.
+
+A interface deverá seguir os princípios de acessibilidade do Librando, mantendo a navegação organizada e os controles de conversa compreensíveis para os usuários da plataforma.
+
+### 🎯 2.2 Benefícios para o Negócio
+
+- 💬 **Comunicação direta:** permite que os usuários conversem dentro da própria plataforma.
+- 👥 **Organização das conversas:** centraliza as conversas em uma área específica, facilitando o acesso às mensagens.
+- 🔎 **Facilidade de localização:** permite pesquisar conversas sem precisar percorrer manualmente toda a lista.
+- 👁️ **Acompanhamento de leitura:** disponibiliza o status de leitura das mensagens, quando aplicável.
+- ✏️ **Autonomia do usuário:** permite atualizar mensagens próprias quando necessário e autorizado.
+- 🗑️ **Gerenciamento de conteúdo:** permite excluir mensagens próprias conforme as regras definidas pelo sistema.
+- 🔐 **Privacidade:** restringe o acesso às conversas aos participantes autorizados.
+- ♿ **Acessibilidade:** contribui para uma experiência de comunicação mais organizada e inclusiva.
+- 🛡️ **Integridade das informações:** protege as mensagens contra alterações e exclusões não autorizadas.
+
+### 👥 2.3 Atores
+
+#### 👤 1. Usuário Cadastrado
+
+- **🎭 Papel:** acessar conversas, visualizar mensagens, enviar novas mensagens, atualizar e excluir mensagens próprias, consultar o status de leitura e pesquisar conversas.
+- **🔐 Permissões:** visualizar somente as conversas autorizadas para sua conta e gerenciar exclusivamente as mensagens de sua autoria.
+- **🖥️ Acesso:** página principal, opção **Conversas**, lista de conversas e área de mensagens.
+- **🚫 Restrições:** não poderá acessar conversas privadas das quais não seja participante, alterar mensagens de outros usuários ou executar operações sem autenticação.
+
+##### 📊 Permissões CRUD — Usuário Cadastrado
 
 | Operação | Permissão | Descrição |
-|---|---|---|
-| **Create** | ✅ | Enviar mensagens em uma conversa autorizada. |
-| **Read** | ✅ | Visualizar conversas, mensagens e seus status de leitura. |
-| **Update** | ✅ | Atualizar as próprias mensagens, respeitando as regras definidas pelo sistema. |
-| **Delete** | ✅ | Excluir as próprias mensagens, respeitando as regras definidas pelo sistema. |
+|---|:---:|---|
+| 🟢 **Create** | ✅ | Pode enviar mensagens em conversas autorizadas. |
+| 🔵 **Read** | ✅ | Pode visualizar suas conversas, mensagens e os status de leitura disponíveis. |
+| 🟡 **Update** | ✅ | Pode atualizar somente as próprias mensagens, respeitando as regras definidas pelo sistema. |
+| 🔴 **Delete** | ✅ | Pode solicitar a exclusão das próprias mensagens, conforme a política de exclusão adotada pelo projeto. |
 
-### 4.2. Sistema Librando
+#### ⚙️ 2. Sistema Librando
+
+- **🎭 Papel:** processar as operações de mensagens, apresentar as conversas autorizadas, validar as solicitações e manter as informações consistentes.
+- **🛡️ Responsabilidade:** verificar autenticação, participação na conversa, autoria da mensagem e permissões antes de executar cada operação.
+- **💾 Acesso:** API, serviços internos, mecanismos de autenticação, banco de dados e recursos responsáveis pelo gerenciamento de conversas e mensagens.
+- **🚫 Restrições:** não deverá permitir acesso não autorizado, alteração de mensagens de terceiros ou exclusões sem uma solicitação válida do usuário. O sistema poderá executar tecnicamente as operações solicitadas, mas não deverá decidir excluir mensagens de forma autônoma.
+
+##### 📊 Permissões CRUD — Sistema Librando
 
 | Operação | Permissão | Descrição |
-|---|---|---|
-| **Create** | ❌ | O sistema não inicia conversas ou envia mensagens em nome próprio. |
-| **Read** | ✅ | Consultar os dados necessários para exibir mensagens, conversas e status de leitura aos participantes autorizados. |
-| **Update** | ✅ | Atualizar informações operacionais, como o status de leitura das mensagens. |
-| **Delete** | ❌ | O sistema não decide excluir mensagens por conta própria; a exclusão depende de uma ação autorizada do usuário. |
+|---|:---:|---|
+| 🟢 **Create** | ❌ | Não cria mensagens por iniciativa própria nem envia mensagens em nome do sistema. |
+| 🔵 **Read** | ✅ | Recupera as conversas e mensagens necessárias para atender às solicitações dos participantes autorizados. |
+| 🟡 **Update** | ✅ | Processa atualizações autorizadas e registra as mudanças necessárias no status de leitura. |
+| 🔴 **Delete** | ❌ | Não decide excluir mensagens autonomamente. Executa tecnicamente a exclusão somente após uma solicitação autorizada do usuário. |
 
-**Observação:** as permissões representam as responsabilidades funcionais de cada ator. O sistema poderá executar tecnicamente uma operação solicitada pelo usuário, mas não deverá decidir excluir mensagens de forma autônoma.
+### ✅ 2.4 Validações Necessárias
 
-## 5. Regras de Negócio e Validações
+1. 🔐 **Autenticação obrigatória:** somente usuários autenticados poderão acessar a funcionalidade de conversas.
+2. 👥 **Participação na conversa:** o sistema deverá verificar se o usuário possui autorização para acessar a conversa solicitada.
+3. ✍️ **Conteúdo obrigatório:** mensagens de texto não poderão ser enviadas vazias ou contendo apenas espaços em branco.
+4. 📏 **Limite de caracteres:** o conteúdo das mensagens deverá respeitar o limite definido pela implementação.
+5. 🛡️ **Validação de autoria:** o usuário poderá atualizar ou excluir somente as próprias mensagens.
+6. 💾 **Persistência:** o sistema deverá confirmar que a mensagem foi armazenada corretamente antes de informar sucesso no envio.
+7. ✏️ **Atualização de mensagens:** o sistema deverá validar a autoria e a permissão antes de salvar qualquer alteração.
+8. 🗑️ **Exclusão de mensagens:** o sistema deverá validar a autoria e aplicar a política de exclusão definida pelo projeto.
+9. 👁️ **Status de leitura:** o sistema deverá atualizar e apresentar o status de leitura conforme as regras de funcionamento adotadas.
+10. 🔎 **Pesquisa de conversas:** os resultados deverão conter somente conversas às quais o usuário autenticado tenha acesso.
+11. 🔒 **Proteção contra acesso indevido:** o backend deverá validar as permissões independentemente dos controles apresentados no frontend.
+12. ⚠️ **Tratamento de erros:** falhas de comunicação, validação ou persistência deverão gerar mensagens claras e não deverão ser apresentadas como operações bem-sucedidas.
+13. ♿ **Acessibilidade:** os botões, campos, indicadores e mensagens deverão possuir identificação clara e navegação compreensível.
+14. 🔄 **Consistência:** após o envio, a atualização ou a exclusão de uma mensagem, a conversa deverá refletir o estado confirmado pelo sistema.
+15. 🔍 **Pesquisa segura:** os termos de pesquisa deverão ser tratados como dados de entrada, sem permitir a execução de comandos ou consultas não autorizadas.
 
-| ID | Regra |
+---
+
+## 🔄 3. Casos de Uso e Requisitos Não Funcionais
+
+### 📌 3.1 Identificação do Caso de Uso
+
+| Campo | Descrição |
 |---|---|
-| **RN-01** | Somente usuários autenticados poderão acessar a área de conversas. |
-| **RN-02** | O usuário poderá visualizar apenas conversas das quais seja participante autorizado. |
-| **RN-03** | O envio de mensagens deverá ocorrer dentro de uma conversa autorizada. |
-| **RN-04** | O usuário poderá atualizar somente as próprias mensagens. |
-| **RN-05** | O usuário poderá excluir somente as próprias mensagens, sem autorização para excluir mensagens de outros participantes. |
-| **RN-06** | O sistema deverá disponibilizar o status de leitura das mensagens conforme o funcionamento definido para as conversas. |
-| **RN-07** | A pesquisa deverá permitir localizar conversas às quais o usuário tenha acesso. |
-| **RN-08** | O sistema deverá validar as permissões antes de permitir a visualização, atualização ou exclusão de mensagens. |
-| **RN-09** | Mensagens e conversas deverão respeitar os requisitos de privacidade e segurança da aplicação. |
+| 🆔 **ID** | UC-008 |
+| 📋 **Requisito relacionado** | RF-008 — Gerir Mensagens |
+| 👤 **Ator principal** | Usuário Cadastrado |
+| ⚙️ **Ator secundário** | Sistema Librando |
+| 🎯 **Objetivo** | Permitir que o usuário consulte conversas, envie mensagens, visualize o status de leitura, pesquise conversas e atualize ou exclua as próprias mensagens. |
+| 🔗 **Relacionamento** | Funcionalidade de comunicação privada integrada à aplicação Librando. |
 
-## 6. Caso de Uso — UC-008
+### 🔐 3.2 Pré-condições
 
-**Nome:** Gerir Mensagens
-
-**Ator principal:** Usuário Cadastrado.
-
-### 6.1. Pré-condições
-
-- O usuário deverá estar autenticado no Librando.
-- O usuário deverá ter acesso à página principal da aplicação.
-
-### 6.2. Pós-condições
-
-- As mensagens enviadas, atualizadas ou excluídas deverão refletir a operação realizada.
-- O status de leitura deverá ser disponibilizado conforme as regras do sistema.
-- A pesquisa deverá apresentar apenas conversas acessíveis ao usuário.
-
-### 6.3. Fluxo Principal
-
-1. O usuário acessa a página principal do Librando.
-2. O usuário seleciona a opção **Conversas**.
-3. O sistema apresenta as conversas disponíveis para o usuário.
-4. O usuário seleciona uma conversa.
-5. O sistema apresenta as mensagens da conversa e seus respectivos status de leitura, quando disponíveis.
-6. O usuário poderá enviar uma nova mensagem, atualizar ou excluir uma mensagem própria.
-7. O sistema valida a operação solicitada.
-8. O sistema realiza a operação autorizada e atualiza a exibição da conversa.
-
-### 6.4. Fluxos Alternativos
-
-- **Pesquisa de conversas:** o usuário informa um termo de pesquisa e o sistema apresenta as conversas correspondentes às quais ele tem acesso.
-- **Mensagem inválida:** o sistema informa o problema e não envia a mensagem.
-- **Permissão insuficiente:** o sistema bloqueia a operação e apresenta uma mensagem informativa.
-- **Conversa inexistente ou inacessível:** o sistema informa que a conversa não está disponível para o usuário.
-
-## 7. Requisitos Não Funcionais
-
-| ID | Requisito |
-|---|---|
-| **RNF-01** | **Desempenho:** as conversas e mensagens deverão ser exibidas em até 2 segundos em condições normais de uso. |
-| **RNF-02** | **Segurança:** o acesso às mensagens deverá ser restrito aos participantes autorizados. |
-| **RNF-03** | **Usabilidade:** a opção Conversas deverá ser facilmente identificável na página principal. |
-| **RNF-04** | **Acessibilidade:** a interface deverá considerar as necessidades de acessibilidade da comunidade surda e dos usuários do Librando. |
-| **RNF-05** | **Compatibilidade:** a funcionalidade deverá ser compatível com Chrome, Firefox, Edge e Safari em versões suportadas. |
-| **RNF-06** | **Integridade:** atualizações e exclusões deverão ser refletidas corretamente na conversa. |
-
-## 8. Critérios de Aceitação
-
-- [ ] O usuário autenticado consegue acessar a opção Conversas.
-- [ ] O usuário consegue visualizar suas conversas e mensagens.
-- [ ] O usuário consegue enviar mensagens.
-- [ ] O usuário consegue atualizar as próprias mensagens.
-- [ ] O usuário consegue excluir as próprias mensagens.
-- [ ] O usuário consegue visualizar o status de leitura das mensagens.
-- [ ] O usuário consegue pesquisar conversas.
-- [ ] O sistema impede o acesso a conversas não autorizadas.
-- [ ] O sistema impede a alteração ou exclusão de mensagens pertencentes a outros usuários.
-- [ ] A funcionalidade atende aos requisitos de desempenho e acessibilidade definidos.
-
-## 9. Pontos Pendentes de Definição
-
-Os seguintes comportamentos deverão ser definidos pela equipe antes da implementação final:
-
-| ID | Ponto pendente | Decisão necessária |
-|---|---|---|
-| **PD-01** | Atualização de mensagens | Definir se o usuário poderá editar mensagens a qualquer momento ou somente dentro de um prazo. |
-| **PD-02** | Exclusão de mensagens | Definir se a exclusão removerá a mensagem para todos os participantes ou somente para quem a excluiu. |
-| **PD-03** | Pesquisa de conversas | Definir se a pesquisa será realizada pelo nome do participante, pelo conteúdo das mensagens ou por ambos. |
-| **PD-04** | Status de leitura | Definir como o status será atualizado e apresentado aos participantes. |
+- O usuário deverá possuir uma conta cadastrada no Librando.
+- O usuário deverá estar autenticado na plataforma.
+- O sistema deverá estar disponível para receber solicitações.
+- O usuário deverá acessar a página principal da aplicação.
+- A opção **Conversas** deverá estar disponível na interface.
+- Para visualizar uma conversa, o usuário deverá ser um participante autorizado.
+- Para atualizar ou excluir uma mensagem, o usuário deverá
