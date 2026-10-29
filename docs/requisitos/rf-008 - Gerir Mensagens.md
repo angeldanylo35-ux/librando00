@@ -148,7 +148,7 @@ A interface deverá seguir os princípios de acessibilidade do Librando, mantend
 - O usuário deverá estar autenticado na plataforma.
 - O sistema deverá estar disponível para receber solicitações.
 - O usuário deverá acessar a página principal da aplicação.
-- A opção **Conversas** deverá estar disponível na interface.
+- A opção **Mensagens** deverá estar disponível na interface.
 - Para visualizar uma conversa, o usuário deverá ser um participante autorizado.
 - Para atualizar ou excluir uma mensagem, o usuário deverá ser seu autor e possuir uma sessão válida.
 - O banco de dados deverá estar acessível para consultar e persistir as informações necessárias.
@@ -157,7 +157,7 @@ A interface deverá seguir os princípios de acessibilidade do Librando, mantend
 
 1. 👤 O usuário acessa sua conta no Librando.
 2. 🖥️ O sistema apresenta a página principal da aplicação.
-3. 💬 O usuário seleciona a opção **Conversas**.
+3. 💬 O usuário seleciona a opção **Mensagens**.
 4. 🔎 O sistema verifica a autenticação e recupera as conversas às quais o usuário possui acesso.
 5. 📋 O sistema apresenta a lista de conversas disponíveis.
 6. 🔍 O usuário poderá utilizar a pesquisa para localizar uma conversa.
@@ -185,7 +185,7 @@ A interface deverá seguir os princípios de acessibilidade do Librando, mantend
 
 #### 🔒 FA-01 — Sessão Expirada ou Usuário Não Autenticado
 
-1. O usuário tenta acessar a opção **Conversas** sem uma sessão válida.
+1. O usuário tenta acessar a opção **Mensagens** sem uma sessão válida.
 2. O sistema verifica a autenticação.
 3. O sistema identifica que o token está ausente, expirado ou inválido.
 4. O sistema bloqueia o acesso às conversas.
@@ -361,5 +361,3 @@ A interface deverá seguir os princípios de acessibilidade do Librando, mantend
 
 ---
 ---
-
-**Observação final:** este documento descreve o comportamento esperado do RF-008. Antes de marcar os itens como concluídos, a equipe deverá verificar a implementação real no frontend, no backend, no banco de dados e no Swagger. Os endpoints e as decisões indicados como pendentes deverão ser confirmados antes de serem tratados como parte da API existente.
