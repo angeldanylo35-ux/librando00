@@ -32,8 +32,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/conta', [PerfilController::class, 'excluirConta']);
 
     // RF-008: Gerir Mensagens
+    Route::get('/usuarios', [ConversaController::class, 'buscarUsuarios']);
     Route::get('/conversas', [ConversaController::class, 'index']);
     Route::post('/conversas', [ConversaController::class, 'store']);
+    Route::delete('/conversas/{conversa}', [ConversaController::class, 'destroy']);
     Route::get('/conversas/{conversa}/mensagens', [ConversaController::class, 'mensagens']);
     Route::post('/conversas/{conversa}/mensagens', [MensagemController::class, 'store']);
 

@@ -12,6 +12,13 @@ Projeto acadêmico de uma rede social voltada para **pessoas surdas**, com a pro
 * Validação de dados
 * Integração entre Front-end e Back-end
 * API para comunicação entre as partes do sistema
+* Mensagens diretas entre usuários cadastrados, com conversas e mensagens persistidas no banco
+
+## Mensagens
+
+Na tela de mensagens, use **Nova mensagem** para pesquisar uma pessoa pelo nome ou nome de usuário e iniciar uma conversa. As mensagens são gravadas pela API; o serviço do frontend deve apontar para a API do backend usando `VITE_API_URL` (incluindo `/api`) quando frontend e backend estiverem em domínios diferentes.
+
+Ao publicar alterações no Render, confirme também que as migrations do backend foram aplicadas ao banco de produção (`php artisan migrate --force`).
 
 ---
 

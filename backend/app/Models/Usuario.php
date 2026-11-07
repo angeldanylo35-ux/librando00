@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class Usuario extends Authenticatable
@@ -38,5 +39,10 @@ class Usuario extends Authenticatable
     public function posts()
     {
         return $this->hasMany(Post::class, 'usuario_id');
+    }
+
+    public function conversas(): BelongsToMany
+    {
+        return $this->belongsToMany(Conversa::class, 'conversa_usuario', 'user_id', 'conversa_id');
     }
 }

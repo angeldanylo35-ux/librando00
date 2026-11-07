@@ -1,6 +1,7 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
+import api from '../services/api'
 
 const router = useRouter()
 
@@ -33,7 +34,7 @@ const navItems = [
   { label: 'Página inicial', icon: 'home', route: '/feed' },
   { label: 'Explorar', icon: 'explore' },
   { label: 'Vídeos', icon: 'video' },
-  { label: 'Mensagens', icon: 'send', route: '/Mensagem', active: true, badge: 3 },
+  { label: 'Mensagens', icon: 'send', route: '/Mensagem', active: true },
   { label: 'Notificações', icon: 'heart' },
   { label: 'Salvos', icon: 'bookmark' },
   { label: 'Meu perfil', icon: 'user', route: '/perfil' },
@@ -56,85 +57,23 @@ function sair() {
   router.replace('/login')
 }
 
-const STORAGE_KEY = 'librando_conversas'
-
-const conversasPadrao = [
-  {
-    id: 1,
-    nome: 'Maria Silva',
-    usuario: 'mariasilva',
-    foto: '',
-    online: true,
-    naoLidas: 2,
-    isGrupo: false,
-    ultimaMensagem: 'Aprendi um sinal novo em Libras hoje!',
-    tempo: '5 min',
-    mensagens: [
-      { id: 101, autor: 'mariasilva', texto: 'Olá! Tudo bem?', hora: '14:20', enviadaPorMim: false, importante: false, editada: false },
-      { id: 102, autor: 'meu_usuario', texto: 'Tudo ótimo e contigo?', hora: '14:22', enviadaPorMim: true, importante: false, editada: false },
-      { id: 103, autor: 'mariasilva', texto: 'Aprendi um sinal novo em Libras hoje!', hora: '14:25', enviadaPorMim: false, importante: false, editada: false }
-    ]
-  },
-  {
-    id: 2,
-    nome: 'João Pedro',
-    usuario: 'joaopedro',
-    foto: '',
-    online: false,
-    naoLidas: 0,
-    isGrupo: false,
-    ultimaMensagem: 'Vamos fazer uma videochamada para treinar?',
-    tempo: '2 h',
-    mensagens: [
-      { id: 201, autor: 'joaopedro', texto: 'Vamos fazer uma videochamada para treinar?', hora: '12:10', enviadaPorMim: false, importante: false, editada: false }
-    ]
-  },
-  {
-    id: 3,
-    nome: 'Comunidade Surda SP',
-    usuario: 'grupo_sp',
-    foto: '',
-    online: true,
-    isGrupo: true,
-    naoLidas: 1,
-    ultimaMensagem: 'Ana: O encontro presencial será no sábado!',
-    tempo: '1 d',
-    mensagens: [
-      { id: 301, autor: 'ana', texto: 'O encontro presencial será no sábado!', hora: 'Ontem', enviadaPorMim: false, importante: false, editada: false }
-    ]
-  }
-]
-
-function carregarConversasSalvas() {
-  try {
-    const salvo = localStorage.getItem(STORAGE_KEY)
-    if (!salvo) return [...conversasPadrao]
-
-    const dados = JSON.parse(salvo)
-    return Array.isArray(dados) && dados.length ? dados : [...conversasPadrao]
-  } catch {
-    return [...conversasPadrao]
-  }
-}
-
-const conversas = ref(carregarConversasSalvas())
-const conversaAtiva = ref(conversas.value[0] ?? null)
-
-watch(conversas, (valor) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(valor))
-}, { deep: true })
+const conversas = ref([])
+const conversaAtiva = ref(null)
 const novaMensagemTexto = ref('')
 const termoBusca = ref('')
 const abaAtiva = ref('principais')
 const mostrarPainelInfo = ref(false)
-
-/* Estados de Edição de Mensagem */
 const mensagemEmEdicao = ref(null)
 const textoEdicao = ref('')
-
-/* Estado do Modal de Criar Grupo */
-const modalGrupoAberto = ref(false)
-const nomeNovoGrupo = ref('')
+const modalNovaConversaAberto = ref(false)
+const termoUsuario = ref('')
+const usuariosEncontrados = ref([])
+const carregandoConversas = ref(false)
+const carregandoMensagens = ref(false)
+const buscandoUsuarios = ref(false)
+const enviandoMensagem = ref(false)
+const erro = ref('')
+const erroBusca = ref('')
 
 const conversasFiltradas = computed(() => {
   return conversas.value.filter(c => 
@@ -143,66 +82,124 @@ const conversasFiltradas = computed(() => {
   )
 })
 
-function selecionarConversa(conversa) {
+function mensagemDeErro(e, padrao) {
+  return e.response?.data?.mensagem || e.response?.data?.message || padrao
+}
+
+function mapearConversa(conversa) {
+  return {
+    ...conversa,
+    nome: conversa.nome || conversa.usuario || 'Usuário',
+    usuario: conversa.usuario || '',
+    ultimaMensagem: conversa.ultimaMensagem || 'Inicie uma conversa',
+    tempo: conversa.tempo || '',
+    naoLidas: conversa.naoLidas || 0,
+    mensagens: conversa.mensagens || [],
+    online: false,
+  }
+}
+
+function mapearMensagem(mensagem) {
+  return { ...mensagem, hora: mensagem.hora || '', importante: false }
+}
+
+async function carregarConversas(silenciosa = false) {
+  if (!silenciosa) carregandoConversas.value = true
+  erro.value = ''
+  try {
+    const idAtivo = conversaAtiva.value?.id
+    const { data } = await api.get('/conversas')
+    conversas.value = data.map(conversa => {
+      const atual = conversas.value.find(c => c.id === conversa.id)
+      return { ...mapearConversa(conversa), mensagens: atual?.mensagens || [] }
+    })
+    if (idAtivo) conversaAtiva.value = conversas.value.find(c => c.id === idAtivo) || null
+  } catch (e) {
+    erro.value = mensagemDeErro(e, 'Não foi possível carregar suas conversas.')
+  } finally {
+    if (!silenciosa) carregandoConversas.value = false
+  }
+}
+
+async function carregarMensagens(conversa, silenciosa = false) {
+  if (!conversa) return
+  if (!silenciosa) carregandoMensagens.value = true
+  erro.value = ''
+  try {
+    const { data } = await api.get(`/conversas/${conversa.id}/mensagens`)
+    if (conversaAtiva.value?.id === conversa.id) {
+      conversaAtiva.value.mensagens = data.map(mapearMensagem)
+      conversaAtiva.value.naoLidas = 0
+    }
+  } catch (e) {
+    erro.value = mensagemDeErro(e, 'Não foi possível carregar as mensagens.')
+  } finally {
+    if (!silenciosa) carregandoMensagens.value = false
+  }
+}
+
+async function selecionarConversa(conversa) {
   conversaAtiva.value = conversa
-  conversa.naoLidas = 0
   cancelarEdicao()
+  await carregarMensagens(conversa)
 }
 
-function enviarMensagem() {
+async function enviarMensagem() {
   const texto = novaMensagemTexto.value.trim()
-  if (!texto || !conversaAtiva.value) return
+  if (!texto || !conversaAtiva.value || enviandoMensagem.value) return
 
-  const novaMsg = {
-    id: Date.now(),
-    autor: 'meu_usuario',
-    texto,
-    hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    enviadaPorMim: true,
-    importante: false,
-    editada: false
+  enviandoMensagem.value = true
+  erro.value = ''
+  try {
+    const { data } = await api.post(`/conversas/${conversaAtiva.value.id}/mensagens`, { texto })
+    conversaAtiva.value.mensagens.push(mapearMensagem(data))
+    conversaAtiva.value.ultimaMensagem = texto
+    conversaAtiva.value.tempo = 'agora'
+    novaMensagemTexto.value = ''
+    await carregarConversas()
+  } catch (e) {
+    erro.value = mensagemDeErro(e, 'Não foi possível enviar a mensagem. Tente novamente.')
+  } finally {
+    enviandoMensagem.value = false
   }
-
-  conversaAtiva.value.mensagens.push(novaMsg)
-  conversaAtiva.value.ultimaMensagem = texto
-  conversaAtiva.value.tempo = 'agora'
-  novaMensagemTexto.value = ''
 }
 
-/* Criar Novo Grupo */
-function criarGrupo() {
-  const nome = nomeNovoGrupo.value.trim()
-  if (!nome) return
-
-  const novoGrupo = {
-    id: Date.now(),
-    nome: nome,
-    usuario: `grupo_${Date.now()}`,
-    foto: '',
-    online: true,
-    isGrupo: true,
-    naoLidas: 0,
-    ultimaMensagem: 'Grupo criado com sucesso!',
-    tempo: 'agora',
-    mensagens: [
-      { id: Date.now() + 1, autor: 'sistema', texto: `Grupo "${nome}" criado. Sejam bem-vindos!`, hora: 'Agora', enviadaPorMim: false, importante: false, editada: false }
-    ]
-  }
-
-  conversas.value.unshift(novoGrupo)
-  conversaAtiva.value = novoGrupo
-  nomeNovoGrupo.value = ''
-  modalGrupoAberto.value = false
+function abrirNovaConversa() {
+  termoUsuario.value = ''
+  usuariosEncontrados.value = []
+  erroBusca.value = ''
+  modalNovaConversaAberto.value = true
 }
 
-/* Excluir Conversa Geral */
-function excluirConversa(id) {
-  const confirmar = window.confirm('Tem certeza de que deseja excluir esta conversa?')
-  if (!confirmar) return
-  
-  conversas.value = conversas.value.filter(c => c.id !== id)
-  if (conversaAtiva.value?.id === id) {
-    conversaAtiva.value = conversas.value.length > 0 ? conversas.value[0] : null
+async function buscarUsuarios() {
+  const busca = termoUsuario.value.trim()
+  usuariosEncontrados.value = []
+  erroBusca.value = ''
+  if (!busca) return
+
+  buscandoUsuarios.value = true
+  try {
+    const { data } = await api.get('/usuarios', { params: { busca } })
+    usuariosEncontrados.value = data
+  } catch (e) {
+    erroBusca.value = mensagemDeErro(e, 'Não foi possível pesquisar usuários.')
+  } finally {
+    buscandoUsuarios.value = false
+  }
+}
+
+async function iniciarConversa(usuario) {
+  erroBusca.value = ''
+  try {
+    const { data } = await api.post('/conversas', { usuario_id: usuario.id })
+    await carregarConversas()
+    const conversa = conversas.value.find(c => c.id === data.id)
+    if (conversa) {
+      modalNovaConversaAberto.value = false
+      await selecionarConversa(conversa)
+    }
+  } catch (e) {
+    erroBusca.value = mensagemDeErro(e, 'Não foi possível iniciar a conversa.')
   }
 }
 
@@ -216,11 +213,17 @@ function salvarEdicao(msg) {
   const novoTexto = textoEdicao.value.trim()
   if (!novoTexto) return
 
-  msg.texto = novoTexto
-  msg.editada = true
-  conversaAtiva.value.ultimaMensagem = novoTexto
-  mensagemEmEdicao.value = null
-  textoEdicao.value = ''
+  api.put(`/mensagens/${msg.id}`, { texto: novoTexto })
+    .then(({ data }) => {
+      Object.assign(msg, mapearMensagem(data))
+      if (conversaAtiva.value.mensagens.at(-1)?.id === msg.id) {
+        conversaAtiva.value.ultimaMensagem = novoTexto
+      }
+      cancelarEdicao()
+    })
+    .catch(e => {
+      erro.value = mensagemDeErro(e, 'Não foi possível editar a mensagem.')
+    })
 }
 
 function cancelarEdicao() {
@@ -236,7 +239,27 @@ function alternarImportante(msg) {
 /* Excluir Mensagem Individual */
 function apagarMensagem(id) {
   if (!conversaAtiva.value) return
-  conversaAtiva.value.mensagens = conversaAtiva.value.mensagens.filter(m => m.id !== id)
+  api.delete(`/mensagens/${id}`)
+    .then(async () => {
+      conversaAtiva.value.mensagens = conversaAtiva.value.mensagens.filter(m => m.id !== id)
+      await carregarConversas()
+    })
+    .catch(e => {
+      erro.value = mensagemDeErro(e, 'Não foi possível apagar a mensagem.')
+    })
+}
+
+async function excluirConversa(id) {
+  if (!window.confirm('Tem certeza de que deseja excluir esta conversa?')) return
+  try {
+    await api.delete(`/conversas/${id}`)
+    conversaAtiva.value = null
+    mostrarPainelInfo.value = false
+    await carregarConversas()
+    if (conversas.value.length) await selecionarConversa(conversas.value[0])
+  } catch (e) {
+    erro.value = mensagemDeErro(e, 'Não foi possível excluir a conversa.')
+  }
 }
 
 function iniciarChamadaVideo() {
@@ -246,6 +269,25 @@ function iniciarChamadaVideo() {
 function inicial(nome) {
   return nome ? nome.charAt(0).toUpperCase() : '?'
 }
+
+let intervaloAtualizacao
+let desmontado = false
+
+onMounted(async () => {
+  await carregarConversas()
+  if (conversas.value.length) await selecionarConversa(conversas.value[0])
+  if (desmontado) return
+  intervaloAtualizacao = window.setInterval(async () => {
+    if (document.visibilityState !== 'visible') return
+    await carregarConversas(true)
+    if (conversaAtiva.value) await carregarMensagens(conversaAtiva.value, true)
+  }, 5000)
+})
+
+onBeforeUnmount(() => {
+  desmontado = true
+  window.clearInterval(intervaloAtualizacao)
+})
 </script>
 
 <template>
@@ -305,10 +347,7 @@ function inicial(nome) {
         <div class="p-4 border-b border-gray-100 flex items-center justify-between">
           <h2 class="text-[20px] font-bold" style="color: #635BFF !important;">Mensagens</h2>
           <div class="flex items-center gap-1">
-            <button type="button" class="p-2 rounded-full hover:bg-gray-100 text-[#635BFF]" title="Criar Grupo" @click="modalGrupoAberto = true">
-              <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" v-html="icons.users" />
-            </button>
-            <button type="button" class="p-2 rounded-full hover:bg-gray-100 text-[#1A1A1A]" title="Nova mensagem">
+            <button type="button" class="p-2 rounded-full hover:bg-gray-100 text-[#1A1A1A]" title="Nova mensagem" @click="abrirNovaConversa">
               <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" v-html="icons.edit" />
             </button>
           </div>
@@ -325,6 +364,7 @@ function inicial(nome) {
             />
           </div>
         </div>
+        <p v-if="erro && !conversaAtiva" class="px-4 py-2 text-sm text-red-600">{{ erro }}</p>
 
         <div class="flex border-b border-gray-100 text-[13px] font-medium text-gray-500 mt-2">
           <button
@@ -354,6 +394,10 @@ function inicial(nome) {
         </div>
 
         <div class="flex-1 overflow-y-auto divide-y divide-gray-50">
+          <p v-if="carregandoConversas" class="p-4 text-sm text-gray-500">Carregando conversas...</p>
+          <p v-else-if="!conversasFiltradas.length" class="p-4 text-sm text-gray-500">
+            {{ termoBusca ? 'Nenhuma conversa encontrada.' : 'Você ainda não tem conversas. Use “Nova mensagem” para encontrar alguém.' }}
+          </p>
           <div
             v-for="conversa in conversasFiltradas"
             :key="conversa.id"
@@ -436,6 +480,8 @@ function inicial(nome) {
 
         <!-- MENSAGENS -->
         <div class="flex-1 overflow-y-auto p-6 space-y-4">
+          <p v-if="erro" class="rounded-lg bg-red-50 p-3 text-sm text-red-700">{{ erro }}</p>
+          <p v-if="carregandoMensagens" class="text-sm text-gray-500">Carregando mensagens...</p>
           <div
             v-for="msg in conversaAtiva.mensagens"
             :key="msg.id"
@@ -530,13 +576,21 @@ function inicial(nome) {
 
             <button
               type="submit"
-              :disabled="!novaMensagemTexto.trim()"
+              :disabled="!novaMensagemTexto.trim() || enviandoMensagem"
               class="px-5 py-2.5 rounded-full bg-[#635BFF] text-white font-semibold text-[14px] hover:bg-[#5249e6] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
             >
-              Enviar
+              {{ enviandoMensagem ? 'Enviando...' : 'Enviar' }}
             </button>
           </form>
         </footer>
+      </main>
+      <main v-else class="flex flex-1 items-center justify-center bg-[#F8F9FA] p-6 text-center">
+        <div>
+          <p class="text-gray-600">Selecione uma conversa ou comece uma nova mensagem.</p>
+          <button type="button" class="mt-4 rounded-full bg-[#635BFF] px-5 py-2.5 text-sm font-semibold text-white" @click="abrirNovaConversa">
+            Encontrar pessoas
+          </button>
+        </div>
       </main>
 
       <!-- PAINEL LATERAL DIREITO -->
@@ -555,24 +609,41 @@ function inicial(nome) {
       </aside>
     </div>
 
-    <!-- MODAL CRIAR GRUPO -->
-    <div v-if="modalGrupoAberto" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div v-if="modalNovaConversaAberto" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-        <h3 class="text-[18px] font-bold text-[#1A1A1A] mb-4">Criar Novo Grupo</h3>
-        <div class="space-y-4">
-          <div>
-            <label class="block text-[13px] font-semibold text-gray-700 mb-1">Nome do Grupo</label>
-            <input
-              v-model="nomeNovoGrupo"
-              type="text"
-              placeholder="Ex: Prática de Libras Básica"
-              class="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-[14px] focus:border-[#635BFF] focus:outline-none"
-            />
-          </div>
+        <h3 class="text-[18px] font-bold text-[#1A1A1A] mb-4">Nova mensagem</h3>
+        <form class="flex gap-2" @submit.prevent="buscarUsuarios">
+          <input
+            v-model="termoUsuario"
+            type="search"
+            placeholder="Nome ou @usuário"
+            class="min-w-0 flex-1 rounded-xl border border-gray-200 px-4 py-2.5 text-[14px] focus:border-[#635BFF] focus:outline-none"
+          />
+          <button type="submit" :disabled="!termoUsuario.trim() || buscandoUsuarios" class="rounded-xl bg-[#635BFF] px-4 text-sm font-semibold text-white disabled:opacity-50">
+            {{ buscandoUsuarios ? 'Buscando...' : 'Buscar' }}
+          </button>
+        </form>
+        <p v-if="erroBusca" class="mt-3 text-sm text-red-600">{{ erroBusca }}</p>
+        <div class="mt-3 max-h-64 overflow-y-auto divide-y">
+          <button
+            v-for="usuario in usuariosEncontrados"
+            :key="usuario.id"
+            type="button"
+            class="flex w-full items-center justify-between py-3 text-left hover:bg-gray-50"
+            @click="iniciarConversa(usuario)"
+          >
+            <span>
+              <span class="block font-semibold">{{ usuario.nome }}</span>
+              <span class="text-sm text-gray-500">@{{ usuario.nome_usuario }}</span>
+            </span>
+            <span class="text-sm font-semibold text-[#635BFF]">Conversar</span>
+          </button>
+          <p v-if="!buscandoUsuarios && termoUsuario.trim() && !usuariosEncontrados.length && !erroBusca" class="py-3 text-sm text-gray-500">
+            Nenhum usuário encontrado.
+          </p>
         </div>
-        <div class="mt-6 flex justify-end gap-3">
-          <button type="button" class="rounded-xl px-4 py-2 text-[14px] font-medium text-gray-600 hover:bg-gray-100" @click="modalGrupoAberto = false">Cancelar</button>
-          <button type="button" :disabled="!nomeNovoGrupo.trim()" class="rounded-xl bg-[#635BFF] px-5 py-2 text-[14px] font-semibold text-white hover:bg-[#5249e6] disabled:opacity-40" @click="criarGrupo">Criar Grupo</button>
+        <div class="mt-4 flex justify-end">
+          <button type="button" class="rounded-xl px-4 py-2 text-[14px] font-medium text-gray-600 hover:bg-gray-100" @click="modalNovaConversaAberto = false">Fechar</button>
         </div>
       </div>
     </div>

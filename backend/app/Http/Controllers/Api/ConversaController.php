@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Conversa;
 use App\Models\MensagemLeitura;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
 
 class ConversaController extends Controller
@@ -48,6 +49,27 @@ class ConversaController extends Controller
             })
             ->sortByDesc('ordem')
             ->values();
+    }
+
+    // GET /api/usuarios?busca=
+    public function buscarUsuarios(Request $request)
+    {
+        $busca = ltrim(trim((string) $request->query('busca', '')), '@');
+
+        if ($busca === '') {
+            return [];
+        }
+
+        $like = '%' . addcslashes($busca, '%_\\') . '%';
+
+        return Usuario::query()
+            ->where('id', '!=', $request->user()->id)
+            ->where(fn ($q) => $q
+                ->where('nome', 'like', $like)
+                ->orWhere('nome_usuario', 'like', $like))
+            ->orderBy('nome')
+            ->limit(20)
+            ->get(['id', 'nome', 'nome_usuario']);
     }
 
     // POST /api/conversas  { usuario_id }
@@ -104,5 +126,12 @@ class ConversaController extends Controller
             ->orderBy('created_at')
             ->get()
             ->map(fn ($m) => $m->paraApi($user, $leituraOk));
+    }
+
+    public function destroy(Request $request, int $conversa)
+    {
+        $request->user()->conversas()->findOrFail($conversa)->delete();
+
+        return response()->json(['sucesso' => true]);
     }
 }
