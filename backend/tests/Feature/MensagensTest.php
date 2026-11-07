@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Conversa;
 use App\Models\Usuario;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Hash;
@@ -74,6 +73,19 @@ class MensagensTest extends TestCase
         ])->assertCreated();
 
         $conversaId = $respostaConversa->json('id');
+
+        $this->postJson('/api/conversas', [
+            'usuario_id' => $destinatario->id,
+        ])->assertOk()->assertJsonPath('id', $conversaId);
+
+        $this->postJson('/api/conversas', [
+            'usuario_id' => $remetente->id,
+        ])->assertUnprocessable();
+
+        $this->getJson('/api/conversas')
+            ->assertOk()
+            ->assertJsonPath('0.id', $conversaId)
+            ->assertJsonPath('0.usuario', 'joaopedro');
 
         $this->postJson("/api/conversas/{$conversaId}/mensagens", [
             'texto' => 'Oi, vamos conversar em Libras?',

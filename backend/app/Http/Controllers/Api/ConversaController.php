@@ -7,6 +7,7 @@ use App\Models\Conversa;
 use App\Models\MensagemLeitura;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ConversaController extends Controller
 {
@@ -81,18 +82,35 @@ class ConversaController extends Controller
             'usuario_id' => ['required', 'integer', 'exists:usuarios,id', 'not_in:' . $user->id],
         ]);
 
-        $existente = $user->conversas()
-            ->whereHas('participantes', fn ($q) => $q->where('usuarios.id', $data['usuario_id']))
-            ->first();
+        [$conversa, $criada] = DB::transaction(function () use ($user, $data) {
+            $participanteIds = [(int) $user->id, (int) $data['usuario_id']];
+            sort($participanteIds);
 
-        if ($existente) {
-            return response()->json(['id' => $existente->id]);
-        }
+            Usuario::query()
+                ->whereIn('id', $participanteIds)
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get();
 
-        $conversa = Conversa::create();
-        $conversa->participantes()->attach([$user->id, $data['usuario_id']]);
+            $existente = $user->conversas()
+                ->whereHas('participantes', fn ($q) => $q->where('usuarios.id', $data['usuario_id']))
+                ->has('participantes', '=', 2)
+                ->first();
 
-        return response()->json(['id' => $conversa->id], 201);
+            if ($existente) {
+                return [$existente, false];
+            }
+
+            $conversa = Conversa::create();
+            $conversa->participantes()->sync($participanteIds);
+
+            return [$conversa, true];
+        });
+
+        return response()->json(
+            ['id' => $conversa->id],
+            $criada ? 201 : 200
+        );
     }
 
     // GET /api/conversas/{conversa}/mensagens
