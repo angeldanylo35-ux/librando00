@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -56,8 +56,9 @@ function sair() {
   router.replace('/login')
 }
 
-/* Dados Simulados das Conversas */
-const conversas = ref([
+const STORAGE_KEY = 'librando_conversas'
+
+const conversasPadrao = [
   {
     id: 1,
     nome: 'Maria Silva',
@@ -102,9 +103,26 @@ const conversas = ref([
       { id: 301, autor: 'ana', texto: 'O encontro presencial será no sábado!', hora: 'Ontem', enviadaPorMim: false, importante: false, editada: false }
     ]
   }
-])
+]
 
-const conversaAtiva = ref(conversas.value[0])
+function carregarConversasSalvas() {
+  try {
+    const salvo = localStorage.getItem(STORAGE_KEY)
+    if (!salvo) return [...conversasPadrao]
+
+    const dados = JSON.parse(salvo)
+    return Array.isArray(dados) && dados.length ? dados : [...conversasPadrao]
+  } catch {
+    return [...conversasPadrao]
+  }
+}
+
+const conversas = ref(carregarConversasSalvas())
+const conversaAtiva = ref(conversas.value[0] ?? null)
+
+watch(conversas, (valor) => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(valor))
+}, { deep: true })
 const novaMensagemTexto = ref('')
 const termoBusca = ref('')
 const abaAtiva = ref('principais')
