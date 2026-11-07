@@ -69,7 +69,7 @@ const navItems = [
   { label: 'Página inicial', icon: 'home', route: '/feed', active: true },
   { label: 'Explorar', icon: 'explore' },
   { label: 'Vídeos', icon: 'video' },
-  { label: 'Mensagens', icon: 'send', badge: 3 },
+  { label: 'Mensagens', icon: 'send', route: '/Mensagem', badge: 3 },
   { label: 'Notificações', icon: 'heart' },
   { label: 'Salvos', icon: 'bookmark' },
   { label: 'Meu perfil', icon: 'user', route: '/perfil' },

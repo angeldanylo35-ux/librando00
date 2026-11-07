@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ConversaController;
+use App\Http\Controllers\Api\MensagemController;
 use App\Http\Controllers\Api\PerfilController;
 use App\Http\Controllers\Api\PostController;
 use Illuminate\Support\Facades\Route;
@@ -28,4 +30,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // RF-007: sair e excluir a própria conta
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::delete('/conta', [PerfilController::class, 'excluirConta']);
+
+    // RF-008: Gerir Mensagens
+    Route::get('/conversas', [ConversaController::class, 'index']);
+    Route::post('/conversas', [ConversaController::class, 'store']);
+    Route::get('/conversas/{conversa}/mensagens', [ConversaController::class, 'mensagens']);
+    Route::post('/conversas/{conversa}/mensagens', [MensagemController::class, 'store']);
+
+    Route::put('/mensagens/{mensagem}', [MensagemController::class, 'update']);
+    Route::delete('/mensagens/{mensagem}', [MensagemController::class, 'destroy']);
 });

@@ -6,6 +6,7 @@ use App\Services\ImageService;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -32,6 +33,30 @@ class PerfilController extends Controller
         ]);
     }
 
+    // Excluir a própria conta (RF-007): a conta é sempre a dona do token
+    public function excluirConta(Request $request)
+    {
+        $usuario = $request->user();
+
+        try {
+            DB::transaction(function () use ($usuario) {
+                $usuario->tokens()->delete(); // invalida todos os tokens da conta
+                $usuario->delete();           // posts e enquete_opcoes saem em cascata (FK)
+            });
+        } catch (\Throwable $e) {
+            Log::error('Falha ao excluir conta: ' . $e->getMessage());
+
+            return response()->json([
+                'sucesso'  => false,
+                'mensagem' => 'Não foi possível excluir a conta. Tente novamente.',
+            ], 500);
+        }
+
+        return response()->json([
+            'sucesso'  => true,
+            'mensagem' => 'Conta excluída com sucesso.',
+        ]);
+    }
     // Editar o próprio perfil (POST /perfil, aceita arquivos)
     public function update(Request $request)
     {

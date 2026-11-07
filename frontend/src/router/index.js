@@ -6,7 +6,7 @@ import EsqueciSenha from '../paginas/esqueci-senha.vue';
 import RedefinirSenha from '../paginas/redefinir-senha.vue';
 import Feed from '../paginas/Feed.vue';
 import Perfil from '../paginas/Perfil.vue';
-
+import Mensagem from '../paginas/Mensagem.vue'
 const routes = [
   {
     path: '/',
@@ -46,6 +46,11 @@ const routes = [
     path: '/Perfil',
     name: 'Perfil',
     component: Perfil,
+  },
+  {
+    path: '/Mensagem',
+    name: 'Mensagem',
+    component: Mensagem,
   },
   // adicione as próximas telas aqui, ex:
   // { path: '/home', name: 'home', component: Home },
