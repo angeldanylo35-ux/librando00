@@ -16,7 +16,10 @@ class ConversaController extends Controller
         $busca = trim((string) $request->query('busca', ''));
 
         return $user->conversas()
-            ->with(['participantes:id,name,nome_usuario', 'ultimaMensagem'])
+            ->with([
+                'participantes:usuarios.id,usuarios.nome,usuarios.nome_usuario',
+                'ultimaMensagem',
+            ])
             ->withCount(['mensagens as nao_lidas' => fn ($q) => $q
                 ->where('user_id', '!=', $user->id)
                 ->whereDoesntHave('leituras', fn ($l) => $l->where('user_id', $user->id))])
@@ -24,9 +27,9 @@ class ConversaController extends Controller
                 // termo tratado como dado: binding do Eloquent + escape de curingas do LIKE
                 $like = '%' . addcslashes($busca, '%_\\') . '%';
                 $q->whereHas('participantes', fn ($p) => $p
-                    ->where('users.id', '!=', $user->id)
-                    ->where(fn ($w) => $w->where('users.name', 'like', $like)
-                        ->orWhere('users.nome_usuario', 'like', $like)));
+                    ->where('usuarios.id', '!=', $user->id)
+                    ->where(fn ($w) => $w->where('usuarios.nome', 'like', $like)
+                        ->orWhere('usuarios.nome_usuario', 'like', $like)));
             })
             ->get()
             ->map(function ($c) use ($user) {
@@ -35,7 +38,7 @@ class ConversaController extends Controller
 
                 return [
                     'id' => $c->id,
-                    'nome' => $outro?->name,
+                    'nome' => $outro?->nome,
                     'usuario' => $outro?->nome_usuario,
                     'naoLidas' => $c->nao_lidas,
                     'ultimaMensagem' => $ultima?->texto,
@@ -53,11 +56,11 @@ class ConversaController extends Controller
         $user = $request->user();
 
         $data = $request->validate([
-            'usuario_id' => ['required', 'integer', 'exists:users,id', 'not_in:' . $user->id],
+            'usuario_id' => ['required', 'integer', 'exists:usuarios,id', 'not_in:' . $user->id],
         ]);
 
         $existente = $user->conversas()
-            ->whereHas('participantes', fn ($q) => $q->where('users.id', $data['usuario_id']))
+            ->whereHas('participantes', fn ($q) => $q->where('usuarios.id', $data['usuario_id']))
             ->first();
 
         if ($existente) {

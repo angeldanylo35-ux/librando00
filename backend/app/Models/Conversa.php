@@ -11,7 +11,7 @@ class Conversa extends Model
 {
     public function participantes(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'conversa_usuario');
+        return $this->belongsToMany(Usuario::class, 'conversa_usuario', 'conversa_id', 'user_id');
     }
 
     public function mensagens(): HasMany

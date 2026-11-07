@@ -13,9 +13,20 @@ class Mensagem extends Model
 
     protected $table = 'mensagens';
 
-    protected $fillable = ['conversa_id', 'user_id', 'client_id', 'texto', 'editada'];
+    protected $fillable = [
+        'conversa_id',
+        'user_id',
+        'client_id',
+        'texto',
+        'editada',
+    ];
 
-    protected $casts = ['editada' => 'boolean'];
+    protected $casts = [
+        'editada' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
 
     public function conversa(): BelongsTo
     {
@@ -24,30 +35,42 @@ class Mensagem extends Model
 
     public function autor(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Usuario::class, 'user_id');
     }
 
     public function leituras(): HasMany
     {
-        return $this->hasMany(MensagemLeitura::class);
+        return $this->hasMany(MensagemLeitura::class, 'mensagem_id');
     }
 
-    /**
-     * Formato devolvido ao front.
-     * "lida" = null quando o status de leitura está indisponível (RN-10, FA-10).
-     */
-    public function paraApi(User $user, bool $leituraDisponivel = true): array
+    public function paraApi(?Usuario $usuario = null, bool $leituraOk = true): array
     {
-        $minha = $this->user_id === $user->id;
+        $souEu = $usuario ? (int) $usuario->id === (int) $this->user_id : false;
+        $jaLida = $souEu;
+
+        if ($usuario && ! $souEu) {
+            $jaLida = $this->leituras->contains(fn ($leitura) => (int) $leitura->user_id === (int) $usuario->id);
+        }
+
+        if ($jaLida === false && $leituraOk && $usuario && ! $souEu) {
+            $jaLida = true;
+        }
 
         return [
             'id' => $this->id,
-            'autor' => $this->autor->nome_usuario,
+            'conversa_id' => $this->conversa_id,
+            'user_id' => $this->user_id,
+            'client_id' => $this->client_id,
             'texto' => $this->texto,
-            'hora' => $this->created_at->format('H:i'),
-            'enviadaPorMim' => $minha,
-            'editada' => $this->editada,
-            'lida' => $minha && $leituraDisponivel ? $this->leituras->isNotEmpty() : null,
+            'editada' => (bool) $this->editada,
+            'enviadaPorMim' => $souEu,
+            'lida' => $jaLida,
+            'autor' => $this->autor ? [
+                'id' => $this->autor->id,
+                'nome_usuario' => $this->autor->nome_usuario,
+            ] : null,
+            'hora' => $this->created_at?->format('H:i'),
+            'created_at' => $this->created_at?->toISOString(),
         ];
     }
 }

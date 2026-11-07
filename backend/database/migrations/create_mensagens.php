@@ -13,17 +13,17 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // Sem coluna "id": evita ambiguidade nas consultas com join
         Schema::create('conversa_usuario', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('conversa_id')->constrained('conversas')->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->unique(['conversa_id', 'user_id']);
+            $table->foreignId('user_id')->constrained('usuarios')->cascadeOnDelete();
+            $table->primary(['conversa_id', 'user_id']);
         });
 
         Schema::create('mensagens', function (Blueprint $table) {
             $table->id();
             $table->foreignId('conversa_id')->constrained('conversas')->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('usuarios')->cascadeOnDelete();
             $table->uuid('client_id')->nullable();
             $table->text('texto');
             $table->boolean('editada')->default(false);
@@ -36,7 +36,7 @@ return new class extends Migration
         Schema::create('mensagem_leituras', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mensagem_id')->constrained('mensagens')->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('usuarios')->cascadeOnDelete();
             $table->timestamp('lida_em');
             $table->unique(['mensagem_id', 'user_id']);
         });
