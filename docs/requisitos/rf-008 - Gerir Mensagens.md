@@ -358,3 +358,299 @@ A interface deverá seguir os princípios de acessibilidade do Librando, mantend
 
 ---
 ---
+💻 4. Protótipo Funcional
+4.1 Localização e acesso ao protótipo
+- Aplicação online: https://librando-frontend.onrender.com/
+- Plataforma de hospedagem: Render.
+- Funcionalidade: opção Mensagens, disponível após a autenticação do usuário.
+- Repositório: https://github.com/angeldanylo35-ux/librando00
+- Banco de dados: MySQL hospedado na Aiven.
+- Interface de administração do banco: https://librando-phpmyadmin.onrender.com
+- Banco informado no ambiente online: defaultdb.
+O acesso à funcionalidade exige uma conta autenticada. As credenciais de avaliação, caso sejam necessárias, devem ser fornecidas separadamente e nunca registradas neste documento.
+
+4.2 Tecnologias utilizadas
+Camada	Tecnologia	Responsabilidade
+Frontend	Vue 3	Construção da interface de mensagens e atualização da tela conforme as respostas da API.
+Backend	Laravel	Implementação das rotas, validações, regras de negócio e operações de mensagens.
+Autenticação	Laravel Sanctum	Proteção dos endpoints para usuários autenticados.
+Banco de dados	MySQL	Persistência de conversas, participantes, mensagens e registros de leitura.
+Comunicação	API REST/HTTP	Comunicação entre o frontend e o backend.
+Controle de versão	Git e GitHub	Armazenamento e acompanhamento do código-fonte.
+
+
+4.3 Operações implementadas
+A funcionalidade RF-008 foi implementada no frontend e no backend, substituindo os dados fictícios da interface por consultas à API.
+Operação	Funcionalidade na interface	Processamento no backend	Persistência
+Create	Enviar mensagem e iniciar conversa quando necessário.	Valida o usuário, a participação na conversa e o conteúdo antes de criar o registro.	Registra a conversa/participantes quando criada e armazena a mensagem.
+Read	Listar e pesquisar conversas; abrir uma conversa e consultar mensagens.	Retorna somente conversas autorizadas e recupera as mensagens correspondentes.	Consulta as tabelas de conversas, participantes e mensagens.
+Update	Editar uma mensagem própria.	Confere a autoria e valida o novo conteúdo antes de atualizar.	Atualiza o conteúdo da mensagem autorizada.
+Delete	Excluir uma mensagem própria, mediante confirmação na interface.	Confere a autoria e executa a exclusão lógica definida pelo projeto.	Mantém o registro no banco, identificando a mensagem como excluída.
+
+
+4.4 Endpoints da API
+A API possui seis endpoints protegidos pelo middleware auth:sanctum, responsáveis por listar/criar conversas, consultar mensagens e enviar/editar/excluir mensagens.
+Operação	Método HTTP	Recurso	Finalidade
+Listar conversas	GET	Rota de conversas	Retornar as conversas do usuário autenticado, com pesquisa e contagem de mensagens não lidas.
+Criar conversa	POST	Rota de criação de conversa	Criar uma conversa e associar seus participantes.
+Consultar mensagens	GET	Rota de mensagens de uma conversa	Retornar as mensagens da conversa autorizada e registrar a leitura das mensagens recebidas.
+Enviar mensagem	POST	Rota de envio de mensagem	Validar e armazenar uma nova mensagem.
+Editar mensagem	PUT ou PATCH	Rota de mensagem específica	Atualizar o conteúdo de uma mensagem somente quando solicitada por seu autor.
+Excluir mensagem	DELETE	Rota de mensagem específica	Realizar a exclusão lógica de uma mensagem própria.
+
+
+Conferência obrigatória antes da entrega: os caminhos completos das seis rotas e o método exato de atualização devem ser copiados do arquivo backend/routes/api.php ou obtidos pelo comando php artisan route:list --path=api. A tabela acima descreve os recursos e as operações, mas não substitui os URIs reais da aplicação.
+
+4.5 Validações e comportamentos da interface
+- A interface consulta a API e não utiliza mais conversas ou mensagens fictícias.
+- A pesquisa apresenta somente conversas às quais o usuário autenticado tem acesso.
+- O conteúdo da mensagem é obrigatório e deve respeitar o limite de 2.000 caracteres.
+- Mensagens com conteúdo vazio ou somente espaços em branco são recusadas.
+- A edição e a exclusão ficam restritas ao autor da mensagem.
+- A interface aguarda a confirmação do servidor antes de atualizar o estado exibido.
+- A exclusão solicita confirmação antes de executar a operação.
+- O identificador client_id evita a criação duplicada de mensagens em caso de reenvio da mesma solicitação.
+- Quando a atualização do status de leitura falha, a interface não apresenta a mensagem como lida de forma confirmada.
+- Erros de validação, falhas de comunicação e sessão expirada recebem tratamento na interface.
+- Os controles possuem identificações de acessibilidade e a tela se adapta a dispositivos móveis.
+4.6 Estados da tela
+Estado	Comportamento esperado
+Carregando	A interface informa que está buscando conversas ou mensagens na API.
+Vazio	Apresenta uma orientação quando não existem conversas, resultados de pesquisa ou mensagens.
+Preenchido	Exibe a lista de conversas e o histórico de mensagens retornado pelo backend.
+Erro	Apresenta uma mensagem compreensível quando a API falha, a validação é recusada ou a sessão expira.
+Sucesso	Atualiza a conversa e apresenta a confirmação somente depois da resposta bem-sucedida do servidor.
+
+
+4.7 Banco de dados e persistência
+A implementação utiliza migrations do Laravel para criar as seguintes tabelas:
+Tabela	Finalidade
+conversas	Armazenar os registros das conversas.
+conversa_usuario	Relacionar as conversas aos usuários participantes.
+mensagens	Armazenar o conteúdo, o autor, a conversa, a informação de edição e os dados de exclusão lógica.
+mensagem_leituras	Registrar os dados de leitura das mensagens pelos participantes.
+
+
+As tabelas possuem relacionamentos com usuarios, utilizando a estrutura de usuários já existente no Librando. As migrations são responsáveis pela criação da estrutura no banco de dados.
+
+Artefato SQL para a entrega: o guia do professor solicita um arquivo DDL em database/, contendo a estrutura de todas as tabelas utilizadas, suas chaves primárias, chaves estrangeiras, restrições e índices. As migrations já implementadas devem ser a referência para gerar e conferir esse arquivo SQL.
+4.8 Documentação da API — OpenAPI/Swagger
+O guia da disciplina exige o arquivo docs/api/swagger.json, em formato OpenAPI 3.0, documentando as operações implementadas.
+
+A documentação deverá conter:
+- Os seis endpoints da RF-008, com seus métodos HTTP e caminhos reais.
+- Parâmetros de rota e de pesquisa, quando aplicáveis.
+- Campos obrigatórios e exemplos dos corpos das requisições.
+- Exemplos de respostas retornadas pela API.
+- Códigos de sucesso e de erro compatíveis com os testes reais.
+- Esquema de autenticação BearerAuth e indicação de segurança nos endpoints protegidos.
+- Respostas para sessão não autenticada, conversa não autorizada, mensagem inexistente e conteúdo inválido.
+Local obrigatório no repositório: docs/api/swagger.json.
+
+Validação: abrir o arquivo em https://editor.swagger.io e conferir se o JSON é válido e se os métodos, campos e códigos de resposta correspondem ao comportamento real da API.
+A existência e a validação final do swagger.json, assim como a conferência dos URIs e dos códigos HTTP, precisam ser verificadas no repositório e nos testes da API antes da entrega. Não se deve documentar um endpoint ou uma resposta que não exista na implementação.
+
+4.9 Testes de aceitação do RF-008
+ID	Cenário	Resultado esperado
+T-01	Acessar mensagens com usuário autenticado.	A lista de conversas autorizadas é apresentada.
+T-02	Tentar acessar a API sem autenticação ou com sessão expirada.	O acesso é bloqueado e a interface orienta o usuário a autenticar-se novamente.
+T-03	Pesquisar uma conversa.	São retornadas somente conversas do usuário autenticado.
+T-04	Abrir uma conversa da qual o usuário participa.	As mensagens são apresentadas e as recebidas são marcadas como lidas conforme o processamento do backend.
+T-05	Tentar abrir uma conversa de outro usuário.	O backend bloqueia o acesso, sem revelar o conteúdo privado.
+T-06	Enviar mensagem válida.	A mensagem é persistida e aparece na conversa após a confirmação da API.
+T-07	Enviar mensagem vazia ou com mais de 2.000 caracteres.	A API recusa o conteúdo e a interface apresenta o erro.
+T-08	Reenviar uma solicitação com o mesmo client_id.	A mensagem não é duplicada.
+T-09	Editar mensagem própria.	O conteúdo é atualizado após a confirmação do backend.
+T-10	Tentar editar mensagem de outro participante.	A operação é bloqueada e o conteúdo original permanece inalterado.
+T-11	Excluir mensagem própria.	Após a confirmação, a mensagem deixa de ser exibida conforme a exclusão lógica.
+T-12	Tentar excluir mensagem de outro participante.	A operação é bloqueada.
+T-13	Simular falha na API durante uma operação.	A interface informa a falha e não apresenta a operação como concluída.
+T-14	Consultar status de leitura quando houver falha no processamento.	A interface não apresenta leitura como confirmada.
+T-15	Utilizar a tela em dispositivo móvel.	Os controles permanecem acessíveis e a interface se adapta à largura da tela.
+
+
+Registro de execução: os cenários acima constituem o roteiro de validação. Marque cada teste como aprovado somente depois de executá-lo e conferir o resultado na interface e, quando aplicável, no banco de dados.
+
+🏗️ 5. Arquitetura e Decisões Técnicas
+5.1 Visão geral da arquitetura
+A RF-008 utiliza uma arquitetura cliente-servidor. O frontend desenvolvido em Vue 3 realiza as solicitações HTTP à API Laravel. O backend autentica o usuário, aplica as regras de negócio e consulta ou altera os registros no MySQL.
+┌──────────────────────────────────────┐
+│             USUÁRIO                   │
+│       Navegador / Dispositivo         │
+└──────────────────┬───────────────────┘
+                   │ Interação
+                   ▼
+┌──────────────────────────────────────┐
+│          FRONTEND — VUE 3             │
+│                                      │
+│  Mensagem.vue                        │
+│  • Lista e pesquisa de conversas     │
+│  • Exibição de mensagens             │
+│  • Envio, edição e exclusão          │
+│  • Estados de carregamento e erro   │
+└──────────────────┬───────────────────┘
+                   │ Requisições HTTP
+                   │ Token de autenticação
+                   ▼
+┌──────────────────────────────────────┐
+│          BACKEND — LARAVEL            │
+│                                      │
+│  Rotas protegidas: auth:sanctum      │
+│  • ConversaController                │
+│  • MensagemController                │
+│  • Models e relacionamentos          │
+│  • Validações e regras de acesso     │
+└──────────────────┬───────────────────┘
+                   │ Eloquent / SQL
+                   ▼
+┌──────────────────────────────────────┐
+│             MYSQL                     │
+│                                      │
+│  usuarios                            │
+│  conversas                           │
+│  conversa_usuario                    │
+│  mensagens                           │
+│  mensagem_leituras                   │
+└──────────────────────────────────────┘
+5.2 Componentes da arquitetura
+Componente	Tecnologia/artefato	Responsabilidade
+Interface de mensagens	Vue 3 — Mensagem.vue	Apresentar conversas, mensagens, pesquisa e controles de gerenciamento.
+API	Laravel	Receber requisições, validar dados e executar as operações.
+Autenticação	Laravel Sanctum	Restringir o acesso aos endpoints a usuários autenticados.
+Controle de conversas	ConversaController	Listar e criar conversas, consultar mensagens e tratar a leitura.
+Controle de mensagens	MensagemController	Enviar, editar e excluir mensagens.
+Camada de dados	Models Conversa, Mensagem e MensagemLeitura	Representar as entidades e seus relacionamentos.
+Persistência	MySQL	Armazenar conversas, participantes, mensagens e leituras.
+
+
+5.3 Fluxo de dados
+1. O usuário acessa a opção Mensagens no frontend.
+2. O componente Mensagem.vue solicita à API a lista de conversas.
+3. O Laravel recebe a requisição e verifica a autenticação por meio do auth:sanctum.
+4. O ConversaController consulta as conversas relacionadas ao usuário autenticado.
+5. O Eloquent acessa o banco MySQL e recupera os dados necessários.
+6. O backend retorna os dados autorizados em uma resposta HTTP.
+7. O Vue 3 apresenta as conversas e permite que o usuário selecione uma delas.
+8. Ao abrir a conversa, o frontend solicita suas mensagens.
+9. O backend verifica a participação do usuário, recupera as mensagens e processa os registros de leitura das mensagens recebidas.
+10. Quando o usuário envia, edita ou exclui uma mensagem, o frontend encaminha a solicitação à API.
+11. O MensagemController valida a operação, incluindo conteúdo e autoria.
+12. O banco de dados registra a alteração solicitada.
+13. O backend retorna o resultado e o frontend atualiza a interface somente após a confirmação.
+5.4 Decisões arquiteturais (ADRs)
+ADR-001 — Separação entre frontend e backend
+- Decisão: utilizar Vue 3 no frontend e Laravel no backend, com comunicação por API HTTP.
+- Motivo: separar a apresentação da interface das regras de negócio e da persistência, permitindo organizar e manter cada camada de forma independente.
+- Aplicação na RF-008: o componente Mensagem.vue consome os endpoints da API, enquanto os controllers Laravel processam as operações.
+ADR-002 — Utilização do Laravel Sanctum para autenticação
+- Decisão: proteger os endpoints da funcionalidade com o middleware auth:sanctum.
+- Motivo: garantir que somente usuários autenticados possam consultar e gerenciar conversas e mensagens.
+- Aplicação na RF-008: as seis rotas da funcionalidade ficam dentro do grupo de autenticação.
+ADR-003 — Persistência relacional no MySQL
+- Decisão: utilizar MySQL e migrations do Laravel para estruturar os dados.
+- Motivo: conversas, participantes, mensagens e leituras possuem relacionamentos que precisam ser mantidos de forma consistente.
+- Aplicação na RF-008: as tabelas conversas, conversa_usuario, mensagens e mensagem_leituras relacionam-se à tabela usuarios.
+ADR-004 — Organização da lógica por Models e Controllers
+- Decisão: separar a representação dos dados em Models e o processamento das requisições em Controllers.
+- Motivo: manter as responsabilidades organizadas, facilitar a manutenção e evitar concentrar todas as regras em um único componente.
+- Aplicação na RF-008: ConversaController concentra as operações de conversas; MensagemController concentra o gerenciamento das mensagens; os Models representam as entidades e seus relacionamentos.
+ADR-005 — Confirmação do backend antes da atualização da interface
+- Decisão: atualizar a interface somente após receber a confirmação da API.
+- Motivo: evitar que o usuário visualize uma operação como concluída quando o servidor não conseguiu persistir a alteração.
+- Aplicação na RF-008: envio, edição e exclusão aguardam a resposta do servidor; falhas são apresentadas sem confirmação indevida.
+5.5 Padrão de projeto adotado
+A implementação utiliza a organização MVC (Model-View-Controller) no backend Laravel:
+- Model: representa os dados e relacionamentos, como Conversa, Mensagem e MensagemLeitura.
+- View: no contexto da aplicação, a interface é apresentada pelo frontend Vue 3, por meio do componente Mensagem.vue.
+- Controller: recebe as requisições e coordena as operações, por meio de ConversaController e MensagemController.
+A separação entre frontend e backend é realizada por meio da API. Essa organização facilita a manutenção, a validação das permissões e a evolução da funcionalidade sem misturar a interface com as regras de persistência.
+🔒 6. Segurança — Controles OWASP
+A segurança da RF-008 é importante porque a funcionalidade trabalha com conversas privadas e mensagens de usuários. Foram considerados controles para autenticação, autorização, validação de entradas e proteção das credenciais.
+Controle 1 — Controle de acesso às conversas e mensagens
+Vulnerabilidade OWASP (risco):
+
+Falhas de controle de acesso podem permitir que um usuário consulte conversas privadas ou altere mensagens pertencentes a outras pessoas.
+
+Implementação (como protege):
+- Os endpoints são protegidos pelo middleware auth:sanctum.
+- O backend verifica se o usuário autenticado participa da conversa solicitada.
+- A consulta de uma conversa não autorizada retorna 404, da mesma forma que uma conversa inexistente, evitando revelar sua existência.
+- A edição e a exclusão verificam se o usuário é o autor da mensagem.
+- As verificações são realizadas no backend, não dependendo apenas dos botões apresentados no frontend.
+Teste (como validar):
+- Autenticar com um usuário e tentar consultar uma conversa da qual ele não participa.
+- Tentar editar e excluir uma mensagem criada por outro usuário.
+- Confirmar que as operações são bloqueadas e que os dados originais permanecem inalterados.
+Controle 2 — Autenticação e proteção dos endpoints
+Vulnerabilidade OWASP (risco):
+
+Endpoints sem autenticação adequada podem permitir que pessoas não autorizadas consultem ou manipulem mensagens privadas.
+
+Implementação (como protege):
+- Utilizar o middleware auth:sanctum nas rotas da RF-008.
+- Exigir uma sessão/token válido para executar as operações.
+- Tratar respostas de autenticação inválida ou sessão expirada no frontend.
+- Não disponibilizar os endpoints de gerenciamento de mensagens para acesso sem autenticação.
+Teste (como validar):
+- Fazer uma requisição aos endpoints sem enviar credenciais.
+- Repetir a requisição com credencial inválida ou expirada.
+- Confirmar que a API bloqueia o acesso e que a interface informa a necessidade de autenticação.
+Controle 3 — Validação de entradas e prevenção contra SQL Injection
+Vulnerabilidade OWASP (risco):
+
+Entradas não validadas podem permitir conteúdo inválido, consultas manipuladas ou tentativas de injeção de comandos no banco de dados.
+
+Implementação (como protege):
+- Validar o conteúdo das mensagens no backend.
+- Recusar mensagens vazias ou compostas apenas por espaços.
+- Limitar o conteúdo a 2.000 caracteres.
+- Utilizar os recursos de consulta do Eloquent e os mecanismos de parametrização do Laravel, evitando concatenar diretamente entradas do usuário em comandos SQL.
+- Tratar os termos da pesquisa como dados de entrada.
+Teste (como validar):
+- Tentar enviar mensagem vazia, somente com espaços e com mais de 2.000 caracteres.
+- Utilizar caracteres especiais e textos que simulem uma tentativa de SQL Injection no campo de mensagem ou pesquisa.
+- Confirmar que os dados são tratados como entrada, que a validação funciona e que nenhuma consulta indevida é executada.
+Controle 4 — Prevenção contra Cross-Site Scripting (XSS)
+Vulnerabilidade OWASP (risco):
+
+Uma mensagem contendo código HTML ou JavaScript malicioso pode tentar executar scripts no navegador de outro participante.
+
+Implementação (como protege):
+- Exibir o conteúdo das mensagens como texto, utilizando a interpolação e os mecanismos de escape padrão do Vue.
+- Evitar renderizar conteúdo enviado pelo usuário como HTML confiável.
+- Não utilizar v-html para exibir mensagens sem sanitização apropriada.
+- Manter a validação no backend e a apresentação segura no frontend.
+Teste (como validar):
+- Enviar uma mensagem contendo texto semelhante a uma tag <script> ou a um atributo HTML com evento JavaScript.
+- Abrir a conversa com outro usuário.
+- Confirmar que o conteúdo é exibido como texto e que nenhum script é executado.
+Controle 5 — Proteção de credenciais e prevenção de duplicidade
+Vulnerabilidade OWASP (risco):
+
+Credenciais, tokens ou configurações sensíveis expostos no repositório podem permitir acesso indevido. Além disso, reenvios de requisições podem gerar mensagens duplicadas.
+
+Implementação (como protege):
+- Manter credenciais e configurações sensíveis em variáveis de ambiente, sem registrá-las no código-fonte.
+- Manter o arquivo .env fora do versionamento por meio do .gitignore.
+- Não inserir tokens ou senhas reais na documentação Swagger.
+- Utilizar o identificador client_id para reconhecer reenvios da mesma solicitação e evitar a duplicação de mensagens.
+Teste (como validar):
+- Conferir se .env está listado no .gitignore e se não há credenciais reais nos arquivos versionados.
+- Inspecionar o histórico do repositório para verificar se segredos não foram publicados.
+- Enviar novamente uma solicitação com o mesmo client_id e confirmar que não é criado um segundo registro para a mesma mensagem.
+Observação sobre evidências: os cenários desta seção descrevem como os controles devem ser validados. Registre como aprovado somente o teste que tiver sido efetivamente executado. Não inclua tokens, senhas ou credenciais reais como evidência.
+
+✅ Checklist final de entrega — RF-008
+- [ ] Aplicação online acessível pela URL informada no Tópico 1.
+- [ ] Acesso de avaliação definido, sem expor credenciais no documento.
+- [ ] Banco MySQL online e dados persistidos após recarregar a aplicação.
+- [ ] Repositório GitHub público com o código atualizado.
+- [ ] Migrations das quatro tabelas presentes no backend.
+- [ ] Arquivo DDL SQL criado em database/ e conferido com as migrations.
+- [ ] Arquivo docs/api/swagger.json criado em OpenAPI 3.0.
+- [ ] Os seis endpoints reais documentados, com métodos, campos e respostas conferidos.
+- [ ] Swagger validado no editor oficial.
+- [ ] Testes de Create, Read, Update e Delete executados pela interface.
+- [ ] Testes de autorização, autenticação, validação e tratamento de erros executados.
+- [ ] Responsividade e acessibilidade conferidas.
+- [ ] Nenhum .env, token, senha ou chave real publicado no GitHub.
