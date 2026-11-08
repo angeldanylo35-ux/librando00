@@ -419,27 +419,20 @@ Interface funcionando online em: https://librando-frontend.onrender.com/ (menu *
 
 ### 4.2 CRUD: as operações do RF-008
 
-O RF-008 trata das conversas das quais o usuário autenticado **participa** e das mensagens de **sua autoria**. A conta é criada no RF-002 (`POST /api/cadastro`). Neste requisito, o **Create** corresponde a iniciar conversa e enviar mensagem. O autor da mensagem nunca vem do corpo da requisição: é sempre o dono do token (`$request->user()`). A conversa só é encontrada se o usuário for participante (`$user->conversas()->findOrFail(...)`), e a mensagem só é encontrada para edição ou exclusão se pertencer ao usuário (`where('user_id', ...)->findOrFail(...)`).
+O RF-008 trata das conversas das quais o usuário autenticado **participa** e das mensagens de **sua autoria**. A conta é criada no RF-002 (`POST /api/cadastro`). Neste requisito, o **Create** corresponde a iniciar conversa e enviar mensagem. O autor da mensagem nunca vem do corpo da requisição: é sempre o dono do token. As rotas usam `{conversa}` e `{mensagem}`, mas o backend só encontra a conversa se o usuário for participante e só encontra a mensagem, para editar ou excluir, se ela for do próprio usuário (RN-02, RN-07, RN-08 e RN-09).
 
-| Operação | Ação na interface | Método | Endpoint | Resposta esperada | Onde verificar |
+| Operação | Ação na interface | Método HTTP | Endpoint | Resposta esperada | Verificação |
 |---|---|---|---|---|---|
-| **C**reate (conversa) | **Nova mensagem** → pesquisar pessoa → selecionar | `POST` | `/api/conversas` | `201` / `200` se a conversa já existir / `401` / `422` | [`ConversaController@store`](https://github.com/angeldanylo35-ux/librando00/blob/main/backend/app/Http/Controllers/Api/ConversaController.php#L77) · tabelas `conversas` e `conversa_usuario` |
-| **C**reate (mensagem) | Digitar e enviar | `POST` | `/api/conversas/{conversa}/mensagens` | `201` / `401` / `404` / `422` | [`MensagemController@store`](https://github.com/angeldanylo35-ux/librando00/blob/main/backend/app/Http/Controllers/Api/MensagemController.php#L11) · tabela `mensagens` |
-| **R**ead (conversas) | Abrir **Mensagens** e pesquisar | `GET` | `/api/conversas?busca=` | `200` / `401` | [`ConversaController@index`](https://github.com/angeldanylo35-ux/librando00/blob/main/backend/app/Http/Controllers/Api/ConversaController.php#L15) · tabela `conversa_usuario` |
-| **R**ead (mensagens) | Selecionar uma conversa | `GET` | `/api/conversas/{conversa}/mensagens` | `200` / `401` / `404` | [`ConversaController@mensagens`](https://github.com/angeldanylo35-ux/librando00/blob/main/backend/app/Http/Controllers/Api/ConversaController.php#L117) · tabela `mensagem_leituras` |
-| **R**ead (usuários) | Pesquisar pessoa em **Nova mensagem** | `GET` | `/api/usuarios?busca=` | `200` / `401` | [`ConversaController@buscarUsuarios`](https://github.com/angeldanylo35-ux/librando00/blob/main/backend/app/Http/Controllers/Api/ConversaController.php#L56) · tabela `usuarios` |
-| **U**pdate | Editar mensagem própria → Enter | `PUT` | `/api/mensagens/{mensagem}` | `200` / `401` / `404` / `422` | [`MensagemController@update`](https://github.com/angeldanylo35-ux/librando00/blob/main/backend/app/Http/Controllers/Api/MensagemController.php#L33) · colunas `texto` e `editada` em `mensagens` |
-| **D**elete (mensagem) | Excluir mensagem própria | `DELETE` | `/api/mensagens/{mensagem}` | `200` (`{"sucesso": true}`) / `401` / `404` | [`MensagemController@destroy`](https://github.com/angeldanylo35-ux/librando00/blob/main/backend/app/Http/Controllers/Api/MensagemController.php#L54) · coluna `deleted_at` em `mensagens` |
-| **D**elete (conversa) | Excluir conversa (com confirmação) | `DELETE` | `/api/conversas/{conversa}` | `200` / `401` / `404` | [`ConversaController@destroy`](https://github.com/angeldanylo35-ux/librando00/blob/main/backend/app/Http/Controllers/Api/ConversaController.php#L149) · tabelas `conversas`, `mensagens`, `mensagem_leituras` |
+| **C**reate (conversa) | **Nova mensagem** → pesquisar pessoa → selecionar | `POST` | `/api/conversas` | `201 Created` / `200` se já existir / `401` / `422` | Linha em `conversas` e duas linhas em `conversa_usuario` (criador e destinatário) |
+| **C**reate (mensagem) | Digitar e enviar | `POST` | `/api/conversas/{conversa}/mensagens` | `201 Created` / `401` / `404` / `422` | Linha em `mensagens` com o autor e a conversa corretos |
+| **R**ead (conversas) | Abrir **Mensagens** e pesquisar | `GET` | `/api/conversas?busca=` | `200 OK` / `401` | Só aparecem conversas em que o usuário consta em `conversa_usuario` |
+| **R**ead (mensagens) | Selecionar uma conversa | `GET` | `/api/conversas/{conversa}/mensagens` | `200 OK` / `401` / `404` | Mensagens da conversa; linhas em `mensagem_leituras` para as mensagens recebidas |
+| **R**ead (usuários) | Pesquisar pessoa em **Nova mensagem** | `GET` | `/api/usuarios?busca=` | `200 OK` / `401` | Resultados conferem com a tabela `usuarios`, sem o próprio usuário |
+| **U**pdate | Editar mensagem própria → Enter | `PUT` | `/api/mensagens/{mensagem}` | `200 OK` / `401` / `404` / `422` | Novo `texto` e `editada = 1` no banco e na tela após recarregar |
+| **D**elete (mensagem) | Excluir mensagem própria | `DELETE` | `/api/mensagens/{mensagem}` | `200 OK` / `401` / `404` | `deleted_at` preenchido; o registro permanece em `mensagens` |
+| **D**elete (conversa) | Excluir conversa, após confirmação | `DELETE` | `/api/conversas/{conversa}` | `200 OK` / `401` / `404` | Conversa, mensagens e leituras removidas do banco (cascata) |
 
-Pontos de atenção:
-- A conversa inexistente e a conversa da qual o usuário não participa recebem a **mesma resposta (`404`)**, para não revelar a existência de conversas privadas (FA-02, RN-14).
-- Editar ou excluir mensagem de outro participante também retorna **`404`**, pois a mensagem não é encontrada entre as do usuário autenticado (FA-06, FA-11). O conteúdo original permanece inalterado.
-- Dados inválidos retornam `422`, padrão de validação do Laravel, com a lista de campos em `errors`.
-- A exclusão de **mensagem** é lógica (`deleted_at` preenchido): o registro continua no banco e a mensagem deixa de ser exibida para os participantes (RN-15).
-- A exclusão de **conversa** é física: remove a conversa e, em cascata, suas mensagens e leituras (chaves estrangeiras com `ON DELETE CASCADE`). A interface pede confirmação antes dessa operação.
-- O status de leitura não tem rota própria: é registrado em `mensagem_leituras` quando o destinatário consulta as mensagens da conversa (`GET .../mensagens`). Se o registro falhar, a API não afirma a leitura (FA-10).
-- Ao iniciar uma conversa com quem já tem conversa direta, a API devolve a existente (`200`) em vez de criar outra. A criação ocorre dentro de transação.
+A exclusão de **mensagem** é lógica: o registro continua no banco, mas deixa de ser exibido (RN-15). A exclusão de **conversa** é física e também apaga o histórico do outro participante. Conversa inexistente, conversa de outra pessoa e mensagem de terceiros recebem a **mesma resposta (`404`)**, para não revelar que o registro existe; por isso a API não documenta `403`. Dados inválidos retornam `422`, padrão de validação do Laravel. O status de leitura não tem rota própria: é registrado ao consultar as mensagens da conversa.
 
 ---
 
@@ -727,6 +720,18 @@ A funcionalidade trabalha com conversas privadas, então os controles abaixo pri
 > **Observação sobre evidências:** os cenários desta seção descrevem como cada controle deve ser validado. Registre como aprovado somente o teste efetivamente executado, sem incluir tokens, senhas ou credenciais reais como evidência.
 
 ---
+
+## ✅ Checklist final de entrega — RF-008
+
+- [ ] Aplicação online acessível pela URL informada no Tópico 1.
+- [ ] Acesso de avaliação definido, sem expor credenciais no documento.
+- [ ] Banco MySQL online e dados persistidos após recarregar a aplicação.
+- [ ] Repositório GitHub público com o código atualizado.
+- [ ] Migrations das quatro tabelas presentes no backend.
+- [ ] Arquivo DDL SQL criado em `database/` e conferido com as migrations.
+- [ ] Arquivo `docs/api/swagger.json` criado em OpenAPI 3.0.
+- [ ] Os seis endpoints reais documentados, com métodos, campos e respostas conferidos.
+- [ ] Swagger validado no editor oficial.
 - [ ] Testes de Create, Read, Update e Delete executados pela interface.
 - [ ] Testes de autorização, autenticação, validação e tratamento de erros executados.
 - [ ] Responsividade e acessibilidade conferidas.
