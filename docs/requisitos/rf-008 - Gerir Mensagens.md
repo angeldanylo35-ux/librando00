@@ -23,9 +23,9 @@
 - **Interface de acesso:** phpMyAdmin
 - **Link:** https://librando-phpmyadmin.onrender.com
 - **Banco de dados:** `defaultdb`
-- **Tabelas relacionadas:** a definir conforme a implementação das conversas e mensagens.
-- **Permissões:** o acesso de leitura para avaliação deverá respeitar as credenciais disponibilizadas pela equipe do projeto.
-
+- **Usuário de leitura:** `professor_leitura`
+- **Senha:** `123456`
+- **Permissões:** consulta dos dados e visualização da estrutura das tabelas, sem permissão para modificá-los.
 
 ### c) Link do GitHub (Repositório)
 
